@@ -20,6 +20,9 @@
 #define ERROR_COLOR_FG "\033[38;5;160m"
 #define FATAL_COLOR_FG "\033[38;5;0m\033[48;5;160m"
 
+#define LOG_OPEN_FILE(path)
+#define LOG_CLOSE_FILE(path)
+
 #define LOG_TRACE(msg)
 #define LOG_DEBUG(msg)
 #define LOG_INFO(msg)
@@ -28,6 +31,12 @@
 #define LOG_FATAL(msg)
 
 #if defined(DEBUG_LVL)
+
+	#undef LOG_OPEN_FILE
+	#define LOG_OPEN_FILE(path) Log::openFile(path);
+
+	#undef LOG_CLOSE_FILE
+	#define LOG_CLOSE_FILE(path) Log::closeFile(path);
 
 	#if (DEBUG_LVL <= TRACE)
 		#undef LOG_TRACE
@@ -64,7 +73,12 @@
 
 class Log
 {
+private:
+	static std::ofstream fout;
 public:
+	static void openFile(const std::string& path);
+	static void closeFile();
+
 	static void trace(const std::stringstream& msg);
 	static void debug(const std::stringstream& msg);
 	static void info(const std::stringstream& msg);

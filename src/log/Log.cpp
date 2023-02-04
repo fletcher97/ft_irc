@@ -2,6 +2,26 @@
 
 #include "Log.hpp"
 
+std::ofstream Log::fout;
+
+void
+Log::openFile(const std::string& path) {
+	if (Log::fout.is_open()) {
+		LOG_INFO("Changing log files to " << path)
+		Log::fout.close();
+	}
+
+	Log::fout.open(path.c_str(), std::ios::out | std::ios::app);
+	if (!Log::fout.is_open()) {
+		LOG_ERROR("Failed to open file.")
+	}
+}
+
+void
+Log::closeFile() {
+	if (Log::fout.is_open())
+		Log::fout.close();
+}
 
 void
 Log::trace(const std::stringstream& msg) {
