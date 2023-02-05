@@ -56,10 +56,10 @@ Log::info(const std::stringstream& msg) {
 
 void
 Log::warn(const std::stringstream& msg) {
-	std::clog << WARN_COLOR_FG << "[WARNS]" << RESET_COLOR << ": " <<
+	std::clog << WARN_COLOR_FG << "[WARN]" << RESET_COLOR << ": " <<
 		msg.str()  << RESET_COLOR << std::endl;
 	if (Log::fout.is_open()) {
-		Log::fout << "[WARNS]: " << msg.str() << std::endl;
+		Log::fout << "[WARN]: " << msg.str() << std::endl;
 		Log::fout.flush();
 	}
 }
