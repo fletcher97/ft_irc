@@ -46,10 +46,10 @@ Log::debug(const std::stringstream& msg) {
 
 void
 Log::info(const std::stringstream& msg) {
-	std::clog << INFO_COLOR_FG << "[INFO]" << RESET_COLOR << " : " <<
+	std::clog << INFO_COLOR_FG << "[INFO]" << RESET_COLOR << ": " <<
 		msg.str()  << RESET_COLOR << std::endl;
 	if (Log::fout.is_open()) {
-		Log::fout << "[INFO] : " << msg.str() << std::endl;
+		Log::fout << "[INFO]: " << msg.str() << std::endl;
 		Log::fout.flush();
 	}
 }
