@@ -21,13 +21,18 @@ Client::Client(const Client &c) {
 	this->_nick = c._nick;
 	this->_address = c._address;
 	this->_username = c._username;
+	this->_channels = c._channels;
 }
 
-Client &Client::operator=(const Client &c) {
+Client&
+Client::operator=(const Client &c) {
 	this->_nick = c._nick;
 	this->_address = c._address;
 	this->_username = c._username;
+	this->_channels = c._channels;
 	return *this;
 }
 
-Client::~Client() {}
+Client::~Client() {
+	// TODO: Check and exit from channels
+}
