@@ -4,7 +4,7 @@
 Channel::Channel(std::string name) {
 	LOG_DEBUG("Creating new channel");
 	this->_name = name;
-	LOG_INFO("New channel created: " << name);
+	LOG_INFO("New channel created: " << this->_name);
 }
 
 Channel::Channel(const Channel& c) {
@@ -19,5 +19,5 @@ Channel &Channel::operator=(const Channel& c) {
 }
 
 Channel::~Channel() {
-	LOG_INFO("Removed channel: " << this->name);
+	LOG_INFO("Removed channel: " << this->_name);
 }

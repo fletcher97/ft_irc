@@ -4,7 +4,7 @@
 Server::Server(std::string name) {
 	LOG_DEBUG("Creating new server");
 	this->_name = name;
-	LOG_INFO("New server created: " << this->name);
+	LOG_INFO("New server created: " << this->_name);
 }
 
 Server::Server(const Server &s) {
@@ -18,5 +18,5 @@ Server &Server::operator=(const Server &s) {
 
 Server::~Server() {
 	//TODO: Check and clean clients and channels
-	LOG_INFO("Removed server: " << this->name);
+	LOG_INFO("Removed server: " << this->_name);
 }
