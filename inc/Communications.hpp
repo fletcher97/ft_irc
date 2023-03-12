@@ -10,25 +10,27 @@
 
 #include "Server.hpp"
 
+class Server;
 class Communications
 {
 private:
+	int _fd;
+	std::vector<pollfd> _pfds;
 	std::string _psswd;
-	int port;
-	struct sockaddr_in server_address;
-	std::vector<int> vec_clients;
-	struct pollfd fd_array[MAX_CLIENTS + 1];
-	int server_socket;
-	int num_fds;
+	Server*	_server;
+	void write_error(const char *s);
 public:
-	Communications(int port, std::string psswd);
+	Communications(Server *server);
 	Communications(const Communications& s);
 	Communications& operator=(const Communications& s);
-	~Communications(void);
-    bool is_digits(const std::string &str);
-	void init_server(void);
-    void run(void);
-    void write_error(const char *s);
+	~Communications();
+	void init(int port, std::string psswd);
+  void run();
+  
+  int	getFd() const;
+  void	addPfd(int fd);
+private:
+	typedef std::vector<pollfd>::iterator	pfds_iterator;
 };
 
 #endif

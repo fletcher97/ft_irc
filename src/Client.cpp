@@ -37,6 +37,7 @@ ClientMode::operator=(const ClientMode& m) {
 	this->s = m.s;
 	return *this;
 }
+#include <iostream>
 
 Client::Client(int fd, struct sockaddr_in socket) :	_fd(fd),
 																							_nickname(),
@@ -47,16 +48,16 @@ Client::Client(int fd, struct sockaddr_in socket) :	_fd(fd),
 																							_mode()
 {
 	LOG_DEBUG("Creating new client")
-	struct	addrinfo	hints;
-	struct	addrinfo	*info;
+	// struct	addrinfo	hints;
+	// struct	addrinfo	*info;
 	
-	hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_CANONNAME;
-  if (getaddrinfo(inet_ntoa(socket.sin_addr), NULL, &hints, &info) == -1)
-		return ; //ERROR
+	// memset(&hints, 0, sizeof(hints));
+	// hints.ai_family = PF_UNSPEC;
+ //  hints.ai_flags = AI_CANONNAME;
+  // if (getaddrinfo(inet_ntoa(socket.sin_addr), NULL, &hints, &info) == -1)  
+		// return ; //ERROR
 	this->_address = inet_ntoa(socket.sin_addr);
-	this->_hostname = info->ai_canonname;
+	// this->_hostname = info->ai_canonname;
 	LOG_INFO("New client created: " << this->_hostname)
 }
 
@@ -88,7 +89,7 @@ Client::operator=(const Client &c) {
 Client::~Client() {
 	// TODO: Check and exit from channels
 	close(this->_fd);
-	LOG_INFO("Removed client: " << this->_nick)
+	LOG_INFO("Removed client: " << this->_nickname)
 }
 
 int
@@ -178,6 +179,21 @@ Client::setMode(char c) {
 		case 'o' : this->_mode.o = true;
 		case 'O' : this->_mode.O = true;
 		case 's' : this->_mode.s = true;
+		default : return ;
+	}
+}
+
+void
+Client::unsetMode(char c) {
+	switch (c)
+	{
+		case 'a' : this->_mode.a = false;
+		case 'i' : this->_mode.i = false;
+		case 'w' : this->_mode.w = false;
+		case 'r' : this->_mode.r = false;
+		case 'o' : this->_mode.o = false;
+		case 'O' : this->_mode.O = false;
+		case 's' : this->_mode.s = false;
 		default : return ;
 	}
 }

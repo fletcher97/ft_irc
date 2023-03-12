@@ -11,7 +11,8 @@ enum	ClientStatus
 	PASSWORD,
 	REGISTER,
 	ONLINE,
-	AWAY
+	AWAY,
+	DELETE
 };
 
 struct	ClientMode
@@ -64,6 +65,7 @@ public:
 	void	setRealname(std::string realname);
 	void	setStatus(ClientStatus status);
 	void	setMode(char c);
+	void	unsetMode(char c);
 	
 	//void handleCommand TODO
 	//void sendTo TODO
