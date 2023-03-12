@@ -21,7 +21,7 @@ Server &Server::operator=(const Server &s) {
 
 Server::~Server() {
 	//TODO: Check and clean clients and channels
-	LOG_INFO("Removed server: " << this->name);
+	LOG_INFO("Removed server: " << this->_name);
 }
 
 void
