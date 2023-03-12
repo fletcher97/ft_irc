@@ -37,7 +37,6 @@ ClientMode::operator=(const ClientMode& m) {
 	this->s = m.s;
 	return *this;
 }
-#include <iostream>
 
 Client::Client(int fd, struct sockaddr_in socket) :	_fd(fd),
 																							_nickname(),
@@ -48,16 +47,7 @@ Client::Client(int fd, struct sockaddr_in socket) :	_fd(fd),
 																							_mode()
 {
 	LOG_DEBUG("Creating new client")
-	// struct	addrinfo	hints;
-	// struct	addrinfo	*info;
-	
-	// memset(&hints, 0, sizeof(hints));
-	// hints.ai_family = PF_UNSPEC;
- //  hints.ai_flags = AI_CANONNAME;
-  // if (getaddrinfo(inet_ntoa(socket.sin_addr), NULL, &hints, &info) == -1)  
-		// return ; //ERROR
 	this->_address = inet_ntoa(socket.sin_addr);
-	// this->_hostname = info->ai_canonname;
 	LOG_INFO("New client created: " << this->_hostname)
 }
 

@@ -82,7 +82,6 @@ Server::getChannels() {
 // bool
 // Server::isChannel(const std::string& name) const
 // {}
-#include <iostream>
 
 void
 Server::newClient() {

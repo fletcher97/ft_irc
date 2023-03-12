@@ -42,9 +42,11 @@ protected:
 	std::map<int, Client&> _clients;
 	// ChannelMode	_mode;
 	std::string	_key;
+	
 	// size_t	maxClients; Usefull?
 	// std::vector<Client*>	_invited; Usefull?
 	// std::vector<Client*>	_banned; Usefull?
+	
 public:
 	Channel();
 	Channel(const Channel& c);
