@@ -280,8 +280,344 @@ std::string RPL_ENDOFNAMES(std::string client, std::string channel)
 	return (client + " " + channel + " :End of /NAMES list");
 }
 
+std::string RPL_LINKS(std::string client, std::string server, int hopcount, std::string server_info)
+{
+	return (client + " * " + server + " :" + std::to_string(hopcount) + " " + server_info);
+}
 
-/*int main()
+std::string RPL_ENDOFLINKS(std::string client)
+{
+	return (client + " * :End of /LINKS list");
+}
+
+std::string RPL_BANLIST(std::string client, std::string channel, std::string mask, std::string who, time_t set_ts)
+{
+	return (client + " " + channel + " " + mask + " " + who + " " + std::to_string(set_ts));
+}
+
+std::string RPL_ENDOFBANLIST(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :End of channel ban list");
+}
+
+std::string RPL_ENDOFWHOWAS(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :End of WHOWAS");
+}
+
+std::string RPL_INFO(std::string client, std::string s)
+{
+	return (client + " :" + s);
+}
+
+std::string RPL_ENDOFINFO(std::string client)
+{
+	return (client + " :End of INFO list");
+}
+
+std::string RPL_MOTDSTART(std::string client, std::string server)
+{
+	return (client + " :- " + server + " Message of the day - ");
+}
+
+std::string RPL_MOTD(std::string client, std::string s)
+{
+	return (client + " :" + s);
+}
+
+std::string RPL_ENDOFMOTD(std::string client)
+{
+	return (client + " :End of /MOTD command.");
+}
+
+std::string RPL_WHOISHOST(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :is connecting from *@localhost 127.0.0.1");
+}
+
+std::string RPL_WHOISMODES(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :is using modes +ailosw");
+}
+
+std::string RPL_YOUREOPER(std::string client)
+{
+	return (client + " :You are now an IRC operator");
+}
+
+std::string RPL_REHASHING(std::string client, std::string conf_file)
+{
+	return (client + " " + conf_file + " :Rehashing");
+}
+
+std::string RPL_TIME(std::string client, std::string server, time_t timestamp, std::string TS, time_t time)
+{
+	return (client + " " + server + " " + std::to_string(timestamp) + " " + TS + " :" + std::to_string(time)); //esto igual esta mal
+}
+
+std::string ERR_UNKNOWNERROR(std::string client, std::string command, std::string subcommand, std::string info)
+{
+	return (client + " " + command + " " + subcommand + " :" + info);
+}
+
+std::string ERR_NOSUCHNICK(std::string client, std::string nickname)
+{
+	return (client + " " + nickname + " :No such nick/channel");
+}
+
+std::string ERR_NOSUCHSERVER(std::string client, std::string server_name)
+{
+	return (client + " " + server_name + " :No such server");
+}
+
+std::string ERR_NOSUCHCHANNEL(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :No such channel");
+}
+
+std::string ERR_CANNOTSENDTOCHAN(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :Cannot send to channel");
+}
+
+std::string ERR_TOOMANYCHANNELS(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :You have joined too many channels");
+}
+
+std::string ERR_WASNOSUCHNICK(std::string client)
+{
+	return (client + " :There was no such nickname");
+}
+
+std::string ERR_NOORIGIN(std::string client)
+{
+	return (client + " :No origin specified");
+}
+
+std::string ERR_INPUTTOOLONG(std::string client)
+{
+	return (client + " :Input line was too long");
+}
+
+std::string ERR_UNKNOWNCOMMAND(std::string client, std::string command)
+{
+	return (client + " " + command + " :Unknown command");
+}
+
+std::string ERR_NOMOTD(std::string client)
+{
+	return (client + " :MOTD File is missing");
+}
+
+std::string ERR_ERRONEUSNICKNAME(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :Erroneus nickname");
+}
+
+std::string ERR_NICKNAMEINUSE(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :Nickname is already in use");
+}
+
+std::string ERR_USERNOTINCHANNEL(std::string client, std::string nick, std::string channel)
+{
+	return (client + " " + nick + " " + channel + " :They aren't on that channel");	
+}
+
+std::string ERR_NOTONCHANNEL(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :You're not on that channel");
+}
+
+std::string ERR_USERONCHANNEL(std::string client, std::string nick, std::string channel)
+{
+	return (client + " " + nick + " " + channel + " :is already on channel");
+}
+
+std::string ERR_NOTREGISTERED(std::string client)
+{
+	return (client + " :You have not registered");
+}
+
+std::string ERR_NEEDMOREPARAMS(std::string client, std::string command)
+{
+	return (client + " " + command + " :Not enough parameters");
+}
+
+std::string ERR_ALREADYREGISTERED(std::string client)
+{
+	return (client + " :You may not reregister");
+}
+
+std::string ERR_PASSWDMISMATCH(std::string client)
+{
+	return (client + " :Password incorrect");
+}
+
+std::string ERR_YOUREBANNEDCREEP(std::string client)
+{
+	return (client + " :You are banned from this server.");
+}
+
+std::string ERR_CHANNELISFULL(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :Cannot join channel (+l)");
+}
+
+std::string ERR_UNKNOWNMODE(std::string client, std::string modechar)
+{
+	return (client + " " + modechar + " :is unknown mode char to me");
+}
+
+std::string ERR_INVITEONLYCHAN(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :Cannot join channel (+i)");
+}
+
+std::string ERR_BANNEDFROMCHAN(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :Cannot join channel (+b)");
+}
+
+std::string ERR_BADCHANNELKEY(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :Cannot join channel (+k)");
+}
+
+std::string ERR_BADCHANMASK(std::string channel)
+{
+	return (channel + " :Bad Channel Mask");
+}
+
+std::string ERR_NOPRIVILEGES(std::string client)
+{
+	return (client + " :Permission Denied- You're not an IRC operator");
+}
+
+std::string ERR_CHANOPRIVSNEEDED(std::string client, std::string channel)
+{
+	return (client + " " + channel + " :You're not channel operator");
+}
+
+std::string ERR_CANTKILLSERVER(std::string client)
+{
+	return (client + " :You cant kill a server!");
+}
+
+std::string ERR_NOOPERHOST(std::string client)
+{
+	return (client + " :No O-lines for your host");
+}
+
+std::string ERR_UMODEUNKNOWNFLAG(std::string client)
+{
+	return (client + " :Unknown MODE flag");
+}
+
+std::string ERR_USERSDONTMATCH(std::string client)
+{
+	return (client + " :Cant change mode for other users");
+}
+
+std::string ERR_HELPNOTFOUND(std::string client, std::string subject)
+{
+	return (client + " " + subject + " :No help available on this topic");
+}
+
+std::string ERR_INVALIDKEY(std::string client, std::string target_chan)
+{
+	return (client + " " + target_chan + " :Key is not well-formed");
+}
+
+std::string RPL_STARTTLS(std::string client)
+{
+	return (client + " :STARTTLS successful, proceed with TLS handshake");
+}
+
+std::string RPL_WHOISSECURE(std::string client, std::string nick)
+{
+	return (client + " " + nick + " :is using a secure connection");
+}
+
+std::string ERR_STARTTLS(std::string client)
+{
+	return (client + " :STARTTLS failed (Wrong moon phase)");
+}
+
+std::string ERR_INVALIDMODEPARAM(std::string client, std::string target, std::string modechar, std::string parameter, std::string description)
+{
+	return (client + " " + target + " " + modechar + " " + parameter + " :" + description);
+}
+
+std::string RPL_HELPSTART(std::string client, std::string subject, std::string line)
+{
+	return (client + " " + subject + " :" + line);
+}
+
+std::string RPL_HELPTXT(std::string client, std::string subject, std::string line)
+{
+	return (client + " " + subject + " :" + line);
+}
+
+std::string RPL_ENDOFHELP(std::string client, std::string subject, std::string line)
+{
+	return (client + " " + subject + " :" + line);
+}
+
+std::string ERR_NOPRIVS(std::string client, std::string priv)
+{
+	return (client + " " + priv + " :Insufficient oper privileges.");
+}
+
+std::string RPL_LOGGEDIN(std::string client, std::string nick, std::string user, std::string host, std::string account, std::string username)
+{
+	return (client + " " + nick + "!" + user + "@" + host + " " + account + " :You are now logged in as " + username);
+}
+
+std::string RPL_LOGGEDOUT(std::string client, std::string nick, std::string user, std::string host)
+{
+	return (client + " " + nick + "!" + user + "@" + host + " :You are now logged out");
+}
+
+std::string ERR_NICKLOCKED(std::string client)
+{
+	return (client + " :You must use a nick assigned to you");
+}
+
+std::string RPL_SASLSUCCESS(std::string client)
+{
+	return (client + " :SASL authentication successful");
+}
+
+std::string ERR_SASLFAIL(std::string client)
+{
+	return (client + " :SASL authentication failed");
+}
+
+std::string ERR_SASLTOOLONG(std::string client)
+{
+	return (client + " :SASL message too long");
+}
+
+std::string ERR_SASLABORTED(std::string client)
+{
+	return (client + " :SASL authentication aborted");
+}
+
+std::string ERR_SASLALREADY(std::string client)
+{
+	return (client + " :You have already authenticated using SASL");
+}
+
+std::string RPL_SASLMECHS(std::string client, std::string mechanisms)
+{
+	return (client + " " + mechanisms + " :are available SASL mechanisms");
+}
+
+
+/*
+int main()
 {
 	time_t x = time(NULL);
 	std::string res;
