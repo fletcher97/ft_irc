@@ -3,8 +3,15 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 4.1
+# Version: 5
 # Repo: www.github.com/fletcher97/utils
+
+# v5: Added testing capabilities to the makefile. You can now places Tests in
+# TST_ROOT or a subfolder and treat it the same as you would SRC_ROOT. For each
+# executable a test executable is now generated. It will use the TST_DIRS that
+# have the same index as SRC_DIRS to test them. An important change is that main
+# functions should now be specified in a different variable. A merge function
+# was also added to aide in the parsing of the required files for tests.
 
 # v4.1: Adde debug variable to specify what debug lvl the code should be
 # compiled with. If the code is prepared to compile with this flag, it's
@@ -89,13 +96,16 @@ VERBOSE := 1
 # By default debug is none.
 DEBUG_LVL := none
 
+# Name prefix for test executable
+TEST_PREFIX := test_
+
 # Version 2.1 and above of this makefile can generate targets to use other
 # makefiles as dependencies. This feature will execute the rule of same name in
 # an other makefile. This can be usefull in many situation but also a hinderence
 # in others. If for example you just want to clean the root directory the clean
 # rule will be executed in any other makefile specified. You can deactivate the
 # creation of these targets by setting the bellow variable to 0.
-CREATE_LIB_TARGETS := 0
+CREATE_LIB_TARGETS := 1
 
 # Pedantic allows for extra warning flags to be used while compiling. If set to
 # true these flags are applied. If set to anything else the flags will not be
@@ -209,6 +219,7 @@ LIB_ROOT := lib/
 OBJ_ROOT := obj/
 SRC_ROOT := src/
 COV_ROOT := cov/
+TST_ROOT := tst/
 
 ################################################################################
 # Libraries
@@ -217,19 +228,19 @@ COV_ROOT := cov/
 ifeq (${CREATE_LIB_TARGETS},1)
 
 # Libft
-LIBFT_ROOT := ${LIB_ROOT}libft/
-LIBFT_INC := ${LIBFT_ROOT}inc/
-LIBFT := ${LIBFT_ROOT}bin/libft.a
+LIBFLT_ROOT := ${LIB_ROOT}flt/
+LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
+LIBFLT := ${LIBFT_ROOT}bin/libflt.a
 
-INC_DIRS += ${LIBFT_INC}
-LIBS += -L${LIBFT_ROOT}bin -lft
+INC_DIRS += ${LIBFLT_INC}
+LIBS += -L${LIBFLT_ROOT}bin -lflt
 
 # Libraries for which to create default targets. All libraries in this list will
 # have targets created autimatically. The targets that are created are set in
 # DEFAULT_LIB_RULES. The targets will have to format <library root>//<target>
 # and it will invoke make as follows:
 # `make -C <library root> <rule>`
-DEFAULT_LIBS := ${LIBFT_ROOT}
+DEFAULT_LIBS := ${LIBFLT_ROOT}
 
 # Default targets to create for libraries specified in DEFAULT_LIBS. This is a
 # small list of common targets in most makefiles.
@@ -254,19 +265,41 @@ endif
 
 # Lists of ':' separated folders inside SRC_ROOT containing source files. Each
 # folder needs to end with a '/'. The path to the folders is relative to
-# SRC_ROOTIf SRC_ROOT contains files './' needs to be in the list. Each list is
-# separated by a space or by going to a new line and adding onto the var.
+# SRC_ROOT. If SRC_ROOT contains files './' needs to be in the list. Each list
+# is separated by a space or by going to a new line and adding onto the var.
+#
+# IMPORTANT: If you wish to use testing, DO NOT place any folders with files
+# containing a main function in this list. The main file(s) should be be
+# isolated in a separate folder (you can place it alone in SRC_ROOT and all src
+# files in their own subfolder). The main file should be place in the FILES_MAIN
+# list.
+#
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := ./:log/:client/
+DIRS := log/:classes/
+
+# List of directories with tests. Formating follows the same rules as DIRS
+# above. All folders are relative to TST_ROOT. Each group of folder should only
+# contain tests for the equivalent executable. The first group will test the
+# files in the first group of DIRS (or the first executable specified in NAMES).
+DIRS_TEST := unit_tests/
 
 SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
 
+TST_DIRS_LIST := $(addprefix ${TST_ROOT},${DIRS_TEST})
+TST_DIRS_LIST := $(foreach dl,${TST_DIRS_LIST},$(subst :,:${TST_ROOT},${dl}))
+
 SRC_DIRS = $(call rmdup,$(subst :,${SPACE},${SRC_DIRS_LIST}))
-OBJ_DIRS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRC_DIRS})
-DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
+
+TST_DIRS = $(call rmdup,$(subst :,${SPACE},${TST_DIRS_LIST}))
+
+OBJ_DIRS := $(addprefix ${OBJ_ROOT},${SRC_DIRS})
+OBJ_DIRS += $(addprefix ${OBJ_ROOT},${TST_DIRS})
+
+DEP_DIRS := $(addprefix ${DEP_ROOT},${SRC_DIRS})
+DEP_DIRS += $(addprefix ${DEP_ROOT},${TST_DIRS})
 
 # List of folders with header files.Each folder needs to end with a '/'. The
 # path to the folders is relative to the root of the makefile. Library includes
@@ -274,7 +307,8 @@ DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
 INC_DIRS += ${INC_ROOT}
 
 # List of folders with templates and their implementations. Each folder needs to
-# end with a '/'. The path to the folders is relative to the root of the makefile.
+# end with a '/'. The path to the folders is relative to the root of the
+# makefile.
 ifeq (${LANG},C++)
 	TPL_DIRS := ${TPL_ROOT}
 	IMP_DIRS := ${IMP_ROOT}
@@ -294,20 +328,49 @@ else ifeq (${LANG},C++)
 	IMP_FILE_EXT := ipp
 endif
 
-SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
-	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.${SRC_FILE_EXT})))))
-OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},\
-	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST}))
+# List of src files containing the main function. This list should contain one
+# entry per executable. All files are relative to SRC_ROOT
+# Exemple:
+MAIN_FILES := ${SRC_ROOT}main.${SRC_FILE_EXT}
+# List of src files containing the main function for testing. This list should
+# contain one entry per executable. All files are relative to SRC_ROOT
+# Exemple:
+MAIN_FILES_TEST := ${TST_ROOT}main.${SRC_FILE_EXT}
 
-SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
-OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.${SRC_FILE_EXT}=.o})
-DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
+# Source files grouped by executable
+SRCS_LIST_SIMPLE = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+	$(foreach dir,$(subst :,${SPACE},${dl}),\
+	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
+SRCS_LIST = $(call merge,${SRCS_LIST_SIMPLE},${MAIN_FILES})
+
+# Test files grouped by executable
+TSTS_LIST_SIMPLE := $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+	$(foreach dir,$(subst :,${SPACE},${dl}),\
+	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
+TSTS_LIST = $(call merge,$(call merge,${SRCS_LIST_SIMPLE},${TSTS_LIST_SIMPLE}),\
+	${MAIN_FILES_TEST})
+
+# Object files grouped by executable
+OBJS_LIST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
+	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST})))
+
+# Test object files grouped by executable
+OBJS_LIST_TEST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
+	$(subst .${SRC_FILE_EXT},.o,${TSTS_LIST})))
+
+# All source/dependancy files
+SRCS_SUM = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
+SRCS_SUM += $(foreach dir,${TST_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
+SRCS_SUM += ${MAIN_FILES} ${MAIN_FILES_TEST}
+SRCS = $(call rmdup,${SRCS_SUM})
+DEPS = $(addprefix ${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
 INCS := ${addprefix -I,${INC_DIRS}}
 INCS += ${addprefix -I,${TPL_DIRS}}
 INCS += ${addprefix -I,${IMP_DIRS}}
 
 BINS := ${addprefix ${BIN_ROOT},${NAMES}}
+TESTS := ${addprefix ${BIN_ROOT}${TEST_PREFIX},${NAMES}}
 
 ################################################################################
 # Conditions
@@ -336,7 +399,7 @@ endif
 
 vpath %.o $(OBJ_ROOT)
 vpath %.${INC_FILE_EXT} $(INC_ROOT)
-vpath %.${SRC_FILE_EXT} $(SRC_DIRS)
+vpath %.${SRC_FILE_EXT} $(SRC_DIRS) $(TST_DIRS)
 vpath %.d $(DEP_DIRS)
 
 ################################################################################
@@ -344,15 +407,22 @@ vpath %.d $(DEP_DIRS)
 ################################################################################
 
 all: ${BINS}
+tests: ${TESTS}
 
 .SECONDEXPANSION:
-${BIN_ROOT}${NAME1}: $$(call get_files,$${@F},$${OBJS_LIST})
+${BIN_ROOT}${NAME1}: ${LIBFLT} $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
 		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
 
-${LIBFT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
+${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFLT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
+	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
+	${AT}mkdir -p ${@D} ${BLOCK}
+	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
+		$(call get_files_tests,${@F},${OBJS_LIST_TEST}) ${LIBS} -o $@ ${BLOCK}
+
+${LIBFLT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
 
 ################################################################################
 # Clean Targets
@@ -371,8 +441,7 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
-	${AT}find ${BIN_ROOT} -type f\
-		$(addprefix -name ,${NAMES}) -delete ${BLOCK}
+	${AT}find ${BIN_ROOT} -type f -delete ${BLOCK}
 
 clean_dep: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 	${AT}printf "\033[38;5;1m[REMOVING DEPENDENCIES]\033[0m\n" ${BLOCK}
@@ -434,6 +503,7 @@ debug_msan_re: fclean debug_msan
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
+	${AT}mkdir -p ${TST_ROOT} ${BLOCK}
 	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
 	${AT}git init ${BLOCK}
 	${AT}echo -en ".DS_Store\na.out\n*.o"\
@@ -462,6 +532,7 @@ targets:
 
 compile-test: CFLAGS += -DDEBUG_LVL=TRACE
 compile-test: ${addprefix compile-test/,${NAMES}}
+compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
 ################################################################################
 # .PHONY
@@ -507,9 +578,17 @@ rmdup = $(if $1,$(firstword $1) $(call rmdup,$(filter-out $(firstword $1),$1)))
 
 # Get files for a specific binary
 get_files = $(subst :,${SPACE},$(call lookup,$1,${NAMES},$2))
+get_files_tests = $(subst :,${SPACE},\
+	$(call lookup,$1,$(addprefix ${TEST_PREFIX},${NAMES}),$2))
 
 # Get default target for libs given a rule
 get_lib_target = $(foreach lib,$1,${lib}/$2)
+
+# Merge 2 lists concatenating element by element
+_merge = $(foreach el,$1,$(if $(call lookup,${el},$1,$2),\
+	$(addprefix ${el},:$(call lookup,${el},$1,$2)), ${el}))
+merge = $(intcmp $(words $1),$(words $2),$(call _merge,$2,$1),\
+	$(call _merge,$1,$2))
 
 ################################################################################
 # Target Templates
@@ -549,6 +628,13 @@ compile-test/${1}: .FORCE
 		$$(call get_files,$${@F},$${SRCS_LIST}) $${BLOCK}
 endef
 
+define make_compile_test_test_def
+compile-test/${1}: .FORCE
+	$${AT}printf "\033[33m[TESTING $${@F}]\033[0m\n" $${BLOCK}
+	$${AT}$${CC} $${CFLAGS} -fsyntax-only $${INCS} $${ASAN_FILE}\
+		$$(call get_files_tests,$${@F},$${TSTS_LIST}) $${BLOCK}
+endef
+
 ################################################################################
 # Target Generator
 ################################################################################
@@ -558,20 +644,28 @@ $(foreach bin,${BINS},$(eval\
 $(call make_bin_def,$(notdir ${bin}),${bin})))
 endif
 
+ifneq (${BIN_ROOT},./)
+$(foreach bin,${TESTS},$(eval\
+$(call make_bin_def,$(notdir ${bin}),${bin})))
+endif
+
 $(foreach src,${SRCS},$(eval\
-$(call make_dep_def,$(subst ${SRC_ROOT},${DEP_ROOT},\
+$(call make_dep_def,$(addprefix ${DEP_ROOT},\
 ${src:.${SRC_FILE_EXT}=.d}),${src})))
 
 $(foreach src,${SRCS},$(eval\
-$(call make_obj_def,$(subst ${SRC_ROOT},${OBJ_ROOT},\
+$(call make_obj_def,$(addprefix ${OBJ_ROOT},\
 ${src:.${SRC_FILE_EXT}=.o}),${src},\
-$(subst ${SRC_ROOT},${DEP_ROOT},${src:.${SRC_FILE_EXT}=.d}))))
+$(addprefix ${DEP_ROOT},${src:.${SRC_FILE_EXT}=.d}))))
 
 $(foreach lib,${DEFAULT_LIBS},$(foreach target,${DEFAULT_LIB_RULES},$(eval\
 $(call make_lib_def,${lib},${target}))))
 
 $(foreach name,$(NAMES),$(eval\
 $(call make_compile_test_def,${name})))
+
+$(foreach name,$(NAMES),$(eval\
+$(call make_compile_test_test_def,${TEST_PREFIX}${name})))
 
 ################################################################################
 # Includes
