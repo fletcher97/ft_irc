@@ -19,5 +19,5 @@ Channel &Channel::operator=(const Channel& c) {
 }
 
 Channel::~Channel() {
-	LOG_INFO("Removed channel: " << this->name);
+	LOG_INFO("Removed channel: " << this->_name);
 }
