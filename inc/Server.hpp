@@ -5,19 +5,28 @@
 #include <map>
 
 #include "Client.hpp"
-#include "Channel.hpp"
 
 class Server
 {
 private:
-	std::string _name;
-	std::map<std::string, Client&> _clients;
-	std::map<std::string, Channel&> _channels;
-public:
-	Server(std::string name);
+	std::map<int, Client*> _clients;
+
+protected:
+	Server(void);
 	Server(const Server& s);
+	~Server(void);
+
 	Server& operator=(const Server& s);
-	~Server();
+
+public:
+	static Server&	getInstance(void);
+
+	void	run(void);
+
+	Client&	getClient(const std::string& nickname) const;
+	Client&	getClient(int fd) const;
+
+	void	newClient(void);
 };
 
 #endif // SERVER_HPP
