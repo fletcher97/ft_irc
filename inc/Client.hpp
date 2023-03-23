@@ -2,9 +2,6 @@
 #define CLIENT_HPP
 
 #include <string>
-#include <map>
-
-#include "Channel.hpp"
 
 class Channel;
 class Client
@@ -26,7 +23,7 @@ private:
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
-	Status	_status;
+	Client::Status	_status;
 
 public:
 	Client(int fd, struct sockaddr_in socket);
@@ -40,12 +37,12 @@ public:
 	const std::string&	getNickname(void) const;
 	const std::string&	getUsername(void) const;
 	const std::string&	getRealname(void) const;
-	Status	getStatus(void) const;
+	Client::Status	getStatus(void) const;
 
 	void	setNickname(std::string& nickname);
 	void	setUsername(std::string& username);
 	void	setRealname(std::string& realname);
-	void	setStatus(Status status);
+	void	setStatus(Client::Status status);
 };
 
 #endif // CLIENT_HPP

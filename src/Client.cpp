@@ -2,8 +2,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "Client.hpp"
 #include "Log.hpp"
+
+#include "Client.hpp"
 
 Client::Client(int fd, struct sockaddr_in socket) :
 	_fd(fd),

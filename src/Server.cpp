@@ -1,5 +1,9 @@
-#include "Server.hpp"
+#include <netinet/in.h>
+
 #include "Log.hpp"
+
+#include "Communications.hpp"
+#include "Server.hpp"
 
 Server&
 Server::getInstance(void) {
@@ -16,20 +20,14 @@ Server::Server(const Server& s) :
 	_clients(s._clients)
 {}
 
-Server& Server::operator=(const Server& s) {
+Server&
+Server::operator=(const Server& s) {
 	this->_clients = s._clients;
 	return *this;
 }
 
 Server::~Server() {
 	LOG_INFO("Removed server");
-}
-
-bool
-Server::init(int port, std::string psswd) {
-	LOG_DEBUG("Initiating server");
-	LOG_INFO("Server initiated with port: " << port << " and password: " << psswd);
-	return Communications::getInstance().init(port, psswd);
 }
 
 void

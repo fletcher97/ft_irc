@@ -5,10 +5,7 @@
 #include <map>
 
 #include "Client.hpp"
-#include "Channel.hpp"
-#include "Communications.hpp"
 
-class Communications;
 class Server
 {
 private:
@@ -24,7 +21,6 @@ protected:
 public:
 	static Server&	getInstance(void);
 
-	bool	init(int port, std::string _psswd);
 	void	run(void);
 
 	Client&	getClient(const std::string& nickname) const;

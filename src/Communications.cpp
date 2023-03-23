@@ -1,7 +1,10 @@
+#include <fcntl.h>
+#include <netinet/in.h>
+
+#include "Log.hpp"
+
 #include "Communications.hpp"
 #include "Server.hpp"
-#include "Log.hpp"
-#include <fcntl.h>
 
 Communications&
 Communications::getInstance(void) {
@@ -32,39 +35,38 @@ Communications::operator=(const Communications& s) {
 Communications::~Communications() {}
 
 bool
-Communications::init(int port, std::string psswd) {
-    if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    	LOG_FATAL("Error creating socket")
-     	return false;
-    }
-    if (fcntl(this->_fd, F_SETFL, O_NONBLOCK) == -1) {
-    	LOG_FATAL("Error fcntl")
-     	return false;
-    }
+Communications::init(int port, const char* psswd) {
+	if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		LOG_FATAL("Error creating socket")
+		return false;
+	}
+	if (fcntl(this->_fd, F_SETFL, O_NONBLOCK) == -1) {
+		LOG_FATAL("Error fcntl")
+		return false;
+	}
 
-    struct sockaddr_in	serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
-    serverAddress.sin_port = htons(port);
-    if (bind(this->_fd, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) == -1) {
-        LOG_FATAL("Error binding")
-        return false;
-    }
-    if (listen(this->_fd, MAX_CLIENTS) == -1) {
-        LOG_FATAL("Error listening");
-        return false;
-    }
-    this->addPfd(this->_fd);
-    this->_psswd = psswd;
-    LOG_INFO("Listening on port " << port)
-    return true;
+	struct sockaddr_in	serverAddress;
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_addr.s_addr = INADDR_ANY;
+	serverAddress.sin_port = htons(port);
+	if (bind(this->_fd, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) == -1) {
+		LOG_FATAL("Error binding")
+		return false;
+	}
+	if (listen(this->_fd, MAX_CLIENTS) == -1) {
+		LOG_FATAL("Error listening");
+		return false;
+	}
+	this->addPfd(this->_fd);
+	this->_psswd = psswd;
+	LOG_INFO("Listening on port " << port)
+	return true;
 }
 
 void
 Communications::run(void) {
 	Server&	server = Server::getInstance();
-	while (42)
-	{
+	while (42) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
 			continue;

@@ -2,15 +2,11 @@
 #define COMMUNICATIONS_HPP
 
 #include <string>
-#include <netinet/in.h>
 #include <vector>
 #include <poll.h>
 
-#include "Server.hpp"
-
 #define MAX_CLIENTS 124
 
-class Server;
 class Communications
 {
 private:
@@ -32,7 +28,7 @@ protected:
 public:
 	static Communications&	getInstance(void);
 
-	bool init(int port, std::string psswd);
+	bool init(int port, const char* psswd);
 	void run(void);
 
 	int	getFd(void) const;

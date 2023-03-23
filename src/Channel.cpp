@@ -1,5 +1,6 @@
-#include "Channel.hpp"
 #include "Log.hpp"
+
+#include "Channel.hpp"
 
 Channel::Channel(void) :
 	_name(),
@@ -17,7 +18,7 @@ Channel::Channel(const Channel& c) :
 	_key(c._key)
 {}
 
-Channel &
+Channel&
 Channel::operator=(const Channel& c) {
 	this->_name = c._name;
 	this->_topic = c._topic;
