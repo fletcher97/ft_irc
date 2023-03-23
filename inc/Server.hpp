@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <vector>
 
 #include "Client.hpp"
 #include "Channel.hpp"
@@ -14,34 +13,24 @@ class Server
 {
 private:
 	std::map<int, Client*> _clients;
-	std::map<std::string, Channel*> _channels;
-	Communications*	_communications;
-public:
-	Server();
+
+protected:
+	Server(void);
 	Server(const Server& s);
+	~Server(void);
+
 	Server& operator=(const Server& s);
-	~Server();
-	
-	void	init(int port, std::string _psswd);
-	void	run();
-		
-	Client&	getClient(const std::string& nickname);
-	Client&	getClient(int fd);
-	Channel&	getChannel(const std::string& name);
-	
-	std::vector<Client*>	getClients();
-	std::vector<Channel*>	getChannels();
-	
-	void	delClient(Client& client);
-	void	delChannel(Channel& channel);
-	
-	bool	isChannel(const std::string& name) const;
-	
-	void	newClient();
-	
-private:
-	typedef std::map<int, Client*>::iterator clients_iterator;
-	typedef std::map<std::string, Channel*>::iterator channels_iterator;
+
+public:
+	static Server&	getInstance(void);
+
+	bool	init(int port, std::string _psswd);
+	void	run(void);
+
+	Client&	getClient(const std::string& nickname) const;
+	Client&	getClient(int fd) const;
+
+	void	newClient(void);
 };
 
 #endif // SERVER_HPP

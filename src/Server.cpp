@@ -1,98 +1,67 @@
 #include "Server.hpp"
 #include "Log.hpp"
 
-Server::Server() : _communications(new Communications(this))
-{
-	LOG_DEBUG("Creating new server");
-	LOG_INFO("New server created");
+Server&
+Server::getInstance(void) {
+	static Server	instance;
+	return instance;
 }
 
-Server::Server(const Server &s) : _clients(s._clients),
-																	_channels(s._channels),
-																	_communications(s._communications)
+Server::Server() {
+	LOG_DEBUG("Creating server");
+	LOG_INFO("Server created");
+}
+
+Server::Server(const Server& s) :
+	_clients(s._clients)
 {}
 
-Server &Server::operator=(const Server &s) {
+Server& Server::operator=(const Server& s) {
 	this->_clients = s._clients;
-	this->_channels = s._channels;
-	this->_communications = s._communications;
 	return *this;
 }
 
 Server::~Server() {
-	//TODO: Check and clean clients and channels
-	delete _communications;
-	LOG_INFO("Removed server: " << this->_name);
+	LOG_INFO("Removed server");
 }
 
-void
+bool
 Server::init(int port, std::string psswd) {
-	_communications->init(port, psswd);
+	LOG_DEBUG("Initiating server");
+	LOG_INFO("Server initiated with port: " << port << " and password: " << psswd);
+	return Communications::getInstance().init(port, psswd);
 }
 
 void
 Server::run() {
-	_communications->run();
+	LOG_DEBUG("Running server");
+	Communications::getInstance().run();
 }
 
 Client&
-Server::getClient(const std::string& nickname) {
-	for (clients_iterator it = _clients.begin(); it != _clients.end(); it++)
-		if ((*it).second->getNickname() == nickname)
-			return *(*it).second;
-	return *(_clients.end()->second);
+Server::getClient(const std::string& nickname) const {
+	for (std::map<int, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++)
+		if (it->second->getNickname() == nickname)
+			return *(it->second);
+	return *(this->_clients.end()->second);
 }
 
 Client&
-Server::getClient(int fd) {
-	return *(*_clients.find(fd)).second;
+Server::getClient(int fd) const{
+	return *(this->_clients.find(fd)->second);
 }
-
-Channel&
-Server::getChannel(const std::string& name) {
-	Channel * channel = _channels[name];
-	channel->setName(name);
-	return *channel;
-}
-
-std::vector<Client*>
-Server::getClients() {
-	std::vector<Client*>	clients_vec;
-	for (clients_iterator it = _clients.begin(); it != _clients.end(); it++)
-		clients_vec.push_back((*it).second);
-	return clients_vec;
-}
-
-std::vector<Channel*>
-Server::getChannels() {
-	std::vector<Channel*>	channels_vec;
-	for (channels_iterator it = _channels.begin(); it != _channels.end(); it++)
-		channels_vec.push_back((*it).second);
-	return channels_vec;
-}
-
-// void
-// Server::delClient(Client& client)
-// {}
-
-// void
-// Server::delChannel(Client& channel)
-// {}
-
-// bool
-// Server::isChannel(const std::string& name) const
-// {}
 
 void
 Server::newClient() {
-	if (_clients.size() == MAX_CLIENTS)
-		return ; //Max clients error
-	
+	Communications&	communications = Communications::getInstance();
+	if (this->_clients.size() == MAX_CLIENTS)
+		return ;
+
 	struct sockaddr_in	clientAddress;
 	socklen_t socklen = sizeof(clientAddress);
-	int	clientFd = accept(_communications->getFd(), reinterpret_cast<struct sockaddr*>(&clientAddress), &socklen);	
+	int	clientFd = accept(communications.getFd(), reinterpret_cast<struct sockaddr*>(&clientAddress), &socklen);
 	if (clientFd == -1)
-		return ; //Accept Error
-	_clients[clientFd] = new Client(clientFd, clientAddress);	
-	_communications->addPfd(clientFd);
+		return ;
+	this->_clients[clientFd] = new Client(clientFd, clientAddress);
+	communications.addPfd(clientFd);
 }

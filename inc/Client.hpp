@@ -6,33 +6,19 @@
 
 #include "Channel.hpp"
 
-enum	ClientStatus
-{
-	PASSWORD,
-	REGISTER,
-	ONLINE,
-	AWAY,
-	DELETE
-};
-
-struct	ClientMode
-{
-	bool	a;
-	bool	i;
-	bool	w;
-	bool	r;
-	bool	o;
-	bool	O;
-	bool	s;
-	
-	ClientMode();
-	ClientMode(const ClientMode& m);
-	ClientMode& operator=(const ClientMode& m);
-};
-
 class Channel;
 class Client
 {
+public:
+	enum	Status
+	{
+		PASSWORD,
+		REGISTER,
+		ONLINE,
+		AWAY,
+		DELETE
+	};
+
 private:
 	int	_fd;
 	std::string _address;
@@ -40,35 +26,26 @@ private:
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
-	std::map<std::string, Channel&> _channels;
-	ClientStatus	_status;
-	ClientMode	_mode;
+	Status	_status;
+
 public:
 	Client(int fd, struct sockaddr_in socket);
 	Client(const Client& c);
 	Client& operator=(const Client& c);
-	~Client();
+	~Client(void);
 
-	int	getFd() const;
-	std::string	getAddress() const;
-	std::string getHostname() const;
-	std::string getNickname() const;
-	std::string getUsername() const;
-	std::string getRealname() const;
-	ClientStatus	getStatus() const;
-	
-	// std::vector<Channel&>	getChannels() const; TODO
-	bool	getMode(char c) const;
-	
-	void	setNickname(std::string nickname);
-	void	setUsername(std::string username);
-	void	setRealname(std::string realname);
-	void	setStatus(ClientStatus status);
-	void	setMode(char c);
-	void	unsetMode(char c);
-	
-	//void handleCommand TODO
-	//void sendTo TODO
+	int	getFd(void) const;
+	const std::string&	getAddress(void) const;
+	const std::string&	getHostname(void) const;
+	const std::string&	getNickname(void) const;
+	const std::string&	getUsername(void) const;
+	const std::string&	getRealname(void) const;
+	Status	getStatus(void) const;
+
+	void	setNickname(std::string& nickname);
+	void	setUsername(std::string& username);
+	void	setRealname(std::string& realname);
+	void	setStatus(Status status);
 };
 
 #endif // CLIENT_HPP

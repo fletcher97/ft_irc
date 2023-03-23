@@ -1,31 +1,28 @@
-//throw std::invalid_argument("Invalid nickname");
-
-#include <iostream>
-#include <vector>
-#include <netinet/in.h>
-#include <poll.h>
-#include <stdexcept>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-
 #include "Communications.hpp"
 #include "Server.hpp"
 #include "Log.hpp"
+#include <fcntl.h>
 
-Communications::Communications(Server *server) : _server(server)
-{
-	LOG_DEBUG("Creating communitation");
-	LOG_INFO("New communitation created");
+Communications&
+Communications::getInstance(void) {
+	static Communications	instance;
+	return instance;
 }
 
-Communications::Communications(const Communications &s) :	_fd(s._fd),
-																													_pfds(s._pfds),
-																													_psswd(s._psswd),
-																													_server(s._server)
+Communications::Communications()
+{
+	LOG_DEBUG("Creating communitation")
+	LOG_INFO("New communitation created")
+}
+
+Communications::Communications(const Communications& s) :
+	_fd(s._fd),
+	_pfds(s._pfds),
+	_psswd(s._psswd)
 {}
 
-Communications &Communications::operator=(const Communications &s) {
+Communications&
+Communications::operator=(const Communications& s) {
 	this->_fd = s._fd;
 	this->_pfds = s._pfds;
 	this->_psswd = s._psswd;
@@ -34,63 +31,61 @@ Communications &Communications::operator=(const Communications &s) {
 
 Communications::~Communications() {}
 
-void
-Communications::write_error(const char *s) {
-    std::cerr << s << std::endl;
-    exit (EXIT_FAILURE);
-}
-
-void
+bool
 Communications::init(int port, std::string psswd) {
-    if ((_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    	write_error("Error creating socket");
-    if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1)
-    	write_error("Error fcntl");
+    if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    	LOG_FATAL("Error creating socket")
+     	return false;
+    }
+    if (fcntl(this->_fd, F_SETFL, O_NONBLOCK) == -1) {
+    	LOG_FATAL("Error fcntl")
+     	return false;
+    }
 
     struct sockaddr_in	serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
     serverAddress.sin_port = htons(port);
-    if (bind(_fd, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) == -1)
-        write_error("Error binding"); //error al asociar el socket a la direccion del servidor
-    if (listen(_fd, MAX_CLIENTS) == -1)
-        write_error("Error listening"); //error al escuchar conexiones entrantes
-    addPfd(_fd);	
-    _psswd = psswd;
-    std::cout << "Listening on port " << port << std::endl;
+    if (bind(this->_fd, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) == -1) {
+        LOG_FATAL("Error binding")
+        return false;
+    }
+    if (listen(this->_fd, MAX_CLIENTS) == -1) {
+        LOG_FATAL("Error listening");
+        return false;
+    }
+    this->addPfd(this->_fd);
+    this->_psswd = psswd;
+    LOG_INFO("Listening on port " << port)
+    return true;
 }
 
 void
 Communications::run(void) {
+	Server&	server = Server::getInstance();
 	while (42)
 	{
-		if (poll(&_pfds[0], _pfds.size(), -1) == -1)
-		{
-			std::cerr << "Error poll" << std::endl;
+		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
+			LOG_ERROR("Error poll")
 			continue;
 		}
-		if (_pfds[0].revents == POLLIN)
-			_server->newClient();
+		if (this->_pfds[0].revents == POLLIN)
+			server.newClient();
 		else
-			for(pfds_iterator it = _pfds.begin(); it != _pfds.end(); it++)
+			for(pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++)
 				if ((*it).revents == POLLIN)
-					_server->getClient((*it).fd); //TODO: Client recive and handle Command function
-		std::vector<Client*>	clients = _server->getClients();
-		for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); it++)
-			if ((*it)->getStatus() == DELETE)
-				(void)_server; //TODO: Delete Client from channels and server
-		//SEND MESSAGES PENDING
+					server.getClient(it->fd);
 	}
 }
 
 int
 Communications::getFd() const {
-	return _fd;
+	return this->_fd;
 }
 
 void
 Communications::addPfd(int fd) {
-	_pfds.push_back(pollfd());
-  _pfds.back().fd = fd;
-  _pfds.back().events = POLLIN;
+	this->_pfds.push_back(pollfd());
+	this->_pfds.back().fd = fd;
+	this->_pfds.back().events = POLLIN;
 }
