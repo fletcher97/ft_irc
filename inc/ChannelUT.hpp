@@ -11,7 +11,7 @@ public:
 	ChannelUT(void);
 	~ChannelUT(void);
 
-	void test_constructor(void);
+	void test_42(void);
 };
 
 #endif // CHANNELUT_HPP
