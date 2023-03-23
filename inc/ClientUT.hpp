@@ -11,7 +11,7 @@ public:
 	ClientUT(void);
 	~ClientUT(void);
 
-	void test_constructor(void);
+	void test_42(void);
 };
 
 #endif // CLIENTUT_HPP

@@ -6,6 +6,8 @@
 
 #include "Client.hpp"
 
+Client::Client(void) {}
+
 Client::Client(int fd, struct sockaddr_in socket) :
 	_fd(fd),
 	_nickname(),
