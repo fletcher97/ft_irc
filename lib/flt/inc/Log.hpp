@@ -5,6 +5,9 @@
 #include <fstream>
 #include <sstream>
 
+namespace flt
+{
+
 #define TRACE 0
 #define DEBUG 1
 #define INFO 2
@@ -33,43 +36,42 @@
 #if defined(DEBUG_LVL)
 
 	#undef LOG_OPEN_FILE
-	#define LOG_OPEN_FILE(path) Log::openFile(path);
+	#define LOG_OPEN_FILE(path) flt::Log::openFile(path);
 
 	#undef LOG_CLOSE_FILE
-	#define LOG_CLOSE_FILE(path) Log::closeFile(path);
+	#define LOG_CLOSE_FILE(path) flt::Log::closeFile(path);
 
 	#if (DEBUG_LVL <= TRACE)
 		#undef LOG_TRACE
-		#define LOG_TRACE(msg) {std::stringstream ss; ss<<msg; Log::trace(ss);}
+		#define LOG_TRACE(msg) {std::stringstream ss; ss<<msg; flt::Log::trace(ss);}
 	#endif // TRACE lvl
 
 	#if (DEBUG_LVL <= DEBUG)
 		#undef LOG_DEBUG
-		#define LOG_DEBUG(msg) {std::stringstream ss; ss<<msg; Log::debug(ss);}
+		#define LOG_DEBUG(msg) {std::stringstream ss; ss<<msg; flt::Log::debug(ss);}
 	#endif // DEBUG lvl
 
 	#if (DEBUG_LVL <= INFO)
 		#undef LOG_INFO
-		#define LOG_INFO(msg) {std::stringstream ss; ss<<msg; Log::info(ss);}
+		#define LOG_INFO(msg) {std::stringstream ss; ss<<msg; flt::Log::info(ss);}
 	#endif // INFO lvl
 
 	#if (DEBUG_LVL <= WARN)
 		#undef LOG_WARN
-		#define LOG_WARN(msg) {std::stringstream ss; ss<<msg; Log::warn(ss);}
+		#define LOG_WARN(msg) {std::stringstream ss; ss<<msg; flt::Log::warn(ss);}
 	#endif // WARN lvl
 
 	#if (DEBUG_LVL <= ERROR)
 		#undef LOG_ERROR
-		#define LOG_ERROR(msg) {std::stringstream ss; ss<<msg; Log::error(ss);}
+		#define LOG_ERROR(msg) {std::stringstream ss; ss<<msg; flt::Log::error(ss);}
 	#endif // ERROR lvl
 
 	#if (DEBUG_LVL <= FATAL)
 		#undef LOG_FATAL
-		#define LOG_FATAL(msg) {std::stringstream ss; ss<<msg; Log::fatal(ss);}
+		#define LOG_FATAL(msg) {std::stringstream ss; ss<<msg; flt::Log::fatal(ss);}
 	#endif // FATAL lvl
 
 #endif // DEBUG_LVL
-
 
 class Log
 {
@@ -77,7 +79,7 @@ private:
 	static std::ofstream fout;
 public:
 	static void openFile(const std::string& path);
-	static void closeFile();
+	static void closeFile(void);
 
 	static void trace(const std::stringstream& msg);
 	static void debug(const std::stringstream& msg);
@@ -86,5 +88,7 @@ public:
 	static void error(const std::stringstream& msg);
 	static void fatal(const std::stringstream& msg);
 };
+
+} // namespace flt
 
 #endif // LOG_HPP

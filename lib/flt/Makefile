@@ -67,11 +67,13 @@
 ################################################################################
 
 # Name of a single binary. Add as many variables as required by the project
-NAME1 := ircserv
+NAME1 := libflt.a
 
 # The names of all the binaries. Add aditional variables created above separated
 # by space.
 NAMES := ${NAME1}
+
+AR = ar rcs
 
 ################################################################################
 # Configs
@@ -105,7 +107,7 @@ TEST_PREFIX := test_
 # in others. If for example you just want to clean the root directory the clean
 # rule will be executed in any other makefile specified. You can deactivate the
 # creation of these targets by setting the bellow variable to 0.
-CREATE_LIB_TARGETS := 1
+CREATE_LIB_TARGETS := 0
 
 # Pedantic allows for extra warning flags to be used while compiling. If set to
 # true these flags are applied. If set to anything else the flags will not be
@@ -144,7 +146,7 @@ else ifeq (${LANG},C++)
 endif
 
 # Compiler flags
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -g
 ifeq (${LANG},C++)
 	CFLAGS += -std=c++98
 endif
@@ -228,19 +230,19 @@ TST_ROOT := tst/
 ifeq (${CREATE_LIB_TARGETS},1)
 
 # Libft
-LIBFLT_ROOT := ${LIB_ROOT}flt/
-LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
-LIBFLT := ${LIBFT_ROOT}bin/libflt.a
+LIBFT_ROOT := ${LIB_ROOT}libft/
+LIBFT_INC := ${LIBFT_ROOT}inc/
+LIBFT := ${LIBFT_ROOT}bin/libft.a
 
-INC_DIRS += ${LIBFLT_INC}
-LIBS += -L${LIBFLT_ROOT}bin -lflt
+INC_DIRS += ${LIBFT_INC}
+LIBS += -L${LIBFT_ROOT}bin -lft
 
 # Libraries for which to create default targets. All libraries in this list will
 # have targets created autimatically. The targets that are created are set in
 # DEFAULT_LIB_RULES. The targets will have to format <library root>//<target>
 # and it will invoke make as follows:
 # `make -C <library root> <rule>`
-DEFAULT_LIBS := ${LIBFLT_ROOT}
+DEFAULT_LIBS := ${LIBFT_ROOT}
 
 # Default targets to create for libraries specified in DEFAULT_LIBS. This is a
 # small list of common targets in most makefiles.
@@ -277,13 +279,13 @@ endif
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := log/:classes/
+DIRS := log/:unit_test/
 
 # List of directories with tests. Formating follows the same rules as DIRS
 # above. All folders are relative to TST_ROOT. Each group of folder should only
 # contain tests for the equivalent executable. The first group will test the
 # files in the first group of DIRS (or the first executable specified in NAMES).
-DIRS_TEST := unit_tests/
+DIRS_TEST :=
 
 SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
@@ -331,7 +333,7 @@ endif
 # List of src files containing the main function. This list should contain one
 # entry per executable. All files are relative to SRC_ROOT
 # Exemple:
-MAIN_FILES := ${SRC_ROOT}main.${SRC_FILE_EXT}
+MAIN_FILES :=
 # List of src files containing the main function for testing. This list should
 # contain one entry per executable. All files are relative to SRC_ROOT
 # Exemple:
@@ -344,7 +346,7 @@ SRCS_LIST_SIMPLE = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
 SRCS_LIST = $(call merge,${SRCS_LIST_SIMPLE},${MAIN_FILES})
 
 # Test files grouped by executable
-TSTS_LIST_SIMPLE = $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+TSTS_LIST_SIMPLE := $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
 	$(foreach dir,$(subst :,${SPACE},${dl}),\
 	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
 TSTS_LIST = $(call merge,$(call merge,${SRCS_LIST_SIMPLE},${TSTS_LIST_SIMPLE}),\
@@ -410,19 +412,16 @@ all: ${BINS}
 tests: ${TESTS}
 
 .SECONDEXPANSION:
-${BIN_ROOT}${NAME1}: ${LIBFLT} $$(call get_files,$${@F},$${OBJS_LIST})
+${BIN_ROOT}${NAME1}: $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
-	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
-		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
+	${AT}${AR} $@ $^ ${BLOCK}
 
-${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFLT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
+${BIN_ROOT}${TEST_PREFIX}${NAME1}: $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
 		$(call get_files_tests,${@F},${OBJS_LIST_TEST}) ${LIBS} -o $@ ${BLOCK}
-
-${LIBFLT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
 
 ################################################################################
 # Clean Targets

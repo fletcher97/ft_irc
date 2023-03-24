@@ -25,6 +25,9 @@ private:
 	std::string _realname;
 	Client::Status	_status;
 
+protected:
+	Client(void);
+
 public:
 	Client(int fd, struct sockaddr_in socket);
 	Client(const Client& c);
