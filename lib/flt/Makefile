@@ -330,20 +330,15 @@ else ifeq (${LANG},C++)
 	IMP_FILE_EXT := ipp
 endif
 
-# List of src files containing the main function. This list should contain one
-# entry per executable. All files are relative to SRC_ROOT
-# Exemple:
-MAIN_FILES :=
 # List of src files containing the main function for testing. This list should
 # contain one entry per executable. All files are relative to SRC_ROOT
 # Exemple:
 MAIN_FILES_TEST := ${TST_ROOT}main.${SRC_FILE_EXT}
 
 # Source files grouped by executable
-SRCS_LIST_SIMPLE = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
 	$(foreach dir,$(subst :,${SPACE},${dl}),\
 	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
-SRCS_LIST = $(call merge,${SRCS_LIST_SIMPLE},${MAIN_FILES})
 
 # Test files grouped by executable
 TSTS_LIST_SIMPLE := $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
@@ -363,7 +358,7 @@ OBJS_LIST_TEST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
 # All source/dependancy files
 SRCS_SUM = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
 SRCS_SUM += $(foreach dir,${TST_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
-SRCS_SUM += ${MAIN_FILES} ${MAIN_FILES_TEST}
+SRCS_SUM += ${MAIN_FILES_TEST}
 SRCS = $(call rmdup,${SRCS_SUM})
 DEPS = $(addprefix ${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
