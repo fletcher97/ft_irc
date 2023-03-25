@@ -3,7 +3,6 @@
 
 #include <string>
 
-class Channel;
 class Client
 {
 public:
