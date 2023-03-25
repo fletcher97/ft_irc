@@ -8,10 +8,10 @@
 class bad
 {
 public:
-	bad() {};
-	~bad() {};
-	bool mytrue() {return true;};
-	bool myfalse() {return false;};
+	bad(void) {};
+	~bad(void) {};
+	bool mytrue(void) {return true;};
+	bool myfalse(void) {return false;};
 	bool inteq(int x, int y) {return x == y;};
 	bool intneq(int x, int y) {return x != y;};
 	int getmsg(void) {return 404;};
@@ -20,20 +20,20 @@ public:
 
 class badtest : public flt::Testable<badtest>, bad {
 public:
-	badtest() : flt::Testable<badtest>("badtest"), bad() {
+	badtest(void) : flt::Testable<badtest>("badtest"), bad(void) {
 		REGISTER(badtest, test_true)
 		REGISTER(badtest, test_false)
 		REGISTER(badtest, test_msg)
 	};
 
-	void test_true(void) {ASSERT(mytrue())};
-	void test_false(void) {ASSERT(myfalse() == false)};
-	void test_msg(void) {ASSERT_EQ(getmsg(), 44)};
+	void test_true(void) {ASSERT(mytrue(void))};
+	void test_false(void) {ASSERT(myfalse(void) == false)};
+	void test_msg(void) {ASSERT_EQ(getmsg(void), 44)};
 };
 
 class badtest2 : public flt::Testable<badtest2>, bad {
 public:
-	badtest2() : flt::Testable<badtest2>("badtest2"), bad() {
+	badtest2(void) : flt::Testable<badtest2>("badtest2"), bad() {
 		REGISTER(badtest2, test_true)
 		REGISTER(badtest2, test_false)
 		REGISTER(badtest2, test_msg)
@@ -42,16 +42,16 @@ public:
 		REGISTER(badtest2, test_small_throw2)
 	};
 
-	void test_true(void) {ASSERT(mytrue())};
-	void test_false(void) {ASSERT_EQ(myfalse(), false)};
-	void test_msg(void) {ASSERT_EQ(getmsg(), 40)};
+	void test_true(void) {ASSERT(mytrue(void))};
+	void test_false(void) {ASSERT_EQ(myfalse(void), false)};
+	void test_msg(void) {ASSERT_EQ(getmsg(void), 40)};
 	void test_small(void) {ASSERT_EQ(small(1), 1)ASSERT_EQ(small(2), 2)ASSERT_EQ(small(1), 1)ASSERT_EQ(small(2), 2)ASSERT_EQ(small(1), 1)};
 	void test_small_throw1(void) {ASSERT_THROW(small(9),std::invalid_argument)};
 	void test_small_throw2(void) {ASSERT_THROW(small(10),std::invalid_argument)};
 };
 
 int
-main()
+main(void)
 {
 	ADD_TEST(badtest)
 	ADD_TEST(badtest2)
