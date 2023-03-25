@@ -6,6 +6,8 @@
 #include <poll.h>
 
 #define MAX_CLIENTS 124
+namespace ft_irc
+{
 
 class Communications
 {
@@ -34,5 +36,7 @@ public:
 	int	getFd(void) const;
 	void	addPfd(int fd);
 };
+
+} // namespace ft_irc
 
 #endif

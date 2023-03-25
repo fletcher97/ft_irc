@@ -4,8 +4,10 @@
 #include "Channel.hpp"
 
 #include "Testable.tpp"
+namespace ft_irc
+{
 
-class ChannelUT : public flt::Testable<ChannelUT>, Channel
+class ChannelUT : public flt::Testable<ChannelUT>, ft_irc::Channel
 {
 public:
 	ChannelUT(void);
@@ -13,5 +15,7 @@ public:
 
 	void test_42(void);
 };
+
+} // namespace ft_irc
 
 #endif // CHANNELUT_HPP

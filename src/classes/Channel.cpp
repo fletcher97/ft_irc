@@ -2,7 +2,7 @@
 
 #include "Channel.hpp"
 
-Channel::Channel(void) :
+ft_irc::Channel::Channel(void) :
 	_name(),
 	_topic(),
 	_clients(),
@@ -11,15 +11,15 @@ Channel::Channel(void) :
 	LOG_DEBUG("Creating new channel");
 }
 
-Channel::Channel(const Channel& c) :
+ft_irc::Channel::Channel(const ft_irc::Channel& c) :
 	_name(c._name),
 	_topic(c._topic),
 	_clients(c._clients),
 	_key(c._key)
 {}
 
-Channel&
-Channel::operator=(const Channel& c) {
+ft_irc::Channel&
+ft_irc::Channel::operator=(const ft_irc::Channel& c) {
 	this->_name = c._name;
 	this->_topic = c._topic;
 	this->_clients = c._clients;
@@ -27,41 +27,41 @@ Channel::operator=(const Channel& c) {
 	return *this;
 }
 
-Channel::~Channel(void) {
+ft_irc::Channel::~Channel(void) {
 	LOG_INFO("Removed channel: " << this->_name);
 }
 
 const std::string&
-Channel::getName(void) const {
+ft_irc::Channel::getName(void) const {
 	return this->_name;
 }
 
 const std::string&
-Channel::getTopic(void) const {
+ft_irc::Channel::getTopic(void) const {
 	return this->_topic;
 }
 
 const std::string&
-Channel::getKey(void) const {
+ft_irc::Channel::getKey(void) const {
 	return this->_key;
 }
 
 void
-Channel::setName(std::string& name) {
+ft_irc::Channel::setName(std::string& name) {
 	this->_name = name;
 }
 
 void
-Channel::setTopic(std::string& topic) {
+ft_irc::Channel::setTopic(std::string& topic) {
 	this->_topic = topic;
 }
 
 void
-Channel::setKey(std::string& key) {
+ft_irc::Channel::setKey(std::string& key) {
 	this->_key = key;
 }
 
 bool
-Channel::isInChannel(const Client& client) {
+ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
 	return this->_clients.count(client.getFd());
 }

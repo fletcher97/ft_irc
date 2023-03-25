@@ -3,6 +3,9 @@
 
 #include <string>
 
+namespace ft_irc
+{
+
 class Channel;
 class Client
 {
@@ -47,5 +50,7 @@ public:
 	void	setRealname(std::string& realname);
 	void	setStatus(Client::Status status);
 };
+
+} // namespace ft_irc
 
 #endif // CLIENT_HPP

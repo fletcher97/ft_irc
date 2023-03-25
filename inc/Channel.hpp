@@ -6,13 +6,16 @@
 
 #include "Client.hpp"
 
+namespace ft_irc
+{
+
 class Client;
 class Channel
 {
 protected:
 	std::string _name;
 	std::string _topic;
-	std::map<int, Client*> _clients;
+	std::map<int, ft_irc::Client*> _clients;
 	std::string	_key;
 
 public:
@@ -29,7 +32,9 @@ public:
 	void	setTopic(std::string& topic);
 	void	setKey(std::string& key);
 
-	bool	isInChannel(const Client& client);
+	bool	isInChannel(const ft_irc::Client& client);
 };
+
+} // namespace ft_irc
 
 #endif // CHANNEL_HPP
