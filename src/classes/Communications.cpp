@@ -12,7 +12,7 @@ Communications::getInstance(void) {
 	return instance;
 }
 
-Communications::Communications()
+Communications::Communications(void)
 {
 	LOG_DEBUG("Creating communitation")
 	LOG_INFO("New communitation created")
@@ -32,7 +32,7 @@ Communications::operator=(const Communications& s) {
 	return *this;
 }
 
-Communications::~Communications() {}
+Communications::~Communications(void) {}
 
 bool
 Communications::init(int port, const char* psswd) {
@@ -81,7 +81,7 @@ Communications::run(void) {
 }
 
 int
-Communications::getFd() const {
+Communications::getFd(void) const {
 	return this->_fd;
 }
 

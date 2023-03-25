@@ -19,7 +19,7 @@ private:
 	void write_error(const char *s);
 
 protected:
-	Communications();
+	Communications(void);
 	Communications(const Communications& s);
 	~Communications(void);
 

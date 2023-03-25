@@ -42,43 +42,43 @@ Client::operator=(const Client &c) {
 	return *this;
 }
 
-Client::~Client() {
+Client::~Client(void) {
 	close(this->_fd);
 	LOG_INFO("Removed client: " << this->_nickname)
 }
 
 int
-Client::getFd() const {
+Client::getFd(void) const {
 	return this->_fd;
 }
 
 const std::string&
-Client::getAddress() const {
+Client::getAddress(void) const {
 	return this->_address;
 }
 
 const std::string&
-Client::getHostname() const {
+Client::getHostname(void) const {
 	return this->_hostname;
 }
 
 const std::string&
-Client::getNickname() const {
+Client::getNickname(void) const {
 	return this->_nickname;
 }
 
 const std::string&
-Client::getUsername() const {
+Client::getUsername(void) const {
 	return this->_username;
 }
 
 const std::string&
-Client::getRealname() const {
+Client::getRealname(void) const {
 	return this->_realname;
 }
 
 Client::Status
-Client::getStatus() const {
+Client::getStatus(void) const {
 	return this->_status;
 }
 
