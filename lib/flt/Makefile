@@ -96,7 +96,7 @@ VERBOSE := 1
 # trace/debug/info/warn/error/critical: set DEBUG macro to the given level
 #
 # By default debug is none.
-DEBUG_LVL := none
+LOG_LVL := none
 
 # Name prefix for test executable
 TEST_PREFIX := test_
@@ -176,20 +176,20 @@ endif
 DFLAGS := -g
 
 # Debug lvl flag
-ifeq (${DEBUG_LVL}, none)
-	CFLAGS += -UDEBUG_LVL
-else ifeq (${DEBUG_LVL}, trace)
-	CFLAGS += -DDEBUG_LVL=TRACE
-else ifeq (${DEBUG_LVL}, debug)
-	CFLAGS += -DDEBUG_LVL=DEBUG
-else ifeq (${DEBUG_LVL}, info)
-	CFLAGS += -DDEBUG_LVL=INFO
-else ifeq (${DEBUG_LVL}, warn)
-	CFLAGS += -DDEBUG_LVL=WARN
-else ifeq (${DEBUG_LVL}, error)
-	CFLAGS += -DDEBUG_LVL=ERROR
-else ifeq (${DEBUG_LVL}, fatal)
-	CFLAGS += -DDEBUG_LVL=FATAL
+ifeq (${LOG_LVL}, none)
+	CFLAGS += -ULOG_LVL
+else ifeq (${LOG_LVL}, trace)
+	CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
+else ifeq (${LOG_LVL}, debug)
+	CFLAGS += -DLOG_LVL=FLT_LOG_DEBUG_LVL
+else ifeq (${LOG_LVL}, info)
+	CFLAGS += -DLOG_LVL=FLT_LOG_INFO_LVL
+else ifeq (${LOG_LVL}, warn)
+	CFLAGS += -DLOG_LVL=FLT_LOG_WARN_LVL
+else ifeq (${LOG_LVL}, error)
+	CFLAGS += -DLOG_LVL=FLT_LOG_ERROR_LVL
+else ifeq (${LOG_LVL}, fatal)
+	CFLAGS += -DLOG_LVL=FLT_LOG_FATAL_LVL
 endif
 
 # Coverage flags
@@ -524,7 +524,7 @@ targets:
 			{if ($$1 ~ "# makefile") {print $$2}}'\
 		| sort
 
-compile-test: CFLAGS += -DDEBUG_LVL=TRACE
+compile-test: CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
