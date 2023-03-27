@@ -5,7 +5,7 @@
 #include "ClientUT.hpp"
 
 int
-main() {
+main(void) {
 	ADD_TEST(ChannelUT)
 	ADD_TEST(ClientUT)
 	ADD_TEST(ServerUT)

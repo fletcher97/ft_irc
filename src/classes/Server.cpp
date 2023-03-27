@@ -11,7 +11,7 @@ Server::getInstance(void) {
 	return instance;
 }
 
-Server::Server() {
+Server::Server(void) {
 	LOG_DEBUG("Creating server");
 	LOG_INFO("Server created");
 }
@@ -26,12 +26,12 @@ Server::operator=(const Server& s) {
 	return *this;
 }
 
-Server::~Server() {
+Server::~Server(void) {
 	LOG_INFO("Removed server");
 }
 
 void
-Server::run() {
+Server::run(void) {
 	LOG_DEBUG("Running server");
 	Communications::getInstance().run();
 }
@@ -50,7 +50,7 @@ Server::getClient(int fd) const{
 }
 
 void
-Server::newClient() {
+Server::newClient(void) {
 	Communications&	communications = Communications::getInstance();
 	if (this->_clients.size() == MAX_CLIENTS)
 		return ;
