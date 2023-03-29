@@ -83,17 +83,23 @@ Client::getStatus(void) const {
 }
 
 void
-Client::setNickname(std::string& nickname) {
+Client::setNickname(const std::string& nickname) {
+	if (nickname.length() == 0)
+		throw EmptyArgument("Nickname must be a non empty string");
 	this->_nickname = nickname;
 }
 
 void
-Client::setUsername(std::string& username) {
+Client::setUsername(const std::string& username) {
+	if (username.length() == 0)
+		throw EmptyArgument("Username must be a non empty string");
 	this->_username = username;
 }
 
 void
-Client::setRealname(std::string& realname) {
+Client::setRealname(const std::string& realname) {
+	if (realname.length() == 0)
+		throw EmptyArgument("Realname must be a non empty string");
 	this->_realname = realname;
 }
 
@@ -101,3 +107,6 @@ void
 Client::setStatus(Client::Status status) {
 	this->_status = status;
 }
+
+Client::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+{}

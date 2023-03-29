@@ -11,7 +11,18 @@ public:
 	ClientUT(void);
 	~ClientUT(void);
 
-	void test_42(void);
+	void test_setNickname(void);
+	void test_setUsername(void);
+	void test_setRealname(void);
+	void test_setStatus(void);
+
+	void test_getFd(void);
+	void test_getAddress(void);
+	void test_getHostname(void);
+	void test_getNickname(void);
+	void test_getUsername(void);
+	void test_getRealname(void);
+	void test_getStatus(void);
 };
 
 #endif // CLIENTUT_HPP

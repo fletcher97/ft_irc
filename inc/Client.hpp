@@ -2,6 +2,7 @@
 #define CLIENT_HPP
 
 #include <string>
+#include <stdexcept>
 
 class Client
 {
@@ -15,7 +16,7 @@ public:
 		DELETE
 	};
 
-private:
+protected:
 	int	_fd;
 	std::string _address;
 	std::string _hostname;
@@ -24,7 +25,6 @@ private:
 	std::string _realname;
 	Client::Status	_status;
 
-protected:
 	Client(void);
 
 public:
@@ -41,10 +41,17 @@ public:
 	const std::string&	getRealname(void) const;
 	Client::Status	getStatus(void) const;
 
-	void	setNickname(std::string& nickname);
-	void	setUsername(std::string& username);
-	void	setRealname(std::string& realname);
+	void	setNickname(const std::string& nickname);
+	void	setUsername(const std::string& username);
+	void	setRealname(const std::string& realname);
 	void	setStatus(Client::Status status);
+
+public:
+	class EmptyArgument : public std::invalid_argument
+	{
+	public:
+			EmptyArgument(std::string msg);
+	};
 };
 
 #endif // CLIENT_HPP
