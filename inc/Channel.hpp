@@ -30,6 +30,12 @@ public:
 	void	setKey(std::string& key);
 
 	bool	isInChannel(const Client& client);
+
+	class EmptyArgument : public std::invalid_argument
+	{
+	public:
+			EmptyArgument(std::string msg);
+	};
 };
 
 #endif // CHANNEL_HPP

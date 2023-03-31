@@ -48,16 +48,22 @@ Channel::getKey(void) const {
 
 void
 Channel::setName(std::string& name) {
+	if (name.length() == 0)
+		throw EmptyArgument("Name must be a non empty string");
 	this->_name = name;
 }
 
 void
 Channel::setTopic(std::string& topic) {
+	if (topic.length() == 0)
+		throw EmptyArgument("Topic must be a non empty string");
 	this->_topic = topic;
 }
 
 void
 Channel::setKey(std::string& key) {
+	if (key.length() == 0)
+		throw EmptyArgument("Key must be a non empty string");
 	this->_key = key;
 }
 
