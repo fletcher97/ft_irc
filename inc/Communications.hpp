@@ -11,7 +11,6 @@ class Communications
 {
 private:
 	int _fd;
-	std::vector<pollfd> _pfds;
 	std::string _psswd;
 
 	typedef std::vector<pollfd>::iterator	pfds_iterator;
@@ -19,6 +18,8 @@ private:
 	void write_error(const char *s);
 
 protected:
+	std::vector<pollfd> _pfds;
+	
 	Communications(void);
 	Communications(const Communications& s);
 	~Communications(void);
