@@ -1,15 +1,16 @@
 #include "ChannelUT.hpp"
 
 ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), Channel() {
-	REGISTER(ChannelUT, test_42)
+	REGISTER(ChannelUT, test_setName);
+	REGISTER(ChannelUT, test_setTopic);
+	REGISTER(ChannelUT, test_setKey);
+
+	REGISTER(ChannelUT, test_getName);
+	REGISTER(ChannelUT, test_getTopic);
+	REGISTER(ChannelUT, test_getKey);
 }
 
 ChannelUT::~ChannelUT(void) {}
-
-void
-ChannelUT::test_42(void) {
-	ASSERT(42)
-}
 
 void ClientUT::test_setName(void) {
 	ASSERT_THROW(this->setName(""), std::invalid_argument)
