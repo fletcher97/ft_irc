@@ -9,7 +9,6 @@
 class Server
 {
 private:
-	std::map<int, Client*> _clients;
 
 protected:
 	Server(void);
@@ -17,6 +16,7 @@ protected:
 	~Server(void);
 
 	Server& operator=(const Server& s);
+	std::map<int, Client*> _clients;
 
 public:
 	static Server&	getInstance(void);

@@ -11,7 +11,8 @@ public:
 	ServerUT(void);
 	~ServerUT(void);
 
-	void test_42(void);
+	void test_getClient_fd(void);
+	void test_getClient_nick(void);
 };
 
 #endif // SERVERUT_HPP
