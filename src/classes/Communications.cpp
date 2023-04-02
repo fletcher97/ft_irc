@@ -6,36 +6,36 @@
 #include "Communications.hpp"
 #include "Server.hpp"
 
-Communications&
-Communications::getInstance(void) {
-	static Communications	instance;
+ft_irc::Communications&
+ft_irc::Communications::getInstance(void) {
+	static ft_irc::Communications	instance;
 	return instance;
 }
 
-Communications::Communications()
+ft_irc::Communications::Communications(void)
 {
 	LOG_DEBUG("Creating communitation")
 	LOG_INFO("New communitation created")
 }
 
-Communications::Communications(const Communications& s) :
+ft_irc::Communications::Communications(const ft_irc::Communications& s) :
 	_fd(s._fd),
 	_pfds(s._pfds),
 	_psswd(s._psswd)
 {}
 
-Communications&
-Communications::operator=(const Communications& s) {
+ft_irc::Communications&
+ft_irc::Communications::operator=(const ft_irc::Communications& s) {
 	this->_fd = s._fd;
 	this->_pfds = s._pfds;
 	this->_psswd = s._psswd;
 	return *this;
 }
 
-Communications::~Communications() {}
+ft_irc::Communications::~Communications(void) {}
 
 bool
-Communications::init(int port, const char* psswd) {
+ft_irc::Communications::init(int port, const char* psswd) {
 	if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		LOG_FATAL("Error creating socket")
 		return false;
@@ -64,8 +64,8 @@ Communications::init(int port, const char* psswd) {
 }
 
 void
-Communications::run(void) {
-	Server&	server = Server::getInstance();
+ft_irc::Communications::run(void) {
+	ft_irc::Server&	server = ft_irc::Server::getInstance();
 	while (42) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
@@ -81,12 +81,12 @@ Communications::run(void) {
 }
 
 int
-Communications::getFd() const {
+ft_irc::Communications::getFd(void) const {
 	return this->_fd;
 }
 
 void
-Communications::addPfd(int fd) {
+ft_irc::Communications::addPfd(int fd) {
 	this->_pfds.push_back(pollfd());
 	this->_pfds.back().fd = fd;
 	this->_pfds.back().events = POLLIN;

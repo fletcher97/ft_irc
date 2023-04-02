@@ -5,53 +5,53 @@
 #include "Communications.hpp"
 #include "Server.hpp"
 
-Server&
-Server::getInstance(void) {
-	static Server	instance;
+ft_irc::Server&
+ft_irc::Server::getInstance(void) {
+	static ft_irc::Server	instance;
 	return instance;
 }
 
-Server::Server() {
+ft_irc::Server::Server(void) {
 	LOG_DEBUG("Creating server");
 	LOG_INFO("Server created");
 }
 
-Server::Server(const Server& s) :
+ft_irc::Server::Server(const ft_irc::Server& s) :
 	_clients(s._clients)
 {}
 
-Server&
-Server::operator=(const Server& s) {
+ft_irc::Server&
+ft_irc::Server::operator=(const ft_irc::Server& s) {
 	this->_clients = s._clients;
 	return *this;
 }
 
-Server::~Server() {
+ft_irc::Server::~Server(void) {
 	LOG_INFO("Removed server");
 }
 
 void
-Server::run() {
+ft_irc::Server::run(void) {
 	LOG_DEBUG("Running server");
-	Communications::getInstance().run();
+	ft_irc::Communications::getInstance().run();
 }
 
-Client&
-Server::getClient(const std::string& nickname) const {
-	for (std::map<int, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++)
+ft_irc::Client&
+ft_irc::Server::getClient(const std::string& nickname) const {
+	for (std::map<int, ft_irc::Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++)
 		if (it->second->getNickname() == nickname)
 			return *(it->second);
 	return *(this->_clients.end()->second);
 }
 
-Client&
-Server::getClient(int fd) const{
+ft_irc::Client&
+ft_irc::Server::getClient(int fd) const{
 	return *(this->_clients.find(fd)->second);
 }
 
 void
-Server::newClient() {
-	Communications&	communications = Communications::getInstance();
+ft_irc::Server::newClient(void) {
+	ft_irc::Communications&	communications = ft_irc::Communications::getInstance();
 	if (this->_clients.size() == MAX_CLIENTS)
 		return ;
 
@@ -60,6 +60,6 @@ Server::newClient() {
 	int	clientFd = accept(communications.getFd(), reinterpret_cast<struct sockaddr*>(&clientAddress), &socklen);
 	if (clientFd == -1)
 		return ;
-	this->_clients[clientFd] = new Client(clientFd, clientAddress);
+	this->_clients[clientFd] = new ft_irc::Client(clientFd, clientAddress);
 	communications.addPfd(clientFd);
 }

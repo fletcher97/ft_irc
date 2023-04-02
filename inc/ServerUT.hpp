@@ -5,7 +5,10 @@
 
 #include "Testable.tpp"
 
-class ServerUT : public flt::Testable<ServerUT>, Server
+namespace ft_irc
+{
+
+class ServerUT : public flt::Testable<ServerUT>, ft_irc::Server
 {
 public:
 	ServerUT(void);
@@ -13,5 +16,7 @@ public:
 
 	void test_42(void);
 };
+
+} // namespace ft_irc
 
 #endif // SERVERUT_HPP

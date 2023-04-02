@@ -5,8 +5,12 @@
 #include "ClientUT.hpp"
 #include "ParserUT.hpp"
 
+using ft_irc::ChannelUT;
+using ft_irc::ClientUT;
+using ft_irc::ServerUT;
+
 int
-main() {
+main(void) {
 	ADD_TEST(ChannelUT)
 	ADD_TEST(ClientUT)
 	ADD_TEST(ServerUT)
