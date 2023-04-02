@@ -15,6 +15,7 @@ public:
 
 	void test_delimiter_msg(void);
 
+	void test_tag_nocmd(void);
 	void test_tag_presence(void);
 	void test_tag_single_simple(void);
 	void test_tag_multi_simple(void);
@@ -23,10 +24,12 @@ public:
 
 	void test_source_presence(void);
 
+	void test_command_nocmd(void);
 	void test_command_valid(void);
 	void test_command_invalid(void);
 	void test_command_missing(void);
 
+	void test_arguments_nocmd(void);
 	void test_arguments_single(void);
 	void test_arguments_multi(void);
 	void test_arguments_missing(void);

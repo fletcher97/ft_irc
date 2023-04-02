@@ -40,6 +40,9 @@ ft_irc::ParserUT::test_delimiter_msg(void) {
 }
 
 void
+ft_irc::ParserUT::test_tag_nocmd(void) {}
+
+void
 ft_irc::ParserUT::test_tag_presence(void) {}
 
 void
@@ -58,6 +61,9 @@ void
 ft_irc::ParserUT::test_source_presence(void) {}
 
 void
+ft_irc::ParserUT::test_command_nocmd(void) {}
+
+void
 ft_irc::ParserUT::test_command_valid(void) {}
 
 void
@@ -65,6 +71,9 @@ ft_irc::ParserUT::test_command_invalid(void) {}
 
 void
 ft_irc::ParserUT::test_command_missing(void) {}
+
+void
+ft_irc::ParserUT::test_arguments_nocmd(void) {}
 
 void
 ft_irc::ParserUT::test_arguments_single(void) {}
