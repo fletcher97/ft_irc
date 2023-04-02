@@ -6,7 +6,6 @@
 namespace ft_irc
 {
 
-class Channel;
 class Client
 {
 public:

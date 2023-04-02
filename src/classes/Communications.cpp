@@ -12,7 +12,7 @@ ft_irc::Communications::getInstance(void) {
 	return instance;
 }
 
-ft_irc::Communications::Communications()
+ft_irc::Communications::Communications(void)
 {
 	LOG_DEBUG("Creating communitation")
 	LOG_INFO("New communitation created")
@@ -32,7 +32,7 @@ ft_irc::Communications::operator=(const ft_irc::Communications& s) {
 	return *this;
 }
 
-ft_irc::Communications::~Communications() {}
+ft_irc::Communications::~Communications(void) {}
 
 bool
 ft_irc::Communications::init(int port, const char* psswd) {
@@ -81,7 +81,7 @@ ft_irc::Communications::run(void) {
 }
 
 int
-ft_irc::Communications::getFd() const {
+ft_irc::Communications::getFd(void) const {
 	return this->_fd;
 }
 

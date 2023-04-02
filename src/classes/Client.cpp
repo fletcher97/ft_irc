@@ -42,43 +42,43 @@ ft_irc::Client::operator=(const ft_irc::Client &c) {
 	return *this;
 }
 
-ft_irc::Client::~Client() {
+ft_irc::Client::~Client(void) {
 	close(this->_fd);
 	LOG_INFO("Removed client: " << this->_nickname)
 }
 
 int
-ft_irc::Client::getFd() const {
+ft_irc::Client::getFd(void) const {
 	return this->_fd;
 }
 
 const std::string&
-ft_irc::Client::getAddress() const {
+ft_irc::Client::getAddress(void) const {
 	return this->_address;
 }
 
 const std::string&
-ft_irc::Client::getHostname() const {
+ft_irc::Client::getHostname(void) const {
 	return this->_hostname;
 }
 
 const std::string&
-ft_irc::Client::getNickname() const {
+ft_irc::Client::getNickname(void) const {
 	return this->_nickname;
 }
 
 const std::string&
-ft_irc::Client::getUsername() const {
+ft_irc::Client::getUsername(void) const {
 	return this->_username;
 }
 
 const std::string&
-ft_irc::Client::getRealname() const {
+ft_irc::Client::getRealname(void) const {
 	return this->_realname;
 }
 
 ft_irc::Client::Status
-ft_irc::Client::getStatus() const {
+ft_irc::Client::getStatus(void) const {
 	return this->_status;
 }
 

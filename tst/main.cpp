@@ -4,11 +4,15 @@
 #include "ServerUT.hpp"
 #include "ClientUT.hpp"
 
+using ft_irc::ChannelUT;
+using ft_irc::ClientUT;
+using ft_irc::ServerUT;
+
 int
-main() {
-	ADD_TEST(ft_irc::ChannelUT)
-	ADD_TEST(ft_irc::ClientUT)
-	ADD_TEST(ft_irc::ServerUT)
+main(void) {
+	ADD_TEST(ChannelUT)
+	ADD_TEST(ClientUT)
+	ADD_TEST(ServerUT)
 
 	flt::TestCollection::instance().test();
 	flt::TestCollection::instance().report(std::cout);

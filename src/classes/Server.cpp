@@ -11,7 +11,7 @@ ft_irc::Server::getInstance(void) {
 	return instance;
 }
 
-ft_irc::Server::Server() {
+ft_irc::Server::Server(void) {
 	LOG_DEBUG("Creating server");
 	LOG_INFO("Server created");
 }
@@ -26,12 +26,12 @@ ft_irc::Server::operator=(const ft_irc::Server& s) {
 	return *this;
 }
 
-ft_irc::Server::~Server() {
+ft_irc::Server::~Server(void) {
 	LOG_INFO("Removed server");
 }
 
 void
-ft_irc::Server::run() {
+ft_irc::Server::run(void) {
 	LOG_DEBUG("Running server");
 	ft_irc::Communications::getInstance().run();
 }
@@ -50,7 +50,7 @@ ft_irc::Server::getClient(int fd) const{
 }
 
 void
-ft_irc::Server::newClient() {
+ft_irc::Server::newClient(void) {
 	ft_irc::Communications&	communications = ft_irc::Communications::getInstance();
 	if (this->_clients.size() == MAX_CLIENTS)
 		return ;
