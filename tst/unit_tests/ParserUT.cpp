@@ -2,12 +2,42 @@
 
 #include "ParserUT.hpp"
 
-ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {}
+ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
+	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
+}
 
 ft_irc::ParserUT::~ParserUT(void) {}
 
 void
-ft_irc::ParserUT::test_delimiter_msg(void) {}
+ft_irc::ParserUT::test_delimiter_msg(void) {
+	// Empty message
+	std::string msg = "";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// No delimiter string
+	msg = "Hello world!";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Multy delimiter string
+	msg = "Hello\r\nworld!\r\n";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Not delimiter terminated string
+	msg = "Hello\r\nworld!";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Delimiter char in middle of string
+	msg = "Hello\rworld!\r\n";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Delimiter char in middle of string
+	msg = "Hello\nworld!\r\n";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Correctly terminated string
+	msg = "Hello world!\r\n";
+	ASSERT_NOTHROW(ft_irc::Parser::check_delimiter(msg))
+}
 
 void
 ft_irc::ParserUT::test_tag_presence(void) {}
