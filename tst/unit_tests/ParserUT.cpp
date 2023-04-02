@@ -4,6 +4,7 @@
 
 ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
 	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
+	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 }
 
 ft_irc::ParserUT::~ParserUT(void) {}
@@ -40,7 +41,11 @@ ft_irc::ParserUT::test_delimiter_msg(void) {
 }
 
 void
-ft_irc::ParserUT::test_tag_nocmd(void) {}
+ft_irc::ParserUT::test_tag_nocmd(void) {
+	// NULL cmd
+	std::string msg = "";
+	ASSERT_THROW(ft_irc::Parser::parse_tags(NULL, msg), std::invalid_argument)
+}
 
 void
 ft_irc::ParserUT::test_tag_presence(void) {}
