@@ -47,6 +47,19 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg) {
 ft_irc::Parser::cmd_t*
 ft_irc::Parser::parse_msg(std::string &msg)
 {
-	(void)msg;
-	throw std::exception();
+	ft_irc::Parser::cmd_t* ret;
+
+	try {
+		check_delimiter(msg);
+		ret = new ft_irc::Parser::cmd_t();
+		ft_irc::Parser::parse_tags(ret, msg);
+		ft_irc::Parser::check_source(msg);
+		ft_irc::Parser::parse_command(ret, msg);
+		ft_irc::Parser::parse_arguments(ret, msg);
+		return ret;
+	} catch(const std::exception& e) {
+		if (ret)
+			delete ret;
+		throw e;
+	}
 }
