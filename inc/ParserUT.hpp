@@ -4,7 +4,10 @@
 #include "Testable.tpp"
 #include "Parser.hpp"
 
-class ParserUT : public flt::Testable<ParserUT>, ft_irc::Parser
+namespace ft_irc
+{
+
+class ParserUT : public flt::Testable<ft_irc::ParserUT>, ft_irc::Parser
 {
 public:
 	ParserUT(void);
@@ -31,5 +34,7 @@ public:
 	void test_arguments_multi_colon(void);
 
 };
+
+} // namespace ft_irc
 
 #endif // PARSERUT_HPP

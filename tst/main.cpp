@@ -8,6 +8,7 @@
 using ft_irc::ChannelUT;
 using ft_irc::ClientUT;
 using ft_irc::ServerUT;
+using ft_irc::ParserUT;
 
 int
 main(void) {

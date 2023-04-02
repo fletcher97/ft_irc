@@ -2,51 +2,51 @@
 
 #include "ParserUT.hpp"
 
-ParserUT::ParserUT(void) : flt::Testable<ParserUT>("Client") {}
+ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {}
 
-ParserUT::~ParserUT(void) {}
-
-void
-ParserUT::test_delimiter_msg(void) {}
+ft_irc::ParserUT::~ParserUT(void) {}
 
 void
-ParserUT::test_tag_presence(void) {}
+ft_irc::ParserUT::test_delimiter_msg(void) {}
 
 void
-ParserUT::test_tag_single_simple(void) {}
+ft_irc::ParserUT::test_tag_presence(void) {}
 
 void
-ParserUT::test_tag_multi_simple(void) {}
+ft_irc::ParserUT::test_tag_single_simple(void) {}
 
 void
-ParserUT::test_tag_single_kv(void) {}
+ft_irc::ParserUT::test_tag_multi_simple(void) {}
 
 void
-ParserUT::test_tag_multi_kv(void) {}
+ft_irc::ParserUT::test_tag_single_kv(void) {}
 
 void
-ParserUT::test_source_presence(void) {}
+ft_irc::ParserUT::test_tag_multi_kv(void) {}
 
 void
-ParserUT::test_command_valid(void) {}
+ft_irc::ParserUT::test_source_presence(void) {}
 
 void
-ParserUT::test_command_invalid(void) {}
+ft_irc::ParserUT::test_command_valid(void) {}
 
 void
-ParserUT::test_command_missing(void) {}
+ft_irc::ParserUT::test_command_invalid(void) {}
 
 void
-ParserUT::test_arguments_single(void) {}
+ft_irc::ParserUT::test_command_missing(void) {}
 
 void
-ParserUT::test_arguments_multi(void) {}
+ft_irc::ParserUT::test_arguments_single(void) {}
 
 void
-ParserUT::test_arguments_missing(void) {}
+ft_irc::ParserUT::test_arguments_multi(void) {}
 
 void
-ParserUT::test_arguments_colon(void) {}
+ft_irc::ParserUT::test_arguments_missing(void) {}
 
 void
-ParserUT::test_arguments_multi_colon(void) {}
+ft_irc::ParserUT::test_arguments_colon(void) {}
+
+void
+ft_irc::ParserUT::test_arguments_multi_colon(void) {}
