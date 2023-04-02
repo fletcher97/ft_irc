@@ -61,6 +61,18 @@ ft_irc::ParserUT::test_tag_presence(void) {
 	msg = "@abc";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_NEQ(cmd.tags.size(), 0)
+
+	// Tags present not at begining (shouldn't be detected)
+	cmd = ft_irc::Parser::cmd_t();
+	msg = " @abc";
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags.size(), 0)
+
+	// Tags present not at begining (shouldn't be detected)
+	cmd = ft_irc::Parser::cmd_t();
+	msg = ":asd @abc";
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags.size(), 0)
 }
 
 void
