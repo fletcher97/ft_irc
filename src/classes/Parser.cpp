@@ -25,8 +25,7 @@ void ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 }
 
 void
-ft_irc::Parser::check_source(ft_irc::Parser::cmd_t *cmd, std::string &msg) {
-	(void)cmd;
+ft_irc::Parser::check_source(std::string &msg) {
 	(void)msg;
 	throw std::exception();
 }
