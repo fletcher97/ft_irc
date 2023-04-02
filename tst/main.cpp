@@ -4,6 +4,10 @@
 #include "ServerUT.hpp"
 #include "ClientUT.hpp"
 
+using ft_irc::ChannelUT;
+using ft_irc::ClientUT;
+using ft_irc::ServerUT;
+
 int
 main(void) {
 	ADD_TEST(ChannelUT)
