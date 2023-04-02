@@ -6,6 +6,7 @@ ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
 	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
 	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 	REGISTER(ft_irc::ParserUT, test_tag_presence)
+	REGISTER(ft_irc::ParserUT, test_tag_single_simple)
 }
 
 ft_irc::ParserUT::~ParserUT(void) {}
@@ -76,7 +77,30 @@ ft_irc::ParserUT::test_tag_presence(void) {
 }
 
 void
-ft_irc::ParserUT::test_tag_single_simple(void) {}
+ft_irc::ParserUT::test_tag_single_simple(void) {
+	// Simple tag
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg = "@abc";
+	std::map<std::string, std::string> expected;
+	expected.insert(std::pair<std::string, std::string>("abc", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@def";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("def", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple tag with extra information
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@ghi CAP * LIST";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("ghi", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+}
 
 void
 ft_irc::ParserUT::test_tag_multi_simple(void) {}
