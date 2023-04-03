@@ -19,9 +19,9 @@ Communications::Communications(void)
 }
 
 Communications::Communications(const Communications& s) :
+	_psswd(s._psswd),
 	_fd(s._fd),
-	_pfds(s._pfds),
-	_psswd(s._psswd)
+	_pfds(s._pfds)
 {}
 
 Communications&
