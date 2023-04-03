@@ -12,45 +12,54 @@ ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), Channel() {
 
 ChannelUT::~ChannelUT(void) {}
 
-void ClientUT::test_setName(void) {
-	ASSERT_THROW(this->setName(""), std::invalid_argument)
-	this->setName("gemartin");
-	ASSERT_EQ(this->_name, "gemartin")
-	this->setName("marvin");
-	ASSERT_EQ(this->_name, "marvin");
+void ChannelUT::test_setName(void) {
+	std::string test = "";
+	ASSERT_THROW(this->setName(test), std::invalid_argument)
+	std::string test2 = "gemartin";
+	this->setName(test2);
+	ASSERT_EQ(this->__name, test2)
+	std::string test3 = "marvin";
+	this->setName(test3);
+	ASSERT_EQ(this->__name, test3);
 }
 
-void ClientUT::test_setTopic(void) {
-	ASSERT_THROW(this->setTopic(""), std::invalid_argument)
-	this->setTopic("gemartin");
-	ASSERT_EQ(this->_topic, "gemartin")
-	this->setTopic("marvin");
-	ASSERT_EQ(this->_topic, "marvin");
+void ChannelUT::test_setTopic(void) {
+	std::string test = "";
+	ASSERT_THROW(this->setTopic(test), std::invalid_argument)
+	std::string test2 = "gemartin";
+	this->setTopic(test2);
+	ASSERT_EQ(this->_topic, test2)
+	std::string test3 = "marvin";
+	this->setTopic(test3);
+	ASSERT_EQ(this->_topic, test3);
 }
 
-void ClientUT::test_setKey(void) {
-	ASSERT_THROW(this->setKey(""), std::invalid_argument)
-	this->setKey("gemartin");
-	ASSERT_EQ(this->_key, "gemartin")
-	this->setKey("marvin");
-	ASSERT_EQ(this->_key, "marvin");
+void ChannelUT::test_setKey(void) {
+	std::string test = "";
+	ASSERT_THROW(this->setKey(test), std::invalid_argument)
+	std::string test2 = "gemartin";
+	this->setKey(test2);
+	ASSERT_EQ(this->_key, test2)
+	std::string test3 = "marvin";
+	this->setKey(test3);
+	ASSERT_EQ(this->_key, test3);
 }
 
-void ClientUT::test_getName(void) {
-	this->_name = "gemartin";
+void ChannelUT::test_getName(void) {
+	this->__name = "gemartin";
 	ASSERT_EQ(this->getName(), "gemartin")
-	this->_name = "marvin";
+	this->__name = "marvin";
 	ASSERT_EQ(this->getName(), "marvin")
 }
 
-void ClientUT::test_getTopic(void) {
+void ChannelUT::test_getTopic(void) {
 	this->_topic = "gemartin";
 	ASSERT_EQ(this->getTopic(), "gemartin")
 	this->_topic = "marvin";
 	ASSERT_EQ(this->getTopic(), "marvin")
 }
 
-void ClientUT::test_getKey(void) {
+void ChannelUT::test_getKey(void) {
 	this->_key = "gemartin";
 	ASSERT_EQ(this->getKey(), "gemartin")
 	this->_key = "marvin";

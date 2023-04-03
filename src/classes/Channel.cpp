@@ -3,7 +3,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(void) :
-	_name(),
+	__name(),
 	_topic(),
 	_clients(),
 	_key()
@@ -12,7 +12,7 @@ Channel::Channel(void) :
 }
 
 Channel::Channel(const Channel& c) :
-	_name(c._name),
+	__name(c.__name),
 	_topic(c._topic),
 	_clients(c._clients),
 	_key(c._key)
@@ -20,7 +20,7 @@ Channel::Channel(const Channel& c) :
 
 Channel&
 Channel::operator=(const Channel& c) {
-	this->_name = c._name;
+	this->__name = c.__name;
 	this->_topic = c._topic;
 	this->_clients = c._clients;
 	this->_key = c._key;
@@ -28,12 +28,12 @@ Channel::operator=(const Channel& c) {
 }
 
 Channel::~Channel(void) {
-	LOG_INFO("Removed channel: " << this->_name);
+	LOG_INFO("Removed channel: " << this->__name);
 }
 
 const std::string&
 Channel::getName(void) const {
-	return this->_name;
+	return this->__name;
 }
 
 const std::string&
@@ -50,7 +50,7 @@ void
 Channel::setName(std::string& name) {
 	if (name.length() == 0)
 		throw EmptyArgument("Name must be a non empty string");
-	this->_name = name;
+	this->__name = name;
 }
 
 void
@@ -71,3 +71,6 @@ bool
 Channel::isInChannel(const Client& client) {
 	return this->_clients.count(client.getFd());
 }
+
+Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+{}

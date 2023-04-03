@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <stdexcept>
 
 #include "Client.hpp"
 
@@ -10,7 +11,7 @@ class Client;
 class Channel
 {
 protected:
-	std::string _name;
+	std::string __name;
 	std::string _topic;
 	std::map<int, Client*> _clients;
 	std::string	_key;
@@ -31,6 +32,7 @@ public:
 
 	bool	isInChannel(const Client& client);
 
+public:
 	class EmptyArgument : public std::invalid_argument
 	{
 	public:
