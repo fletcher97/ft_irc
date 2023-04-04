@@ -5,6 +5,7 @@
 #include <map>
 
 #include "Client.hpp"
+#include "Configuration.hpp"
 
 namespace ft_irc
 {
@@ -13,6 +14,7 @@ class Server
 {
 private:
 	std::map<int, ft_irc::Client*> _clients;
+	Configuration _config;
 
 protected:
 	Server(void);
