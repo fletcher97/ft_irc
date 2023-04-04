@@ -14,12 +14,10 @@ private:
 
 	typedef std::vector<pollfd>::iterator	pfds_iterator;
 
-	void write_error(const char *s);
-
 protected:
 	int _fd;
 	std::vector<pollfd> _pfds;
-	
+
 	Communications(void);
 	Communications(const Communications& s);
 	~Communications(void);
@@ -31,6 +29,7 @@ public:
 
 	bool init(int port, const char* psswd);
 	void run(void);
+	void read(int fd);
 
 	int	getFd(void) const;
 	void	addPfd(int fd);

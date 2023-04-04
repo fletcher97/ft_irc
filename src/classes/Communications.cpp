@@ -64,6 +64,19 @@ Communications::init(int port, const char* psswd) {
 }
 
 void
+Communications::read(int fd) {
+	char	buffer[4096];
+	ssize_t	size;
+
+	if ((size = recv(fd, &buffer, 4096, 0)) == -1) {
+		LOG_ERROR("Error recv")
+		return ;
+	}
+	buffer[size] = '\0';
+	LOG_INFO("Message: '" << buffer << "' from: " << fd)
+}
+
+void
 Communications::run(void) {
 	Server&	server = Server::getInstance();
 	while (42) {
@@ -74,9 +87,16 @@ Communications::run(void) {
 		if (this->_pfds[0].revents == POLLIN)
 			server.newClient();
 		else
-			for(pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++)
-				if ((*it).revents == POLLIN)
-					server.getClient(it->fd);
+			for(pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
+				if (it->revents & POLLHUP) {
+					LOG_INFO("Client disconnected: " << it->fd)
+					delete &server.getClient(it->fd);
+					this->_pfds.erase(it);
+					break ;
+				}
+				if (it->revents & POLLIN)
+					this->read(it->fd);
+			}
 	}
 }
 
