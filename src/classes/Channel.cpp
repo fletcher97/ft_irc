@@ -2,75 +2,99 @@
 
 #include "Channel.hpp"
 
-Channel::Channel(void) :
+ft_irc::Channel::Channel(void) :
 	__name(),
 	_topic(),
-	_clients(),
-	_key()
+	_key(),
+	_clients()
 {
 	LOG_DEBUG("Creating new channel");
 }
 
-Channel::Channel(const Channel& c) :
+ft_irc::Channel::Channel(const std::string& name) :
+	__name(name),
+	_topic(),
+	_key(),
+	_clients()
+{
+	LOG_DEBUG("Creating new channel")
+	LOG_INFO("New channel created: " << name)
+}
+
+ft_irc::Channel::Channel(const ft_irc::Channel& c) :
 	__name(c.__name),
 	_topic(c._topic),
-	_clients(c._clients),
-	_key(c._key)
+	_key(c._key),
+	_clients(c._clients)
 {}
 
-Channel&
-Channel::operator=(const Channel& c) {
+ft_irc::Channel&
+ft_irc::Channel::operator=(const ft_irc::Channel& c) {
 	this->__name = c.__name;
 	this->_topic = c._topic;
-	this->_clients = c._clients;
 	this->_key = c._key;
+	this->_clients = c._clients;
 	return *this;
 }
 
-Channel::~Channel(void) {
+ft_irc::Channel::~Channel(void) {
 	LOG_INFO("Removed channel: " << this->__name);
 }
 
 const std::string&
-Channel::getName(void) const {
+ft_irc::Channel::getName(void) const {
 	return this->__name;
 }
 
 const std::string&
-Channel::getTopic(void) const {
+ft_irc::Channel::getTopic(void) const {
 	return this->_topic;
 }
 
 const std::string&
-Channel::getKey(void) const {
+ft_irc::Channel::getKey(void) const {
 	return this->_key;
 }
 
 void
-Channel::setName(std::string& name) {
+ft_irc::Channel::setName(std::string& name) {
 	if (name.length() == 0)
 		throw EmptyArgument("Name must be a non empty string");
 	this->__name = name;
 }
 
 void
-Channel::setTopic(std::string& topic) {
+ft_irc::Channel::setTopic(std::string& topic) {
 	if (topic.length() == 0)
 		throw EmptyArgument("Topic must be a non empty string");
 	this->_topic = topic;
 }
 
 void
-Channel::setKey(std::string& key) {
+ft_irc::Channel::setKey(std::string& key) {
 	if (key.length() == 0)
 		throw EmptyArgument("Key must be a non empty string");
 	this->_key = key;
 }
 
 bool
-Channel::isInChannel(const Client& client) {
+ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
 	return this->_clients.count(client.getFd());
 }
 
-Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+bool
+ft_irc::Channel::addClient(ft_irc::Client* client) {
+	if (this->_clients.count(client->getFd()))
+		return false;
+	this->_clients[client->getFd()] = client;
+	return true;
+}
+
+ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+{}
+
+ft_irc::Channel::InvalidKey::InvalidKey(std::string msg) : std::invalid_argument(msg)
+{}
+
+ft_irc::Channel::ChannelIsFull::ChannelIsFull(std::string msg) : std::exception(msg)
 {}

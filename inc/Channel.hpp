@@ -3,9 +3,13 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include <stdexcept>
 
 #include "Client.hpp"
+
+namespace ft_irc
+{
 
 class Client;
 class Channel
@@ -13,11 +17,13 @@ class Channel
 protected:
 	std::string __name;
 	std::string _topic;
-	std::map<int, Client*> _clients;
 	std::string	_key;
+	std::map<int, ft_irc::Client*> _clients;
+	std::vector<std::string>	_banned;
 
 public:
 	Channel(void);
+	Channel(const std::string& name);
 	Channel(const Channel& c);
 	Channel& operator=(const Channel& c);
 	~Channel(void);
@@ -32,12 +38,29 @@ public:
 
 	bool	isInChannel(const Client& client);
 
+	bool	addClient(Client* client, const std::string& key);
+
 public:
 	class EmptyArgument : public std::invalid_argument
 	{
 	public:
 			EmptyArgument(std::string msg);
 	};
+
+	class InvalidKey : public std::invalid_argument
+	{
+	public:
+			InvalidKey(std::string msg);
+	};
+
+	class ChannelIsFull : public std::exception
+	{
+	public:
+			ChannelIsFull(std::string msg);
+	};
+
 };
+
+} // namespace ft_irc
 
 #endif // CHANNEL_HPP

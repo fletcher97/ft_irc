@@ -1,11 +1,12 @@
 #include "ClientUT.hpp"
 
-ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
-	REGISTER(ClientUT, test_42)
+ft_irc::ClientUT::ClientUT(void) : flt::Testable<ft_irc::ClientUT>("Client"), ft_irc::Client() {
+	REGISTER(ft_irc::ClientUT, test_42)
 }
 
-ClientUT::~ClientUT(void) {}
+ft_irc::ClientUT::~ClientUT(void) {}
 
-void ClientUT::test_42(void) {
+void
+ft_irc::ClientUT::test_42(void) {
 	ASSERT(42)
 }
