@@ -20,6 +20,7 @@ public:
 	void test_setName(void);
 	void test_setTopic(void);
 	void test_setKey(void);
+	void test_addClient(void);
 };
 
 } // namespace ft_irc

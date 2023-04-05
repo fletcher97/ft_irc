@@ -1,3 +1,5 @@
+#include <netinet/in.h>
+
 #include "ChannelUT.hpp"
 
 ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc::Channel() {
@@ -8,6 +10,7 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_getName);
 	REGISTER(ChannelUT, test_getTopic);
 	REGISTER(ChannelUT, test_getKey);
+	REGISTER(ChannelUT, test_addClient);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -70,4 +73,11 @@ ft_irc::ChannelUT::test_getKey(void) {
 	ASSERT_EQ(this->getKey(), "gemartin")
 	this->_key = "marvin";
 	ASSERT_EQ(this->getKey(), "marvin")
+}
+
+void
+ft_irc::ChannelUT::test_addClient(void) {
+	Client test(42, sockaddr_in());
+	ASSERT(this->addClient(test))
+	ASSERT(!this->addClient(test))
 }
