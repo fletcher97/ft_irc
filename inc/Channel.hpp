@@ -37,7 +37,6 @@ public:
 	void	setKey(std::string& key);
 
 	bool	isInChannel(const Client& client);
-
 	bool	addClient(Client client);
 	bool	banClient(const std::string& client);
 

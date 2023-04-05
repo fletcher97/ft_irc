@@ -97,7 +97,7 @@ ft_irc::Channel::banClient(const std::string& client) {
 	if (std::count(this->_banned.begin(), this->_banned.end(), client))
 		return false;
 	this->_banned.push_back(client);
-	return false;
+	return true;
 }
 
 ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
