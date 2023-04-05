@@ -11,6 +11,7 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_getTopic);
 	REGISTER(ChannelUT, test_getKey);
 	REGISTER(ChannelUT, test_addClient);
+	REGISTER(ChannelUT, test_banClient);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -80,4 +81,11 @@ ft_irc::ChannelUT::test_addClient(void) {
 	Client test(42, sockaddr_in());
 	ASSERT(this->addClient(test))
 	ASSERT(!this->addClient(test))
+}
+
+void
+ft_irc::ChannelUT::test_banClient(void) {
+	std::string test = "smiro";
+	ASSERT(this->banClient(test))
+	ASSERT(!this->banClient(test))
 }

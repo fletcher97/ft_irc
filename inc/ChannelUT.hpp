@@ -21,6 +21,7 @@ public:
 	void test_setTopic(void);
 	void test_setKey(void);
 	void test_addClient(void);
+	void test_banClient(void);
 };
 
 } // namespace ft_irc
