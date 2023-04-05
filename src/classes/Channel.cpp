@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Log.hpp"
 
 #include "Channel.hpp"
@@ -83,18 +85,23 @@ ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
 }
 
 bool
-ft_irc::Channel::addClient(ft_irc::Client* client) {
-	if (this->_clients.count(client->getFd()))
+ft_irc::Channel::addClient(ft_irc::Client client) {
+	if (this->_clients.count(client.getFd()))
 		return false;
-	this->_clients[client->getFd()] = client;
+	this->_clients[client.getFd()] = &client;
 	return true;
+}
+
+bool
+ft_irc::Channel::banClient(const std::string& client) {
+	if (std::count(this->_banned.begin(), this->_banned.end(), client))
+		return false;
+	this->_banned.push_back(client);
+	return false;
 }
 
 ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
 {}
 
 ft_irc::Channel::InvalidKey::InvalidKey(std::string msg) : std::invalid_argument(msg)
-{}
-
-ft_irc::Channel::ChannelIsFull::ChannelIsFull(std::string msg) : std::exception(msg)
 {}

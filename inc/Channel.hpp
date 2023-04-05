@@ -38,7 +38,8 @@ public:
 
 	bool	isInChannel(const Client& client);
 
-	bool	addClient(Client* client, const std::string& key);
+	bool	addClient(Client client);
+	bool	banClient(const std::string& client);
 
 public:
 	class EmptyArgument : public std::invalid_argument
@@ -51,12 +52,6 @@ public:
 	{
 	public:
 			InvalidKey(std::string msg);
-	};
-
-	class ChannelIsFull : public std::exception
-	{
-	public:
-			ChannelIsFull(std::string msg);
 	};
 
 };
