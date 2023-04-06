@@ -27,6 +27,7 @@ protected:
 	std::string	_key;
 	std::map<int, ft_irc::Client*> _clients;
 	std::vector<std::string>	_banned;
+	std::vector<std::string>	_invited;
 	char _mode;
 
 public:
@@ -48,6 +49,9 @@ public:
 	bool	isInChannel(const Client& client);
 	bool	addClient(Client client);
 	bool	banClient(const std::string& client);
+	bool	inviteClient(const std::string& client);
+
+	// bool	join(const ft_irc::Client& client, const std::string& key = "");
 
 public:
 	class EmptyArgument : public std::invalid_argument
@@ -62,11 +66,17 @@ public:
 		InvalidMode(std::string msg);
 	};
 
-	// class InvalidKey : public std::invalid_argument
-	// {
-	// public:
-	// 		InvalidKey(std::string msg);
-	// };
+	class InvalidKey : public std::invalid_argument
+	{
+	public:
+			InvalidKey(std::string msg);
+	};
+
+	class BannedClient : public std::exception
+	{
+	public:
+			BannedClient();
+	};
 
 };
 

@@ -113,9 +113,23 @@ ft_irc::Channel::banClient(const std::string& client) {
 	return true;
 }
 
-// bool
-// ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key = "") {
+bool
+ft_irc::Channel::inviteClient(const std::string& client) {
+	if (std::count(this->_invited.begin(), this->_invited.end(), client))
+		return false;
+	this->_invited.push_back(client);
+	return true;
+}
 
+// bool
+// ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
+// 	if (this->_clients.count(client.getFd()))
+// 		return false;
+// 	if (std::count(this->_banned.begin(), this->_banned.end(), client.getNickname()))
+// 		throw ft_irc::Channel::BannedClient();
+// 	if (!this->_key.empty() && this->_key != key)
+// 		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
+// 	return true;
 // }
 
 ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
@@ -124,5 +138,7 @@ ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_ar
 ft_irc::Channel::InvalidMode::InvalidMode(std::string msg) : std::invalid_argument(msg)
 {}
 
-// ft_irc::Channel::InvalidKey::InvalidKey(std::string msg) : std::invalid_argument(msg)
-// {}
+ft_irc::Channel::InvalidKey::InvalidKey(std::string msg) : std::invalid_argument(msg)
+{}
+
+ft_irc::Channel::BannedClient::BannedClient() {}
