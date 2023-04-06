@@ -8,6 +8,13 @@
 
 #include "Client.hpp"
 
+#define I 0x01 // Invite-only
+#define M 0x02 // Moderated
+#define S 0x04 // Secret
+#define _T 0x08 // Protected topic
+#define N 0x10 // Not external messages
+
+
 namespace ft_irc
 {
 
@@ -20,6 +27,7 @@ protected:
 	std::string	_key;
 	std::map<int, ft_irc::Client*> _clients;
 	std::vector<std::string>	_banned;
+	char _mode;
 
 public:
 	Channel(void);
@@ -35,6 +43,7 @@ public:
 	void	setName(std::string& name);
 	void	setTopic(std::string& topic);
 	void	setKey(std::string& key);
+	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);
 	bool	addClient(Client client);
@@ -44,14 +53,20 @@ public:
 	class EmptyArgument : public std::invalid_argument
 	{
 	public:
-			EmptyArgument(std::string msg);
+		EmptyArgument(std::string msg);
 	};
 
-	class InvalidKey : public std::invalid_argument
+	class InvalidMode : public std::invalid_argument
 	{
 	public:
-			InvalidKey(std::string msg);
+		InvalidMode(std::string msg);
 	};
+
+	// class InvalidKey : public std::invalid_argument
+	// {
+	// public:
+	// 		InvalidKey(std::string msg);
+	// };
 
 };
 
