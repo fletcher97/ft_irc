@@ -25,7 +25,7 @@ public:
 	void test_toggleMode(void);
 	void test_inviteClient(void);
 
-	// void test_join(void);
+	void test_join(void);
 };
 
 } // namespace ft_irc

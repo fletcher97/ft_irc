@@ -15,7 +15,7 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_inviteClient);
 	REGISTER(ChannelUT, test_toggleMode);
 
-	// REGISTER(ChannelUT, test_join);
+	REGISTER(ChannelUT, test_join);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -130,18 +130,35 @@ ft_irc::ChannelUT::test_toggleMode(void) {
 	ASSERT_THROW(this->toggleMode(-1), std::invalid_argument)
 }
 
-// void
-// ft_irc::ChannelUT::test_join(void) {
-// 	Client test(42, sockaddr_in());
-// 	std::string name = "test";
-// 	test.setNickname(name);
-// 	ASSERT(ft_irc::Channel::join(test))
-// 	this->banClient(name);
-// 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
-// 	this->_banned.clear();
-// 	std::string key = "1234";
-// 	this->setKey(key);
-// 	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
-// 	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
-// 	ASSERT(ft_irc::Channel::join(test, "1234"))
-// }
+void
+ft_irc::ChannelUT::test_join(void) {
+	Client test(42, sockaddr_in());
+	std::string name = "test";
+	test.setNickname(name);
+	ASSERT(ft_irc::Channel::join(test))
+	this->_clients.clear();
+	this->banClient(name);
+	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
+	this->_banned.clear();
+	std::string key = "1234";
+	this->setKey(key);
+	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
+	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
+	ASSERT(ft_irc::Channel::join(test, "1234"))
+	this->_clients.clear();
+	this->_key = "";
+	this->toggleMode(I);
+	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
+	this->inviteClient(name);
+	ASSERT(ft_irc::Channel::join(test))
+	this->_clients.clear();
+	this->toggleMode(I);
+	this->setClientLimit(1);
+	Client test2(20, sockaddr_in());
+	this->addClient(test2);
+	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::ChannelIsFull)
+	this->_client_limit = 0;
+	ASSERT(ft_irc::Channel::join(test))
+	ASSERT(!ft_irc::Channel::join(test))
+	this->_clients.clear();
+}
