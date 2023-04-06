@@ -29,6 +29,7 @@ protected:
 	std::vector<std::string>	_banned;
 	std::vector<std::string>	_invited;
 	char _mode;
+	size_t	_client_limit;
 
 public:
 	Channel(void);
@@ -44,6 +45,7 @@ public:
 	void	setName(std::string& name);
 	void	setTopic(std::string& topic);
 	void	setKey(std::string& key);
+	void	setClientLimit(size_t limit);
 	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);
@@ -51,7 +53,7 @@ public:
 	bool	banClient(const std::string& client);
 	bool	inviteClient(const std::string& client);
 
-	// bool	join(const ft_irc::Client& client, const std::string& key = "");
+	bool	join(const ft_irc::Client& client, const std::string& key = "");
 
 public:
 	class EmptyArgument : public std::invalid_argument
@@ -72,12 +74,29 @@ public:
 			InvalidKey(std::string msg);
 	};
 
+	class InvalidLimit : public std::invalid_argument
+	{
+	public:
+			InvalidLimit(std::string msg);
+	};
+
 	class BannedClient : public std::exception
 	{
 	public:
 			BannedClient();
 	};
 
+	class InviteOnlyChannel : public std::exception
+	{
+	public:
+			InviteOnlyChannel();
+	};
+
+	class ChannelIsFull : public std::exception
+	{
+	public:
+			ChannelIsFull();
+	};
 };
 
 } // namespace ft_irc
