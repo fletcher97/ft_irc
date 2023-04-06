@@ -12,6 +12,7 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_getKey);
 	REGISTER(ChannelUT, test_addClient);
 	REGISTER(ChannelUT, test_banClient);
+	REGISTER(ChannelUT, test_toggleMode);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -88,4 +89,29 @@ ft_irc::ChannelUT::test_banClient(void) {
 	std::string test = "smiro";
 	ASSERT(this->banClient(test))
 	ASSERT(!this->banClient(test))
+}
+
+void
+ft_irc::ChannelUT::test_toggleMode(void) {
+	this->toggleMode(I);
+	ASSERT(this->_mode & I)
+	this->toggleMode(I);
+	ASSERT(this->_mode ^ I)
+	this->toggleMode(M);
+	ASSERT(this->_mode & M)
+	this->toggleMode(M);
+	ASSERT(this->_mode ^ M)
+	this->toggleMode(S);
+	ASSERT(this->_mode & S)
+	this->toggleMode(S);
+	ASSERT(this->_mode ^ S)
+	this->toggleMode(_T);
+	ASSERT(this->_mode & _T)
+	this->toggleMode(_T);
+	ASSERT(this->_mode ^ _T)
+	this->toggleMode(N);
+	ASSERT(this->_mode & N)
+	this->toggleMode(N);
+	ASSERT(this->_mode ^ N)
+	ASSERT_THROW(this->toggleMode(-1), std::invalid_argument)
 }
