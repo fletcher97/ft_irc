@@ -12,7 +12,10 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_getKey);
 	REGISTER(ChannelUT, test_addClient);
 	REGISTER(ChannelUT, test_banClient);
+	REGISTER(ChannelUT, test_inviteClient);
 	REGISTER(ChannelUT, test_toggleMode);
+
+	// REGISTER(ChannelUT, test_join);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -75,6 +78,7 @@ ft_irc::ChannelUT::test_getKey(void) {
 	ASSERT_EQ(this->getKey(), "gemartin")
 	this->_key = "marvin";
 	ASSERT_EQ(this->getKey(), "marvin")
+	this->_key = "";
 }
 
 void
@@ -82,6 +86,7 @@ ft_irc::ChannelUT::test_addClient(void) {
 	Client test(42, sockaddr_in());
 	ASSERT(this->addClient(test))
 	ASSERT(!this->addClient(test))
+	this->_clients.clear();
 }
 
 void
@@ -89,6 +94,15 @@ ft_irc::ChannelUT::test_banClient(void) {
 	std::string test = "smiro";
 	ASSERT(this->banClient(test))
 	ASSERT(!this->banClient(test))
+	this->_banned.clear();
+}
+
+void
+ft_irc::ChannelUT::test_inviteClient(void) {
+	std::string test = "smiro";
+	ASSERT(this->inviteClient(test))
+	ASSERT(!this->inviteClient(test))
+	this->_invited.clear();
 }
 
 void
@@ -115,3 +129,19 @@ ft_irc::ChannelUT::test_toggleMode(void) {
 	ASSERT(this->_mode ^ N)
 	ASSERT_THROW(this->toggleMode(-1), std::invalid_argument)
 }
+
+// void
+// ft_irc::ChannelUT::test_join(void) {
+// 	Client test(42, sockaddr_in());
+// 	std::string name = "test";
+// 	test.setNickname(name);
+// 	ASSERT(ft_irc::Channel::join(test))
+// 	this->banClient(name);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
+// 	this->_banned.clear();
+// 	std::string key = "1234";
+// 	this->setKey(key);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
+// 	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
+// 	ASSERT(ft_irc::Channel::join(test, "1234"))
+// }
