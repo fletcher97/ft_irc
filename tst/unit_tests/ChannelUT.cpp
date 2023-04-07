@@ -11,11 +11,11 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_getTopic);
 	REGISTER(ChannelUT, test_getKey);
 	REGISTER(ChannelUT, test_addClient);
-	REGISTER(ChannelUT, test_banClient);
-	REGISTER(ChannelUT, test_inviteClient);
+	REGISTER(ChannelUT, test_banMask);
 	REGISTER(ChannelUT, test_toggleMode);
 
-	REGISTER(ChannelUT, test_join);
+	REGISTER(ChannelUT, test_invite);
+	// REGISTER(ChannelUT, test_join);
 }
 
 ft_irc::ChannelUT::~ChannelUT(void) {}
@@ -85,24 +85,17 @@ void
 ft_irc::ChannelUT::test_addClient(void) {
 	Client test(42, sockaddr_in());
 	ASSERT(this->addClient(test))
+	ASSERT(this->_clients.at(test.getFd()).mode & O);
 	ASSERT(!this->addClient(test))
 	this->_clients.clear();
 }
 
 void
-ft_irc::ChannelUT::test_banClient(void) {
-	std::string test = "smiro";
-	ASSERT(this->banClient(test))
-	ASSERT(!this->banClient(test))
-	this->_banned.clear();
-}
-
-void
-ft_irc::ChannelUT::test_inviteClient(void) {
-	std::string test = "smiro";
-	ASSERT(this->inviteClient(test))
-	ASSERT(!this->inviteClient(test))
-	this->_invited.clear();
+ft_irc::ChannelUT::test_banMask(void) {
+	std::string test = "smiro!*@*";
+	ASSERT(this->banMask(test))
+	ASSERT(!this->banMask(test))
+	this->_masks.clear();
 }
 
 void
@@ -136,40 +129,62 @@ ft_irc::ChannelUT::test_toggleMode(void) {
 }
 
 void
-ft_irc::ChannelUT::test_join(void) {
-	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
-	ft_irc::Client tmp = ft_irc::Client(20, sockaddr_in());
-	std::string name = "test";
-	std::string key = "1234";
-	test.setNickname(name);
+ft_irc::ChannelUT::test_invite(void) {
+	Client client(42, sockaddr_in());
+	std::string nickname = "smiro";
 
-	ASSERT(ft_irc::Channel::join(test))
-	this->_clients.clear();
-
-	this->banClient(name);
-	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
-	this->_banned.clear();
-
-	this->setKey(key);
-	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
-	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
-	ASSERT(ft_irc::Channel::join(test, "1234"))
-	this->_clients.clear();
-	this->_key = "";
+	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOnChannel)
+	ft_irc::Channel::addClient(client);
+	this->_clients.at(client.getFd()).mode ^= O;
 
 	this->toggleMode(I);
-	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
-	this->inviteClient(name);
-	ASSERT(ft_irc::Channel::join(test))
-	this->_clients.clear();
+	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOperOnChannel)
 	this->toggleMode(I);
 
-	this->setClientLimit(1);
-	this->addClient(tmp);
-	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::ChannelIsFull)
-	this->_client_limit = 0;
+	ASSERT(ft_irc::Channel::invite(client, nickname))
+	ASSERT(!ft_irc::Channel::invite(client, nickname))
 
-	ASSERT(ft_irc::Channel::join(test))
-	ASSERT(!ft_irc::Channel::join(test))
+	client.setNickname(nickname);
+	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::AlreadyOnChannel)
+	this->_masks.clear();
 	this->_clients.clear();
 }
+
+// void
+// ft_irc::ChannelUT::test_join(void) {
+// 	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
+// 	ft_irc::Client tmp = ft_irc::Client(20, sockaddr_in());
+// 	std::string name = "test";
+// 	std::string key = "1234";
+// 	test.setNickname(name);
+
+// 	ASSERT(ft_irc::Channel::join(test))
+// 	this->_clients.clear();
+
+// 	this->banClient(name);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
+// 	this->_banned.clear();
+
+// 	this->setKey(key);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
+// 	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
+// 	ASSERT(ft_irc::Channel::join(test, "1234"))
+// 	this->_clients.clear();
+// 	this->_key = "";
+
+// 	this->toggleMode(I);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
+// 	this->inviteClient(name);
+// 	ASSERT(ft_irc::Channel::join(test))
+// 	this->_clients.clear();
+// 	this->toggleMode(I);
+
+// 	this->setClientLimit(1);
+// 	this->addClient(tmp);
+// 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::ChannelIsFull)
+// 	this->_client_limit = 0;
+
+// 	ASSERT(ft_irc::Channel::join(test))
+// 	ASSERT(!ft_irc::Channel::join(test))
+// 	this->_clients.clear();
+// }

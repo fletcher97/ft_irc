@@ -95,7 +95,7 @@ ft_irc::Channel::setClientLimit(size_t limit) {
 
 void
 ft_irc::Channel::toggleMode(const  char& mode) {
-	if (mode <= (I|M|S|_T|N)) {
+	if (mode <= (I|M|S|_T|N) && mode > 0) {
 		this->_mode ^= mode;
 		return ;
 	}
@@ -122,7 +122,7 @@ ft_irc::Channel::addClient(const ft_irc::Client& client) {
 	this->_clients.insert(
 		std::make_pair(client.getFd(), ft_irc::Channel::ClientInfo(client)));
 	if (this->_clients.size() == 1)
-		this->_clients.begin()->second.mode &= (Q|O);
+		this->_clients.begin()->second.mode = (Q|O);
 	return true;
 }
 
@@ -141,7 +141,7 @@ bool
 ft_irc::Channel::invite(const Client& source, const std::string& nick) {
 	if (!this->_clients.count(source.getFd()))
 		throw ft_irc::Channel::NotOnChannel();
-	if (this->_mode & I && this->_clients.at(source.getFd()).mode ^ O)
+	if (this->_mode & I && !(this->_clients.at(source.getFd()).mode & O))
 		throw ft_irc::Channel::NotOperOnChannel();
 	if (this->isInChannel(nick))
 		throw ft_irc::Channel::AlreadyOnChannel();
@@ -161,11 +161,11 @@ ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 		return false;
 	// if (std::count(this->_banned.begin(), this->_banned.end(), client.getNickname()))
 	// 	throw ft_irc::Channel::BannedClient();
-	// if (this->_mode & I &&
-	// 	!std::count(this->_invited.begin(), this->_invited.end(), client.getNickname()))
-	// 	throw ft_irc::Channel::InviteOnlyChannel();
-	// if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
-	// 	throw ft_irc::Channel::ChannelIsFull();
+	if (this->_mode & I &&
+		!this->_masks.count(client.getNickname()))
+		throw ft_irc::Channel::InviteOnlyChannel();
+	if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
+		throw ft_irc::Channel::ChannelIsFull();
 	if (!this->_key.empty() && this->_key != key)
 		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
 	this->addClient(client);
