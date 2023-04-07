@@ -52,7 +52,7 @@ ft_irc::ParserUT::test_tag_nocmd(void) {
 void
 ft_irc::ParserUT::test_tag_presence(void) {
 	// Tags not present
-	ft_irc::Parser::cmd_t cmd;
+	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
 	std::string msg = "";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags.size(), 0)
@@ -79,7 +79,7 @@ ft_irc::ParserUT::test_tag_presence(void) {
 void
 ft_irc::ParserUT::test_tag_single_simple(void) {
 	// Simple tag
-	ft_irc::Parser::cmd_t cmd;
+	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
 	std::string msg = "@abc";
 	std::map<std::string, std::string> expected;
 	expected.insert(std::pair<std::string, std::string>("abc", ""));
