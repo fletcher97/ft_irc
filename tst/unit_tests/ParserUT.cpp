@@ -7,6 +7,7 @@ ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
 	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 	REGISTER(ft_irc::ParserUT, test_tag_presence)
 	REGISTER(ft_irc::ParserUT, test_tag_single_simple)
+	REGISTER(ft_irc::ParserUT, test_tag_multi_simple)
 }
 
 ft_irc::ParserUT::~ParserUT(void) {}
@@ -119,7 +120,36 @@ ft_irc::ParserUT::test_tag_single_simple(void) {
 }
 
 void
-ft_irc::ParserUT::test_tag_multi_simple(void) {}
+ft_irc::ParserUT::test_tag_multi_simple(void) {
+	// Simple multi tag
+	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
+	std::string msg = "@abc;def;ghi";
+	std::map<std::string, std::string> expected;
+	expected.insert(std::pair<std::string, std::string>("abc", ""));
+	expected.insert(std::pair<std::string, std::string>("def", ""));
+	expected.insert(std::pair<std::string, std::string>("ghi", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple multi tag with source and command
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc;def :sdwa CAP * LIST";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("abc", ""));
+	expected.insert(std::pair<std::string, std::string>("def", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple multi tag with source and command
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@+abc;+localhost/def;ab42 :sdwa CAP * LIST";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("+abc", ""));
+	expected.insert(std::pair<std::string, std::string>("+localhost/def", ""));
+	expected.insert(std::pair<std::string, std::string>("ab42", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+}
 
 void
 ft_irc::ParserUT::test_tag_single_kv(void) {}
