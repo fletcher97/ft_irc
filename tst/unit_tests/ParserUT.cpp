@@ -88,9 +88,25 @@ ft_irc::ParserUT::test_tag_single_simple(void) {
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@def";
+	msg = "@de-f";
 	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("def", ""));
+	expected.insert(std::pair<std::string, std::string>("de-f", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@+locahost/def";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("+locahost/def", ""));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+
+	// Simple tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@ab42";
+	expected = std::map<std::string, std::string>();
+	expected.insert(std::pair<std::string, std::string>("ab42", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
