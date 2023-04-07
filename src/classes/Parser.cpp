@@ -47,7 +47,7 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg) {
 ft_irc::Parser::cmd_t*
 ft_irc::Parser::parse_msg(std::string &msg)
 {
-	ft_irc::Parser::cmd_t* ret;
+	ft_irc::Parser::cmd_t* ret = NULL;
 
 	try {
 		check_delimiter(msg);
