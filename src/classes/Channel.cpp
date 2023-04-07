@@ -159,8 +159,8 @@ bool
 ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 	if (this->_clients.count(client.getFd()))
 		return false;
-	// if (std::count(this->_banned.begin(), this->_banned.end(), client.getNickname()))
-	// 	throw ft_irc::Channel::BannedClient();
+	if (this->_masks.count(client.getMask()))
+		throw ft_irc::Channel::BannedClient();
 	if (this->_mode & I &&
 		!this->_masks.count(client.getNickname()))
 		throw ft_irc::Channel::InviteOnlyChannel();
