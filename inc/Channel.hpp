@@ -22,13 +22,22 @@ class Client;
 class Channel
 {
 protected:
+	struct ClientInfo {
+		ClientInfo(void);
+		ClientInfo(ft_irc::Client& client);
+		ClientInfo&	operator=(const ClientInfo& src);
+
+		ft_irc::Client&	client;
+		char	mode;
+	};
+
+protected:
 	std::string __name;
 	std::string _topic;
 	std::string	_key;
-	std::map<int, ft_irc::Client*> _clients;
-	std::vector<std::string>	_banned;
-	std::vector<std::string>	_invited;
-	char _mode;
+	std::map<int, ClientInfo>	_clients;
+	std::map<std::string, char>	_masks;
+	char	_mode;
 	size_t	_client_limit;
 
 public:
@@ -49,7 +58,7 @@ public:
 	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);
-	bool	addClient(Client client);
+	bool	addClient(Client& client);
 	bool	banClient(const std::string& client);
 	bool	inviteClient(const std::string& client);
 

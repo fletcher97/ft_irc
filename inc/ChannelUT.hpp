@@ -22,8 +22,8 @@ public:
 	void test_setKey(void);
 	void test_addClient(void);
 	void test_banClient(void);
-	void test_toggleMode(void);
 	void test_inviteClient(void);
+	void test_toggleMode(void);
 
 	void test_join(void);
 };

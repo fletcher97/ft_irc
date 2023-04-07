@@ -111,53 +111,64 @@ ft_irc::ChannelUT::test_toggleMode(void) {
 	ASSERT(this->_mode & I)
 	this->toggleMode(I);
 	ASSERT(this->_mode ^ I)
+
 	this->toggleMode(M);
 	ASSERT(this->_mode & M)
 	this->toggleMode(M);
 	ASSERT(this->_mode ^ M)
+
 	this->toggleMode(S);
 	ASSERT(this->_mode & S)
 	this->toggleMode(S);
 	ASSERT(this->_mode ^ S)
+
 	this->toggleMode(_T);
 	ASSERT(this->_mode & _T)
 	this->toggleMode(_T);
 	ASSERT(this->_mode ^ _T)
+
 	this->toggleMode(N);
 	ASSERT(this->_mode & N)
 	this->toggleMode(N);
 	ASSERT(this->_mode ^ N)
+
 	ASSERT_THROW(this->toggleMode(-1), std::invalid_argument)
 }
 
 void
 ft_irc::ChannelUT::test_join(void) {
-	Client test(42, sockaddr_in());
+	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
+	ft_irc::Client tmp = ft_irc::Client(20, sockaddr_in());
 	std::string name = "test";
+	std::string key = "1234";
 	test.setNickname(name);
+
 	ASSERT(ft_irc::Channel::join(test))
 	this->_clients.clear();
+
 	this->banClient(name);
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::BannedClient)
 	this->_banned.clear();
-	std::string key = "1234";
+
 	this->setKey(key);
 	ASSERT_THROW(ft_irc::Channel::join(test), std::invalid_argument)
 	ASSERT_THROW(ft_irc::Channel::join(test, "0000"), std::invalid_argument)
 	ASSERT(ft_irc::Channel::join(test, "1234"))
 	this->_clients.clear();
 	this->_key = "";
+
 	this->toggleMode(I);
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
 	this->inviteClient(name);
 	ASSERT(ft_irc::Channel::join(test))
 	this->_clients.clear();
 	this->toggleMode(I);
+
 	this->setClientLimit(1);
-	Client test2(20, sockaddr_in());
-	this->addClient(test2);
+	this->addClient(tmp);
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::ChannelIsFull)
 	this->_client_limit = 0;
+
 	ASSERT(ft_irc::Channel::join(test))
 	ASSERT(!ft_irc::Channel::join(test))
 	this->_clients.clear();
