@@ -108,13 +108,21 @@ ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
 }
 
 bool
+ft_irc::Channel::isInChannel(const std::string& nickname) {
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++)
+		if (it->second.client.getNickname() == nickname)
+			return true;
+	return false;
+}
+
+bool
 ft_irc::Channel::addClient(const ft_irc::Client& client) {
 	if (this->_clients.count(client.getFd()))
 		return false;
 	this->_clients.insert(
 		std::make_pair(client.getFd(), ft_irc::Channel::ClientInfo(client)));
 	if (this->_clients.size() == 1)
-		this->_clients.begin()->second.mode &= Q;
+		this->_clients.begin()->second.mode &= (Q|O);
 	return true;
 }
 
@@ -129,13 +137,23 @@ ft_irc::Channel::banMask(const std::string& mask) {
 	return true;
 }
 
-// bool
-// ft_irc::Channel::inviteClient(const std::string& client) {
-// 	if (std::count(this->_invited.begin(), this->_invited.end(), client))
-// 		return false;
-// 	this->_invited.push_back(client);
-// 	return true;
-// }
+bool
+ft_irc::Channel::invite(const Client& source, const std::string& nick) {
+	if (!this->_clients.count(source.getFd()))
+		throw ft_irc::Channel::NotOnChannel();
+	if (this->_mode & I && this->_clients.at(source.getFd()).mode ^ O)
+		throw ft_irc::Channel::NotOperOnChannel();
+	if (this->isInChannel(nick))
+		throw ft_irc::Channel::AlreadyOnChannel();
+	if (this->_masks.count(nick)) {
+		if (this->_masks[nick] & IV)
+			return false;
+		this->_masks[nick] ^= IV;
+		return true;
+	}
+	this->_masks.insert(std::make_pair(nick, IV));
+	return true;
+}
 
 bool
 ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
@@ -171,6 +189,12 @@ ft_irc::Channel::BannedClient::BannedClient() {}
 ft_irc::Channel::InviteOnlyChannel::InviteOnlyChannel() {}
 
 ft_irc::Channel::ChannelIsFull::ChannelIsFull() {}
+
+ft_irc::Channel::NotOnChannel::NotOnChannel() {}
+
+ft_irc::Channel::NotOperOnChannel::NotOperOnChannel() {}
+
+ft_irc::Channel::AlreadyOnChannel::AlreadyOnChannel() {}
 
 ft_irc::Channel::ClientInfo::ClientInfo(const ft_irc::Client& client) :
 	client(client),

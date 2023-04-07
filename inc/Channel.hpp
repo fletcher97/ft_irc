@@ -22,7 +22,8 @@
 
 #define B 0x01 // Ban nick mask
 #define E 0x02 // Ban exception nick mask
-#define IE 0x04 // Invite exception nick mask
+#define IV 0x04 // Invite nick mask
+#define IE 0x08 // Invite exception nick mask
 
 namespace ft_irc
 {
@@ -43,6 +44,10 @@ protected:
 		const ft_irc::Client&	client;
 		client_mode	mode;
 	};
+
+public:
+	typedef	std::map<std::string, mask_mode>::iterator	mask_iterator;
+	typedef	std::map<int, ClientInfo>::iterator	client_iterator;
 
 protected:
 	std::string __name;
@@ -71,9 +76,10 @@ public:
 	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);
+	bool	isInChannel(const std::string& nickname);
 	bool	addClient(const Client& client);
 	bool	banMask(const std::string& client);
-	bool	inviteClient(const std::string& client);
+	bool	invite(const Client& source, const std::string& client);
 
 	bool	join(const ft_irc::Client& client, const std::string& key = "");
 
@@ -119,6 +125,25 @@ public:
 	public:
 			ChannelIsFull();
 	};
+
+	class NotOnChannel : public std::exception
+	{
+	public:
+			NotOnChannel();
+	};
+
+	class NotOperOnChannel : public std::exception
+	{
+	public:
+			NotOperOnChannel();
+	};
+
+	class AlreadyOnChannel : public std::exception
+	{
+	public:
+			AlreadyOnChannel();
+	};
+
 };
 
 } // namespace ft_irc
