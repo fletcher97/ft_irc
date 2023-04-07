@@ -110,3 +110,8 @@ Client::setStatus(Client::Status status) {
 
 Client::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
 {}
+
+std::string
+ft_irc::Client::getMask(void) const {
+	return this->_nickname + "!" + this->_username + "@" + this->_address;
+}

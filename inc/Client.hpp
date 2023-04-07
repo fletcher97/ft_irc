@@ -40,6 +40,7 @@ public:
 	const std::string&	getUsername(void) const;
 	const std::string&	getRealname(void) const;
 	Client::Status	getStatus(void) const;
+	std::string	getMask(void) const;
 
 	void	setNickname(const std::string& nickname);
 	void	setUsername(const std::string& username);
