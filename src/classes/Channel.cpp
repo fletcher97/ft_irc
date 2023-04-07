@@ -108,20 +108,26 @@ ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
 }
 
 bool
-ft_irc::Channel::addClient(ft_irc::Client& client) {
+ft_irc::Channel::addClient(const ft_irc::Client& client) {
 	if (this->_clients.count(client.getFd()))
 		return false;
-	this->_clients[client.getFd()] = ft_irc::Channel::ClientInfo(client);
+	this->_clients.insert(
+		std::make_pair(client.getFd(), ft_irc::Channel::ClientInfo(client)));
+	if (this->_clients.size() == 1)
+		this->_clients.begin()->second.mode &= Q;
 	return true;
 }
 
-// bool
-// ft_irc::Channel::banClient(const std::string& client) {
-// 	if (std::count(this->_banned.begin(), this->_banned.end(), client))
-// 		return false;
-// 	this->_banned.push_back(client);
-// 	return true;
-// }
+bool
+ft_irc::Channel::banMask(const std::string& mask) {
+	if (this->_masks.count(mask)) {
+		if (this->_masks[mask] & B)
+			return false;
+		this->_masks[mask] ^= B;
+	}
+	this->_masks.insert(std::make_pair(mask, B));
+	return true;
+}
 
 // bool
 // ft_irc::Channel::inviteClient(const std::string& client) {
@@ -131,22 +137,22 @@ ft_irc::Channel::addClient(ft_irc::Client& client) {
 // 	return true;
 // }
 
-// bool
-// ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
-// 	if (this->_clients.count(client.getFd()))
-// 		return false;
-// 	if (std::count(this->_banned.begin(), this->_banned.end(), client.getNickname()))
-// 		throw ft_irc::Channel::BannedClient();
-// 	if (this->_mode & I &&
-// 		!std::count(this->_invited.begin(), this->_invited.end(), client.getNickname()))
-// 		throw ft_irc::Channel::InviteOnlyChannel();
-// 	if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
-// 		throw ft_irc::Channel::ChannelIsFull();
-// 	if (!this->_key.empty() && this->_key != key)
-// 		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
-// 	this->addClient(client);
-// 	return true;
-// }
+bool
+ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
+	if (this->_clients.count(client.getFd()))
+		return false;
+	// if (std::count(this->_banned.begin(), this->_banned.end(), client.getNickname()))
+	// 	throw ft_irc::Channel::BannedClient();
+	// if (this->_mode & I &&
+	// 	!std::count(this->_invited.begin(), this->_invited.end(), client.getNickname()))
+	// 	throw ft_irc::Channel::InviteOnlyChannel();
+	// if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
+	// 	throw ft_irc::Channel::ChannelIsFull();
+	if (!this->_key.empty() && this->_key != key)
+		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
+	this->addClient(client);
+	return true;
+}
 
 ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
 {}
@@ -166,14 +172,7 @@ ft_irc::Channel::InviteOnlyChannel::InviteOnlyChannel() {}
 
 ft_irc::Channel::ChannelIsFull::ChannelIsFull() {}
 
-ft_irc::Channel::ClientInfo::ClientInfo(ft_irc::Client& client) :
+ft_irc::Channel::ClientInfo::ClientInfo(const ft_irc::Client& client) :
 	client(client),
 	mode()
 {}
-
-ft_irc::Channel::ClientInfo&
-ft_irc::Channel::ClientInfo::operator=(const ft_irc::Channel::ClientInfo& src) {
-	this->client = src.client;
-	this->mode = src.mode;
-	return *this;
-}

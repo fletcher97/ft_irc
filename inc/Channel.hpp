@@ -14,6 +14,15 @@
 #define _T 0x08 // Protected topic
 #define N 0x10 // Not external messages
 
+#define Q 0x01 // Founder
+#define A 0x02 // Protected
+#define	O 0x04 // Operator
+#define H 0x08 // Halfop
+#define V 0x10 // Voice
+
+#define B 0x01 // Ban nick mask
+#define E 0x02 // Ban exception nick mask
+#define IE 0x04 // Invite exception nick mask
 
 namespace ft_irc
 {
@@ -21,14 +30,18 @@ namespace ft_irc
 class Client;
 class Channel
 {
-protected:
-	struct ClientInfo {
-		ClientInfo(void);
-		ClientInfo(ft_irc::Client& client);
-		ClientInfo&	operator=(const ClientInfo& src);
+public:
+	typedef char channel_mode;
+	typedef char client_mode;
+	typedef char mask_mode;
 
-		ft_irc::Client&	client;
-		char	mode;
+protected:
+	class ClientInfo {
+	public:
+		ClientInfo(const ft_irc::Client& client);
+
+		const ft_irc::Client&	client;
+		client_mode	mode;
 	};
 
 protected:
@@ -36,8 +49,8 @@ protected:
 	std::string _topic;
 	std::string	_key;
 	std::map<int, ClientInfo>	_clients;
-	std::map<std::string, char>	_masks;
-	char	_mode;
+	std::map<std::string, mask_mode>	_masks;
+	channel_mode	_mode;
 	size_t	_client_limit;
 
 public:
@@ -58,8 +71,8 @@ public:
 	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);
-	bool	addClient(Client& client);
-	bool	banClient(const std::string& client);
+	bool	addClient(const Client& client);
+	bool	banMask(const std::string& client);
 	bool	inviteClient(const std::string& client);
 
 	bool	join(const ft_irc::Client& client, const std::string& key = "");
