@@ -50,7 +50,7 @@ public:
 	typedef	std::map<int, ClientInfo>::iterator	client_iterator;
 
 protected:
-	std::string __name;
+	std::string _name;
 	std::string _topic;
 	std::string	_key;
 	std::map<int, ClientInfo>	_clients;
@@ -72,7 +72,7 @@ public:
 	void	setName(std::string& name);
 	void	setTopic(std::string& topic);
 	void	setKey(std::string& key);
-	void	setClientLimit(size_t limit);
+	void	setClientLimit(long limit);
 	void	toggleMode(const char& mode);
 
 	bool	isInChannel(const Client& client);

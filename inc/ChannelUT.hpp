@@ -23,9 +23,11 @@ public:
 	void test_addClient(void);
 	void test_banMask(void);
 	void test_toggleMode(void);
+	void test_isInChannel(void);
 
 	void test_invite(void);
 	void test_join(void);
+	void test_setClientLimit(void);
 };
 
 } // namespace ft_irc

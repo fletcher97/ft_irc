@@ -5,7 +5,7 @@
 #include "Channel.hpp"
 
 ft_irc::Channel::Channel(void) :
-	__name(),
+	_name(),
 	_topic(),
 	_key(),
 	_clients(),
@@ -16,7 +16,7 @@ ft_irc::Channel::Channel(void) :
 }
 
 ft_irc::Channel::Channel(const std::string& name) :
-	__name(name),
+	_name(name),
 	_topic(),
 	_key(),
 	_mode(),
@@ -27,7 +27,7 @@ ft_irc::Channel::Channel(const std::string& name) :
 }
 
 ft_irc::Channel::Channel(const ft_irc::Channel& c) :
-	__name(c.__name),
+	_name(c._name),
 	_topic(c._topic),
 	_key(c._key),
 	_clients(c._clients),
@@ -37,7 +37,7 @@ ft_irc::Channel::Channel(const ft_irc::Channel& c) :
 
 ft_irc::Channel&
 ft_irc::Channel::operator=(const ft_irc::Channel& c) {
-	this->__name = c.__name;
+	this->_name = c._name;
 	this->_topic = c._topic;
 	this->_key = c._key;
 	this->_clients = c._clients;
@@ -47,12 +47,12 @@ ft_irc::Channel::operator=(const ft_irc::Channel& c) {
 }
 
 ft_irc::Channel::~Channel(void) {
-	LOG_INFO("Removed channel: " << this->__name);
+	LOG_INFO("Removed channel: " << this->_name);
 }
 
 const std::string&
 ft_irc::Channel::getName(void) const {
-	return this->__name;
+	return this->_name;
 }
 
 const std::string&
@@ -69,7 +69,7 @@ void
 ft_irc::Channel::setName(std::string& name) {
 	if (name.length() == 0)
 		throw ft_irc::Channel::EmptyArgument("Name must be a non empty string");
-	this->__name = name;
+	this->_name = name;
 }
 
 void
@@ -87,8 +87,8 @@ ft_irc::Channel::setKey(std::string& key) {
 }
 
 void
-ft_irc::Channel::setClientLimit(size_t limit) {
-	if (limit == 0)
+ft_irc::Channel::setClientLimit(long limit) {
+	if (limit <= 0)
 		throw ft_irc::Channel::InvalidLimit("Invalid limit");
 	this->_client_limit = limit;
 }
@@ -119,8 +119,8 @@ bool
 ft_irc::Channel::addClient(const ft_irc::Client& client) {
 	if (this->_clients.count(client.getFd()))
 		return false;
-	this->_clients.insert(
-		std::make_pair(client.getFd(), ft_irc::Channel::ClientInfo(client)));
+	this->_clients.insert(std::make_pair(client.getFd(),
+		ft_irc::Channel::ClientInfo(client)));
 	if (this->_clients.size() == 1)
 		this->_clients.begin()->second.mode = (Q|O);
 	return true;
