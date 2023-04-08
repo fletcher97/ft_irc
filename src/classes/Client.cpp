@@ -17,7 +17,8 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 {
 	LOG_DEBUG("Creating new client")
 	this->_address = inet_ntoa(socket.sin_addr);
-	LOG_INFO("New client created: " << this->_hostname)
+	this->_hostname = inet_ntoa(socket.sin_addr);
+	LOG_INFO("New client created: " << this->_address)
 }
 
 ft_irc::Client::Client(const ft_irc::Client &c) :
@@ -83,21 +84,21 @@ ft_irc::Client::getStatus(void) const {
 }
 
 void
-Client::setNickname(const std::string& nickname) {
+ft_irc::Client::setNickname(const std::string& nickname) {
 	if (nickname.length() == 0)
 		throw EmptyArgument("Nickname must be a non empty string");
 	this->_nickname = nickname;
 }
 
 void
-Client::setUsername(const std::string& username) {
+ft_irc::Client::setUsername(const std::string& username) {
 	if (username.length() == 0)
 		throw EmptyArgument("Username must be a non empty string");
 	this->_username = username;
 }
 
 void
-Client::setRealname(const std::string& realname) {
+ft_irc::Client::setRealname(const std::string& realname) {
 	if (realname.length() == 0)
 		throw EmptyArgument("Realname must be a non empty string");
 	this->_realname = realname;
@@ -108,10 +109,10 @@ ft_irc::Client::setStatus(ft_irc::Client::Status status) {
 	this->_status = status;
 }
 
-Client::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
-{}
-
 std::string
 ft_irc::Client::getMask(void) const {
-	return this->_nickname + "!" + this->_username + "@" + this->_address;
+	return this->_nickname + "!" + this->_username + "@" + this->_hostname;
 }
+
+ft_irc::Client::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+{}

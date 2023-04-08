@@ -1,7 +1,6 @@
 #include "ClientUT.hpp"
 
-<<<<<<< HEAD
-ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
+ft_irc::ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_setNickname)
 	REGISTER(ClientUT, test_setUsername)
 	REGISTER(ClientUT, test_setRealname)
@@ -14,98 +13,139 @@ ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_getUsername)
 	REGISTER(ClientUT, test_getRealname)
 	REGISTER(ClientUT, test_getStatus)
+	REGISTER(ClientUT, test_getMask)
 }
 
 ft_irc::ClientUT::~ClientUT(void) {}
 
-void ClientUT::test_setNickname(void) {
-	ASSERT_THROW(this->setNickname(""), std::invalid_argument)
-	this->setNickname("smiro");
-	ASSERT_EQ(this->_nickname, "smiro")
-	this->setNickname("marvin");
-	ASSERT_EQ(this->_nickname, "marvin");
+void
+ft_irc::ClientUT::test_setNickname(void) {
+	ASSERT_THROW(ft_irc::Client::setNickname(""), std::invalid_argument)
+
+	ft_irc::Client::setNickname("smiro");
+	ASSERT_EQ(ft_irc::Client::_nickname, "smiro")
+
+	ft_irc::Client::setNickname("marvin");
+	ASSERT_EQ(ft_irc::Client::_nickname, "marvin");
 }
 
-void ClientUT::test_setUsername(void) {
-	ASSERT_THROW(this->setUsername(""), std::invalid_argument)
-	this->setUsername("smiro");
-	ASSERT_EQ(this->_username, "smiro")
-	this->setUsername("marvin");
-	ASSERT_EQ(this->_username, "marvin");
+void
+ft_irc::ClientUT::test_setUsername(void) {
+	ASSERT_THROW(ft_irc::Client::setUsername(""), std::invalid_argument)
+
+	ft_irc::Client::setUsername("smiro");
+	ASSERT_EQ(ft_irc::Client::_username, "smiro")
+
+	ft_irc::Client::setUsername("marvin");
+	ASSERT_EQ(ft_irc::Client::_username, "marvin");
 }
 
-void ClientUT::test_setRealname(void) {
-	ASSERT_THROW(this->setRealname(""), std::invalid_argument)
-	this->setRealname("smiro");
-	ASSERT_EQ(this->_realname, "smiro")
-	this->setRealname("marvin");
-	ASSERT_EQ(this->_realname, "marvin");
+void
+ft_irc::ClientUT::test_setRealname(void) {
+	ASSERT_THROW(ft_irc::Client::setRealname(""), std::invalid_argument)
+
+	ft_irc::Client::setRealname("smiro");
+	ASSERT_EQ(ft_irc::Client::_realname, "smiro")
+
+	ft_irc::Client::setRealname("marvin");
+	ASSERT_EQ(ft_irc::Client::_realname, "marvin");
 }
 
-void ClientUT::test_setStatus(void) {
-	this->setStatus(Client::PASSWORD);
-	ASSERT_EQ(this->_status, Client::PASSWORD)
-	this->setStatus(Client::REGISTER);
-	ASSERT_EQ(this->_status, Client::REGISTER)
-	this->setStatus(Client::ONLINE);
-	ASSERT_EQ(this->_status, Client::ONLINE)
-	this->setStatus(Client::AWAY);
-	ASSERT_EQ(this->_status, Client::AWAY)
-	this->setStatus(Client::DELETE);
-	ASSERT_EQ(this->_status, Client::DELETE)
+void
+ft_irc::ClientUT::test_setStatus(void) {
+	ft_irc::Client::setStatus(Client::PASSWORD);
+	ASSERT_EQ(ft_irc::Client::_status, Client::PASSWORD)
+
+	ft_irc::Client::setStatus(Client::REGISTER);
+	ASSERT_EQ(ft_irc::Client::_status, Client::REGISTER)
+
+	ft_irc::Client::setStatus(Client::ONLINE);
+	ASSERT_EQ(ft_irc::Client::_status, Client::ONLINE)
+
+	ft_irc::Client::setStatus(Client::AWAY);
+	ASSERT_EQ(ft_irc::Client::_status, Client::AWAY)
+
+	ft_irc::Client::setStatus(Client::DELETE);
+	ASSERT_EQ(ft_irc::Client::_status, Client::DELETE)
 }
 
-void ClientUT::test_getFd(void) {
-	this->_fd = 42;
-	ASSERT_EQ(this->getFd(), 42)
-	this->_fd = 84;
-	ASSERT_EQ(this->getFd(), 84)
+void
+ft_irc::ClientUT::test_getFd(void) {
+	ft_irc::Client::_fd = 42;
+	ASSERT_EQ(ft_irc::Client::getFd(), 42)
+
+	ft_irc::Client::_fd = 84;
+	ASSERT_EQ(ft_irc::Client::getFd(), 84)
 }
 
-void ClientUT::test_getAddress(void) {
-	this->_address = "127.0.0.1";
-	ASSERT_EQ(this->getAddress(), "127.0.0.1")
-	this->_address = "10.12.6.4";
-	ASSERT_EQ(this->getAddress(), "10.12.6.4")
+void
+ft_irc::ClientUT::test_getAddress(void) {
+	ft_irc::Client::_address = "127.0.0.1";
+	ASSERT_EQ(ft_irc::Client::getAddress(), "127.0.0.1")
+
+	ft_irc::Client::_address = "10.12.6.4";
+	ASSERT_EQ(ft_irc::Client::getAddress(), "10.12.6.4")
 }
 
-void ClientUT::test_getHostname(void) {
-	this->_hostname = "localhost";
-	ASSERT_EQ(this->getHostname(), "localhost")
-	this->_hostname = "irc.com";
-	ASSERT_EQ(this->getHostname(), "irc.com")
+void
+ft_irc::ClientUT::test_getHostname(void) {
+	ft_irc::Client::_hostname = "localhost";
+	ASSERT_EQ(ft_irc::Client::getHostname(), "localhost")
+
+	ft_irc::Client::_hostname = "irc.com";
+	ASSERT_EQ(ft_irc::Client::getHostname(), "irc.com")
 }
 
-void ClientUT::test_getNickname(void) {
-	this->_nickname = "smiro";
-	ASSERT_EQ(this->getNickname(), "smiro")
-	this->_nickname = "marvin";
-	ASSERT_EQ(this->getNickname(), "marvin")
+void
+ft_irc::ClientUT::test_getNickname(void) {
+	ft_irc::Client::_nickname = "smiro";
+	ASSERT_EQ(ft_irc::Client::getNickname(), "smiro")
+
+	ft_irc::Client::_nickname = "marvin";
+	ASSERT_EQ(ft_irc::Client::getNickname(), "marvin")
 }
 
-void ClientUT::test_getUsername(void) {
-	this->_username = "smiro";
-	ASSERT_EQ(this->getUsername(), "smiro")
-	this->_username = "marvin";
-	ASSERT_EQ(this->getUsername(), "marvin")
+void
+ft_irc::ClientUT::test_getUsername(void) {
+	ft_irc::Client::_username = "smiro";
+	ASSERT_EQ(ft_irc::Client::getUsername(), "smiro")
+
+	ft_irc::Client::_username = "marvin";
+	ASSERT_EQ(ft_irc::Client::getUsername(), "marvin")
 }
 
-void ClientUT::test_getRealname(void) {
-	this->_realname = "smiro";
-	ASSERT_EQ(this->getRealname(), "smiro")
-	this->_realname = "marvin";
-	ASSERT_EQ(this->getRealname(), "marvin")
+void
+ft_irc::ClientUT::test_getRealname(void) {
+	ft_irc::Client::_realname = "smiro";
+	ASSERT_EQ(ft_irc::Client::getRealname(), "smiro")
+
+	ft_irc::Client::_realname = "marvin";
+	ASSERT_EQ(ft_irc::Client::getRealname(), "marvin")
 }
 
-void ClientUT::test_getStatus(void) {
-	this->_status = Client::PASSWORD;
-	ASSERT_EQ(this->getStatus(), Client::PASSWORD)
-	this->_status = Client::REGISTER;
-	ASSERT_EQ(this->getStatus(), Client::REGISTER)
-	this->_status = Client::ONLINE;
-	ASSERT_EQ(this->getStatus(), Client::ONLINE)
-	this->_status = Client::AWAY;
-	ASSERT_EQ(this->getStatus(), Client::AWAY)
-	this->_status = Client::DELETE;
-	ASSERT_EQ(this->getStatus(), Client::DELETE)
+void
+ft_irc::ClientUT::test_getStatus(void) {
+	ft_irc::Client::_status = ft_irc::Client::PASSWORD;
+	ASSERT_EQ(ft_irc::Client::getStatus(), ft_irc::Client::PASSWORD)
+
+	ft_irc::Client::_status = ft_irc::Client::REGISTER;
+	ASSERT_EQ(ft_irc::Client::getStatus(), ft_irc::Client::REGISTER)
+
+	ft_irc::Client::_status = ft_irc::Client::ONLINE;
+	ASSERT_EQ(ft_irc::Client::getStatus(), ft_irc::Client::ONLINE)
+
+	ft_irc::Client::_status = ft_irc::Client::AWAY;
+	ASSERT_EQ(ft_irc::Client::getStatus(), ft_irc::Client::AWAY)
+
+	ft_irc::Client::_status = ft_irc::Client::DELETE;
+	ASSERT_EQ(ft_irc::Client::getStatus(), ft_irc::Client::DELETE)
+}
+
+void
+ft_irc::ClientUT::test_getMask(void) {
+	ft_irc::Client::_nickname = "smiro";
+	ft_irc::Client::_username = "smiro";
+	ft_irc::Client::_hostname = "localhost.com";
+
+	ASSERT_EQ(ft_irc::Client::getMask(), "smiro!smiro@localhost.com")
 }

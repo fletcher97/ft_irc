@@ -26,6 +26,7 @@ public:
 	void test_getUsername(void);
 	void test_getRealname(void);
 	void test_getStatus(void);
+	void test_getMask(void);
 };
 
 } // namespace ft_irc
