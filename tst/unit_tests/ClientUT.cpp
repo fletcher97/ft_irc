@@ -7,7 +7,6 @@ ft_irc::ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_setStatus)
 
 	REGISTER(ClientUT, test_getFd)
-	REGISTER(ClientUT, test_getAddress)
 	REGISTER(ClientUT, test_getHostname)
 	REGISTER(ClientUT, test_getNickname)
 	REGISTER(ClientUT, test_getUsername)
@@ -76,15 +75,6 @@ ft_irc::ClientUT::test_getFd(void) {
 
 	ft_irc::Client::_fd = 84;
 	ASSERT_EQ(ft_irc::Client::getFd(), 84)
-}
-
-void
-ft_irc::ClientUT::test_getAddress(void) {
-	ft_irc::Client::_address = "127.0.0.1";
-	ASSERT_EQ(ft_irc::Client::getAddress(), "127.0.0.1")
-
-	ft_irc::Client::_address = "10.12.6.4";
-	ASSERT_EQ(ft_irc::Client::getAddress(), "10.12.6.4")
 }
 
 void

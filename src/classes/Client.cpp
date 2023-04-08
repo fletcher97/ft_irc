@@ -6,6 +6,11 @@
 
 #include "Client.hpp"
 
+#define I 0x01 // Invisible
+#define W 0x02 // Recives Wallops
+#define O 0x04 // Operator
+#define _O 0x08 // Local operator
+
 ft_irc::Client::Client(void) {}
 
 ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
@@ -16,14 +21,13 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	_status(PASSWORD)
 {
 	LOG_DEBUG("Creating new client")
-	this->_address = inet_ntoa(socket.sin_addr);
 	this->_hostname = inet_ntoa(socket.sin_addr);
+	this->_mode &= W;
 	LOG_INFO("New client created: " << this->_address)
 }
 
 ft_irc::Client::Client(const ft_irc::Client &c) :
 	_fd(c._fd),
-	_address(c._address),
 	_hostname(c._hostname),
 	_nickname(c._nickname),
 	_username(c._username),
@@ -34,7 +38,6 @@ ft_irc::Client::Client(const ft_irc::Client &c) :
 ft_irc::Client&
 ft_irc::Client::operator=(const ft_irc::Client &c) {
 	this->_fd = c._fd;
-	this->_address = c._address;
 	this->_hostname = c._hostname;
 	this->_nickname = c._nickname;
 	this->_username = c._username;
@@ -51,11 +54,6 @@ ft_irc::Client::~Client(void) {
 int
 ft_irc::Client::getFd(void) const {
 	return this->_fd;
-}
-
-const std::string&
-ft_irc::Client::getAddress(void) const {
-	return this->_address;
 }
 
 const std::string&

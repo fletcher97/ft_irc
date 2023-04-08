@@ -19,14 +19,16 @@ public:
 		DELETE
 	};
 
+	typedef char	client_mode;
+
 protected:
 	int	_fd;
-	std::string _address;
 	std::string _hostname;
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
 	Client::Status	_status;
+	client_mode	_mode;
 
 	Client(void);
 

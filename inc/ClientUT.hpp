@@ -20,7 +20,6 @@ public:
 	void test_setStatus(void);
 
 	void test_getFd(void);
-	void test_getAddress(void);
 	void test_getHostname(void);
 	void test_getNickname(void);
 	void test_getUsername(void);
