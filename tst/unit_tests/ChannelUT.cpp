@@ -51,16 +51,37 @@ ft_irc::ChannelUT::test_setName(void) {
 
 void
 ft_irc::ChannelUT::test_setTopic(void) {
-	std::string test = "";
-	ASSERT_THROW(ft_irc::Channel::setTopic(test), std::invalid_argument)
+	ft_irc::Client test(42, sockaddr_in());
+	std::string topic = "";
 
-	std::string test2 = "gemartin";
-	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test2))
-	ASSERT_EQ(ft_irc::Channel::_topic, test2)
 
-	std::string test3 = "marvin";
-	ft_irc::Channel::setTopic(test3);
-	ASSERT_EQ(ft_irc::Channel::_topic, test3)
+	ASSERT_THROW(ft_irc::Channel::setTopic(test, topic), ft_irc::Channel::NotOnChannel);
+
+	ft_irc::Channel::addClient(test);
+	this->_clients.at(test.getFd()).mode = 0;
+
+	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+	ASSERT_THROW(ft_irc::Channel::setTopic(test, topic), ft_irc::Channel::NoPrivsOnChannel);
+
+	topic = "gemartin";
+	ft_irc::Channel::_clients.at(test.getFd()).mode = OPERATOR;
+	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
+	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+
+	ft_irc::Channel::_clients.at(test.getFd()).mode = HALFOP;
+	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
+	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+
+	ft_irc::Channel::_clients.at(test.getFd()).mode = PROTECTED;
+	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
+	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+
+	ft_irc::Channel::_clients.at(test.getFd()).mode = 0;
+	topic = "marvin";
+	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
+	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+	ft_irc::Channel::_clients.clear();
 }
 
 void
@@ -68,13 +89,13 @@ ft_irc::ChannelUT::test_setKey(void) {
 	std::string test = "";
 	ASSERT_THROW(ft_irc::Channel::setKey(test), std::invalid_argument)
 
-	std::string test2 = "gemartin";
-	ft_irc::Channel::setKey(test2);
-	ASSERT_EQ(ft_irc::Channel::_key, test2)
+	test = "gemartin";
+	ft_irc::Channel::setKey(test);
+	ASSERT_EQ(ft_irc::Channel::_key, test)
 
-	std::string test3 = "marvin";
-	ft_irc::Channel::setKey(test3);
-	ASSERT_EQ(ft_irc::Channel::_key, test3)
+	test = "marvin";
+	ft_irc::Channel::setKey(test);
+	ASSERT_EQ(ft_irc::Channel::_key, test)
 }
 
 void
@@ -201,7 +222,7 @@ ft_irc::ChannelUT::test_invite(void) {
 	ft_irc::Channel::_clients.at(client.getFd()).mode ^= OPERATOR;
 
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOperOnChannel)
+	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NoPrivsOnChannel)
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
 
 	ASSERT(ft_irc::Channel::invite(client, nickname))
@@ -238,7 +259,7 @@ ft_irc::ChannelUT::test_join(void) {
 	ft_irc::Channel::addClient(tmp);
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
-	ft_irc::Channel::invite(tmp, name);
+	ft_irc::Channel::invite(tmp, test.getMask());
 	ASSERT(ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
