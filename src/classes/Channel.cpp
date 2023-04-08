@@ -2,23 +2,6 @@
 
 #include "Channel.hpp"
 
-#define I 0x01 // Invite-only
-#define M 0x02 // Moderated
-#define S 0x04 // Secret
-#define T 0x08 // Protected topic
-#define N 0x10 // Not external messages
-
-#define Q 0x01 // Founder
-#define A 0x02 // Protected
-#define	O 0x04 // Operator
-#define H 0x08 // Halfop
-#define V 0x10 // Voice
-
-#define B 0x01 // Ban nick mask
-#define E 0x02 // Ban exception nick mask
-#define IV 0x04 // Invite nick mask
-#define IE 0x08 // Invite exception nick mask
-
 ft_irc::Channel::Channel(void) :
 	_name(),
 	_topic(),
@@ -84,6 +67,11 @@ void
 ft_irc::Channel::setName(std::string& name) {
 	if (name.length() == 0)
 		throw ft_irc::Channel::EmptyArgument("Name must be a non empty string");
+	if ((name.at(0) != '#' && name.at(0) != '&')
+		|| name.find(' ') != std::string::npos
+		|| name.find(0x07) != std::string::npos
+		|| name.find(',') != std::string::npos)
+		throw ft_irc::Channel::InvalidChannelName("Invalid channel  name: " + name);
 	LOG_INFO("Channel's name changed from: " << this->_name << " to: " << name)
 	this->_name = name;
 }
@@ -113,12 +101,11 @@ ft_irc::Channel::setClientLimit(long limit) {
 }
 
 void
-ft_irc::Channel::toggleMode(const  char& mode) {
-	if (mode <= (I|M|S|T|N) && mode > 0) {
-		this->_mode ^= mode;
-		return ;
-	}
-	throw ft_irc::Channel::InvalidMode("Invalid mode");
+ft_irc::Channel::toggleMode(const char mode) {
+	if (mode > (INVITE|MODERATE|SECRET|PROTECTED_TOPIC|NOT_EXTERNAL_MSGS)
+		|| mode <= 0)
+		throw ft_irc::Channel::InvalidMode("Invalid mode");
+	this->_mode ^= mode;
 }
 
 bool
@@ -138,10 +125,10 @@ bool
 ft_irc::Channel::addClient(const ft_irc::Client& client) {
 	if (this->_clients.count(client.getFd()))
 		return false;
-	this->_clients.insert(std::make_pair(client.getFd(),
+	this->_clients.insert(std::make_pair<int, ft_irc::Channel::ClientInfo>(client.getFd(),
 		ft_irc::Channel::ClientInfo(client)));
 	if (this->_clients.size() == 1)
-		this->_clients.begin()->second.mode = (Q|O);
+		this->_clients.begin()->second.mode = (FOUNDER|OPERATOR);
 	LOG_INFO("New client added to channel: " << client.getNickname())
 	return true;
 }
@@ -149,12 +136,12 @@ ft_irc::Channel::addClient(const ft_irc::Client& client) {
 bool
 ft_irc::Channel::banMask(const std::string& mask) {
 	if (this->_masks.count(mask)) {
-		if (this->_masks[mask] & B)
+		if (this->_masks[mask] & BAN)
 			return false;
-		this->_masks[mask] ^= B;
+		this->_masks[mask] ^= BAN;
 	}
 	else
-		this->_masks.insert(std::make_pair(mask, B));
+		this->_masks.insert(std::make_pair<std::string, mask_mode>(mask, BAN));
 	LOG_INFO("Mask banned from channel: " << mask)
 	return true;
 }
@@ -163,17 +150,17 @@ bool
 ft_irc::Channel::invite(const Client& source, const std::string& nick) {
 	if (!this->_clients.count(source.getFd()))
 		throw ft_irc::Channel::NotOnChannel();
-	if (this->_mode & I && !(this->_clients.at(source.getFd()).mode & O))
+	if (this->_mode & INVITE_ONLY && !(this->_clients.at(source.getFd()).mode & OPERATOR))
 		throw ft_irc::Channel::NotOperOnChannel();
 	if (this->isInChannel(nick))
 		throw ft_irc::Channel::AlreadyOnChannel();
 	if (this->_masks.count(nick)) {
-		if (this->_masks[nick] & IV)
+		if (this->_masks[nick] & INVITE)
 			return false;
-		this->_masks[nick] ^= IV;
+		this->_masks[nick] ^= INVITE;
 	}
 	else
-		this->_masks.insert(std::make_pair(nick, IV));
+		this->_masks.insert(std::make_pair<std::string, mask_mode>(nick, INVITE));
 	LOG_INFO("Client invited to channel: " << nick)
 	return true;
 }
@@ -184,7 +171,7 @@ ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 		return false;
 	if (this->_masks.count(client.getMask()))
 		throw ft_irc::Channel::BannedClient();
-	if (this->_mode & I &&
+	if (this->_mode & INVITE_ONLY &&
 		!this->_masks.count(client.getNickname()))
 		throw ft_irc::Channel::InviteOnlyChannel();
 	if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
@@ -197,6 +184,9 @@ ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 }
 
 ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
+{}
+
+ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) : std::invalid_argument(msg)
 {}
 
 ft_irc::Channel::InvalidMode::InvalidMode(std::string msg) : std::invalid_argument(msg)

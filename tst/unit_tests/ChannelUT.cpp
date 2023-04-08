@@ -2,23 +2,6 @@
 
 #include "ChannelUT.hpp"
 
-#define I 0x01 // Invite-only
-#define M 0x02 // Moderated
-#define S 0x04 // Secret
-#define _T 0x08 // Protected topic
-#define N 0x10 // Not external messages
-
-#define Q 0x01 // Founder
-#define A 0x02 // Protected
-#define	O 0x04 // Operator
-#define H 0x08 // Halfop
-#define V 0x10 // Voice
-
-#define B 0x01 // Ban nick mask
-#define E 0x02 // Ban exception nick mask
-#define IV 0x04 // Invite nick mask
-#define IE 0x08 // Invite exception nick mask
-
 ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc::Channel() {
 	REGISTER(ChannelUT, test_setName)
 	REGISTER(ChannelUT, test_setTopic)
@@ -44,13 +27,26 @@ ft_irc::ChannelUT::test_setName(void) {
 	std::string test = "";
 	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
 
-	std::string test2 = "#gemartin";
-	ft_irc::Channel::setName(test2);
-	ASSERT_EQ(ft_irc::Channel::_name, test2)
+	test = "channel";
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
 
-	std::string test3 = "#marvin";
-	ft_irc::Channel::setName(test3);
-	ASSERT_EQ(ft_irc::Channel::_name, test3)
+	test = "#channel 1";
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
+	test = "#channel,1";
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
+	test = "#channel";
+	test.at(1) = char(0x07);
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
+	test = "#channel";
+	ASSERT_NOTHROW(ft_irc::Channel::setName(test))
+	ASSERT_EQ(ft_irc::Channel::_name, test)
+
+	test = "&channel";
+	ASSERT_NOTHROW(ft_irc::Channel::setName(test);)
+	ASSERT_EQ(ft_irc::Channel::_name, test)
 }
 
 void
@@ -59,7 +55,7 @@ ft_irc::ChannelUT::test_setTopic(void) {
 	ASSERT_THROW(ft_irc::Channel::setTopic(test), std::invalid_argument)
 
 	std::string test2 = "gemartin";
-	ft_irc::Channel::setTopic(test2);
+	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test2))
 	ASSERT_EQ(ft_irc::Channel::_topic, test2)
 
 	std::string test3 = "marvin";
@@ -128,8 +124,8 @@ ft_irc::ChannelUT::test_addClient(void) {
 
 	ASSERT(ft_irc::Channel::addClient(test))
 
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & O)
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & Q)
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & OPERATOR)
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & FOUNDER)
 
 	ASSERT(!ft_irc::Channel::addClient(test))
 	ft_irc::Channel::_clients.clear();
@@ -167,30 +163,30 @@ ft_irc::ChannelUT::test_banMask(void) {
 
 void
 ft_irc::ChannelUT::test_toggleMode(void) {
-	ft_irc::Channel::toggleMode(I);
-	ASSERT(ft_irc::Channel::_mode & I)
-	ft_irc::Channel::toggleMode(I);
-	ASSERT(!(ft_irc::Channel::_mode & I))
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ASSERT(ft_irc::Channel::_mode & INVITE_ONLY)
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ASSERT(!(ft_irc::Channel::_mode & INVITE_ONLY))
 
-	ft_irc::Channel::toggleMode(M);
-	ASSERT(ft_irc::Channel::_mode & M)
-	ft_irc::Channel::toggleMode(M);
-	ASSERT(!(ft_irc::Channel::_mode & M))
+	ft_irc::Channel::toggleMode(MODERATE);
+	ASSERT(ft_irc::Channel::_mode & MODERATE)
+	ft_irc::Channel::toggleMode(MODERATE);
+	ASSERT(!(ft_irc::Channel::_mode & MODERATE))
 
-	ft_irc::Channel::toggleMode(S);
-	ASSERT(ft_irc::Channel::_mode & S)
-	ft_irc::Channel::toggleMode(S);
-	ASSERT(!(ft_irc::Channel::_mode & S))
+	ft_irc::Channel::toggleMode(SECRET);
+	ASSERT(ft_irc::Channel::_mode & SECRET)
+	ft_irc::Channel::toggleMode(SECRET);
+	ASSERT(!(ft_irc::Channel::_mode & SECRET))
 
-	ft_irc::Channel::toggleMode(_T);
-	ASSERT(ft_irc::Channel::_mode & _T)
-	ft_irc::Channel::toggleMode(_T);
-	ASSERT(!(ft_irc::Channel::_mode & _T))
+	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+	ASSERT(ft_irc::Channel::_mode & PROTECTED_TOPIC)
+	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+	ASSERT(!(ft_irc::Channel::_mode & PROTECTED_TOPIC))
 
-	ft_irc::Channel::toggleMode(N);
-	ASSERT(ft_irc::Channel::_mode & N)
-	ft_irc::Channel::toggleMode(N);
-	ASSERT(!(ft_irc::Channel::_mode & N))
+	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
+	ASSERT(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS)
+	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
+	ASSERT(!(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS))
 
 	ASSERT_THROW(ft_irc::Channel::toggleMode(-1), std::invalid_argument)
 }
@@ -202,11 +198,11 @@ ft_irc::ChannelUT::test_invite(void) {
 
 	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOnChannel)
 	ft_irc::Channel::addClient(client);
-	ft_irc::Channel::_clients.at(client.getFd()).mode ^= O;
+	ft_irc::Channel::_clients.at(client.getFd()).mode ^= OPERATOR;
 
-	ft_irc::Channel::toggleMode(I);
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
 	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOperOnChannel)
-	ft_irc::Channel::toggleMode(I);
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
 
 	ASSERT(ft_irc::Channel::invite(client, nickname))
 	ASSERT(!ft_irc::Channel::invite(client, nickname))
@@ -240,12 +236,12 @@ ft_irc::ChannelUT::test_join(void) {
 	ft_irc::Channel::_key = "";
 
 	ft_irc::Channel::addClient(tmp);
-	ft_irc::Channel::toggleMode(I);
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
 	ft_irc::Channel::invite(tmp, name);
 	ASSERT(ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
-	ft_irc::Channel::toggleMode(I);
+	ft_irc::Channel::toggleMode(INVITE_ONLY);
 
 	ft_irc::Channel::addClient(tmp);
 	ft_irc::Channel::setClientLimit(1);

@@ -7,6 +7,23 @@
 
 #include "Client.hpp"
 
+#define INVITE_ONLY 0x01
+#define MODERATE 0x02
+#define SECRET 0x04
+#define PROTECTED_TOPIC 0x08
+#define NOT_EXTERNAL_MSGS 0x10
+
+#define FOUNDER 0x01
+#define PROTECTED 0x02
+#define	OPERATOR 0x04
+#define HALFOP 0x08
+#define VOICE 0x10
+
+#define BAN 0x01
+#define EXCEPTION 0x02
+#define INVITE 0x04
+#define INVITE_EXCEPTION 0x08
+
 namespace ft_irc
 {
 
@@ -21,10 +38,10 @@ public:
 protected:
 	class ClientInfo {
 	public:
-		ClientInfo(const ft_irc::Client& client);
-
 		const ft_irc::Client&	client;
 		client_mode	mode;
+
+		ClientInfo(const ft_irc::Client& client);
 	};
 
 public:
@@ -55,7 +72,7 @@ public:
 	void	setTopic(std::string& topic);
 	void	setKey(std::string& key);
 	void	setClientLimit(long limit);
-	void	toggleMode(const char& mode);
+	void	toggleMode(const char mode);
 
 	bool	isInChannel(const Client& client);
 	bool	isInChannel(const std::string& nickname);
@@ -70,6 +87,12 @@ public:
 	{
 	public:
 		EmptyArgument(std::string msg);
+	};
+
+	class InvalidChannelName : public std::invalid_argument
+	{
+	public:
+		InvalidChannelName(std::string msg);
 	};
 
 	class InvalidMode : public std::invalid_argument
