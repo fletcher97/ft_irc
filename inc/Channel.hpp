@@ -69,7 +69,7 @@ public:
 	const std::string&	getKey(void) const;
 
 	void	setName(std::string& name);
-	void	setTopic(std::string& topic);
+	void	setTopic(ft_irc::Client& source, std::string& topic);
 	void	setKey(std::string& key);
 	void	setClientLimit(long limit);
 	void	toggleMode(const char mode);
@@ -83,12 +83,6 @@ public:
 	bool	join(const ft_irc::Client& client, const std::string& key = "");
 
 public:
-	class EmptyArgument : public std::invalid_argument
-	{
-	public:
-		EmptyArgument(std::string msg);
-	};
-
 	class InvalidChannelName : public std::invalid_argument
 	{
 	public:
@@ -137,10 +131,10 @@ public:
 			NotOnChannel();
 	};
 
-	class NotOperOnChannel : public std::exception
+	class NoPrivsOnChannel : public std::exception
 	{
 	public:
-			NotOperOnChannel();
+			NoPrivsOnChannel();
 	};
 
 	class AlreadyOnChannel : public std::exception

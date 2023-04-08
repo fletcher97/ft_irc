@@ -66,7 +66,7 @@ ft_irc::Channel::getKey(void) const {
 void
 ft_irc::Channel::setName(std::string& name) {
 	if (name.length() == 0)
-		throw ft_irc::Channel::EmptyArgument("Name must be a non empty string");
+		throw std::invalid_argument("Name must be a non empty string");
 	if ((name.at(0) != '#' && name.at(0) != '&')
 		|| name.find(' ') != std::string::npos
 		|| name.find(0x07) != std::string::npos
@@ -77,9 +77,14 @@ ft_irc::Channel::setName(std::string& name) {
 }
 
 void
-ft_irc::Channel::setTopic(std::string& topic) {
-	if (topic.length() == 0)
-		throw ft_irc::Channel::EmptyArgument("Topic must be a non empty string");
+ft_irc::Channel::setTopic(ft_irc::Client& source, std::string& topic) {
+	if (!this->_clients.count(source.getFd()))
+		throw ft_irc::Channel::NotOnChannel();
+	if (this->_mode & PROTECTED_TOPIC
+		&& !(this->_clients.at(source.getFd()).mode & OPERATOR)
+		&& !(this->_clients.at(source.getFd()).mode & HALFOP)
+		&& !(this->_clients.at(source.getFd()).mode & PROTECTED))
+		throw ft_irc::Channel::NoPrivsOnChannel();
 	LOG_INFO("Channel's topic changed from: " << this->_topic << " to: " << topic)
 	this->_topic = topic;
 }
@@ -87,7 +92,7 @@ ft_irc::Channel::setTopic(std::string& topic) {
 void
 ft_irc::Channel::setKey(std::string& key) {
 	if (key.length() == 0)
-		throw ft_irc::Channel::EmptyArgument("Key must be a non empty string");
+		throw std::invalid_argument("Key must be a non empty string");
 	LOG_INFO("Channel's key changed from: " << this->_key << " to: " << key)
 	this->_key = key;
 }
@@ -151,7 +156,7 @@ ft_irc::Channel::invite(const Client& source, const std::string& nick) {
 	if (!this->_clients.count(source.getFd()))
 		throw ft_irc::Channel::NotOnChannel();
 	if (this->_mode & INVITE_ONLY && !(this->_clients.at(source.getFd()).mode & OPERATOR))
-		throw ft_irc::Channel::NotOperOnChannel();
+		throw ft_irc::Channel::NoPrivsOnChannel();
 	if (this->isInChannel(nick))
 		throw ft_irc::Channel::AlreadyOnChannel();
 	if (this->_masks.count(nick)) {
@@ -169,10 +174,10 @@ bool
 ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 	if (this->_clients.count(client.getFd()))
 		return false;
-	if (this->_masks.count(client.getMask()))
+	if (this->_masks.count(client.getMask()) && this->_masks[client.getMask()] & BAN)
 		throw ft_irc::Channel::BannedClient();
 	if (this->_mode & INVITE_ONLY &&
-		!this->_masks.count(client.getNickname()))
+		(!this->_masks.count(client.getMask()) || !(this->_masks[client.getMask()] & INVITE)))
 		throw ft_irc::Channel::InviteOnlyChannel();
 	if (this->_client_limit != 0 && this->_client_limit >= this->_clients.size())
 		throw ft_irc::Channel::ChannelIsFull();
@@ -182,9 +187,6 @@ ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 	this->addClient(client);
 	return true;
 }
-
-ft_irc::Channel::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
-{}
 
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) : std::invalid_argument(msg)
 {}
@@ -206,7 +208,7 @@ ft_irc::Channel::ChannelIsFull::ChannelIsFull() {}
 
 ft_irc::Channel::NotOnChannel::NotOnChannel() {}
 
-ft_irc::Channel::NotOperOnChannel::NotOperOnChannel() {}
+ft_irc::Channel::NoPrivsOnChannel::NoPrivsOnChannel() {}
 
 ft_irc::Channel::AlreadyOnChannel::AlreadyOnChannel() {}
 
