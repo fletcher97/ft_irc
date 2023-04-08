@@ -62,7 +62,7 @@ ft_irc::Channel::operator=(const ft_irc::Channel& c) {
 }
 
 ft_irc::Channel::~Channel(void) {
-	LOG_INFO("Removed channel: " << this->_name);
+	LOG_INFO("Removed channel: " << this->_name)
 }
 
 const std::string&
@@ -84,6 +84,7 @@ void
 ft_irc::Channel::setName(std::string& name) {
 	if (name.length() == 0)
 		throw ft_irc::Channel::EmptyArgument("Name must be a non empty string");
+	LOG_INFO("Channel's name changed from: " << this->_name << " to: " << name)
 	this->_name = name;
 }
 
@@ -91,6 +92,7 @@ void
 ft_irc::Channel::setTopic(std::string& topic) {
 	if (topic.length() == 0)
 		throw ft_irc::Channel::EmptyArgument("Topic must be a non empty string");
+	LOG_INFO("Channel's topic changed from: " << this->_topic << " to: " << topic)
 	this->_topic = topic;
 }
 
@@ -98,6 +100,7 @@ void
 ft_irc::Channel::setKey(std::string& key) {
 	if (key.length() == 0)
 		throw ft_irc::Channel::EmptyArgument("Key must be a non empty string");
+	LOG_INFO("Channel's key changed from: " << this->_key << " to: " << key)
 	this->_key = key;
 }
 
@@ -105,6 +108,7 @@ void
 ft_irc::Channel::setClientLimit(long limit) {
 	if (limit <= 0)
 		throw ft_irc::Channel::InvalidLimit("Invalid limit");
+	LOG_INFO("Channel's limit changed from: " << this->_limit << " to: " << limit)
 	this->_client_limit = limit;
 }
 
@@ -138,6 +142,7 @@ ft_irc::Channel::addClient(const ft_irc::Client& client) {
 		ft_irc::Channel::ClientInfo(client)));
 	if (this->_clients.size() == 1)
 		this->_clients.begin()->second.mode = (Q|O);
+	LOG_INFO("New client added to channel: " << client.getNickname())
 	return true;
 }
 
@@ -148,7 +153,9 @@ ft_irc::Channel::banMask(const std::string& mask) {
 			return false;
 		this->_masks[mask] ^= B;
 	}
-	this->_masks.insert(std::make_pair(mask, B));
+	else
+		this->_masks.insert(std::make_pair(mask, B));
+	LOG_INFO("Mask banned from channel: " << mask)
 	return true;
 }
 
@@ -164,9 +171,10 @@ ft_irc::Channel::invite(const Client& source, const std::string& nick) {
 		if (this->_masks[nick] & IV)
 			return false;
 		this->_masks[nick] ^= IV;
-		return true;
 	}
-	this->_masks.insert(std::make_pair(nick, IV));
+	else
+		this->_masks.insert(std::make_pair(nick, IV));
+	LOG_INFO("Client invited to channel: " << nick)
 	return true;
 }
 
@@ -183,6 +191,7 @@ ft_irc::Channel::join(const ft_irc::Client& client, const std::string& key) {
 		throw ft_irc::Channel::ChannelIsFull();
 	if (!this->_key.empty() && this->_key != key)
 		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
+	LOG_INFO("Client joined to channel: " << client.getNickname())
 	this->addClient(client);
 	return true;
 }
