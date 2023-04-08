@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "Log.hpp"
 
 #include "Channel.hpp"
