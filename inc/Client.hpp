@@ -4,6 +4,9 @@
 #include <string>
 #include <stdexcept>
 
+namespace ft_irc
+{
+
 class Client
 {
 public:
@@ -54,5 +57,7 @@ public:
 			EmptyArgument(std::string msg);
 	};
 };
+
+} // namespace ft_irc
 
 #endif // CLIENT_HPP

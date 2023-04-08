@@ -5,7 +5,10 @@
 
 #include "Testable.tpp"
 
-class ClientUT : public flt::Testable<ClientUT>, Client
+namespace ft_irc
+{
+
+class ClientUT : public flt::Testable<ClientUT>, ft_irc::Client
 {
 public:
 	ClientUT(void);
@@ -24,5 +27,7 @@ public:
 	void test_getRealname(void);
 	void test_getStatus(void);
 };
+
+} // namespace ft_irc
 
 #endif // CLIENTUT_HPP

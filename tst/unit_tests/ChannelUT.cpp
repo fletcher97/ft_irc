@@ -1,12 +1,12 @@
 #include "ChannelUT.hpp"
 
-ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), Channel() {
+ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ft_irc::ChannelUT>("Channel"), ft_irc::Channel() {
 	REGISTER(ChannelUT, test_42)
 }
 
-ChannelUT::~ChannelUT(void) {}
+ft_irc::ChannelUT::~ChannelUT(void) {}
 
 void
-ChannelUT::test_42(void) {
+ft_irc::ChannelUT::test_42(void) {
 	ASSERT(42)
 }

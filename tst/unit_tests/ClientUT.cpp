@@ -1,5 +1,6 @@
 #include "ClientUT.hpp"
 
+<<<<<<< HEAD
 ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_setNickname)
 	REGISTER(ClientUT, test_setUsername)
@@ -15,7 +16,7 @@ ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_getStatus)
 }
 
-ClientUT::~ClientUT(void) {}
+ft_irc::ClientUT::~ClientUT(void) {}
 
 void ClientUT::test_setNickname(void) {
 	ASSERT_THROW(this->setNickname(""), std::invalid_argument)

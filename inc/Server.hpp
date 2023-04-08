@@ -6,10 +6,13 @@
 
 #include "Client.hpp"
 
+namespace ft_irc
+{
+
 class Server
 {
 private:
-	std::map<int, Client*> _clients;
+	std::map<int, ft_irc::Client*> _clients;
 
 protected:
 	Server(void);
@@ -23,10 +26,12 @@ public:
 
 	void	run(void);
 
-	Client&	getClient(const std::string& nickname) const;
-	Client&	getClient(int fd) const;
+	ft_irc::Client&	getClient(const std::string& nickname) const;
+	ft_irc::Client&	getClient(int fd) const;
 
 	void	newClient(void);
 };
+
+} // namespace ft_irc
 
 #endif // SERVER_HPP
