@@ -4,6 +4,23 @@
 
 #include "Channel.hpp"
 
+#define I 0x01 // Invite-only
+#define M 0x02 // Moderated
+#define S 0x04 // Secret
+#define T 0x08 // Protected topic
+#define N 0x10 // Not external messages
+
+#define Q 0x01 // Founder
+#define A 0x02 // Protected
+#define	O 0x04 // Operator
+#define H 0x08 // Halfop
+#define V 0x10 // Voice
+
+#define B 0x01 // Ban nick mask
+#define E 0x02 // Ban exception nick mask
+#define IV 0x04 // Invite nick mask
+#define IE 0x08 // Invite exception nick mask
+
 ft_irc::Channel::Channel(void) :
 	_name(),
 	_topic(),
@@ -95,7 +112,7 @@ ft_irc::Channel::setClientLimit(long limit) {
 
 void
 ft_irc::Channel::toggleMode(const  char& mode) {
-	if (mode <= (I|M|S|_T|N) && mode > 0) {
+	if (mode <= (I|M|S|T|N) && mode > 0) {
 		this->_mode ^= mode;
 		return ;
 	}

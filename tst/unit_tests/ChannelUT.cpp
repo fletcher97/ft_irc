@@ -2,6 +2,23 @@
 
 #include "ChannelUT.hpp"
 
+#define I 0x01 // Invite-only
+#define M 0x02 // Moderated
+#define S 0x04 // Secret
+#define _T 0x08 // Protected topic
+#define N 0x10 // Not external messages
+
+#define Q 0x01 // Founder
+#define A 0x02 // Protected
+#define	O 0x04 // Operator
+#define H 0x08 // Halfop
+#define V 0x10 // Voice
+
+#define B 0x01 // Ban nick mask
+#define E 0x02 // Ban exception nick mask
+#define IV 0x04 // Invite nick mask
+#define IE 0x08 // Invite exception nick mask
+
 ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc::Channel() {
 	REGISTER(ChannelUT, test_setName)
 	REGISTER(ChannelUT, test_setTopic)
