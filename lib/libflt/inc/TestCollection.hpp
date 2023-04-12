@@ -14,19 +14,23 @@ namespace flt
 class TestCollection
 {
 private:
-	std::list<flt::ITestable*> _tests;
+	std::list< flt::ITestable* > _tests;
 	unsigned long _count;
+
 private:
 	TestCollection(void);
+
+public:
+	static TestCollection& instance(void);
+
 public:
 	~TestCollection(void);
-	static TestCollection& instance(void);
-	void addTest(flt::ITestable& t);
+
+	void addTest(flt::ITestable &t);
 	void test(void);
-	void report(std::ostream& out) const;
-};
+	void report(std::ostream &out) const;
+};	// class TestCollection
 
-} // namespace flt
-
+}	// namespace flt
 
 #endif // TESTCOLLECTION_HPP
