@@ -240,7 +240,7 @@ TST_ROOT := tst/
 ifeq (${CREATE_LIB_TARGETS},1)
 
 # Libft
-LIBFLT_ROOT := ${LIB_ROOT}flt/
+LIBFLT_ROOT := ${LIB_ROOT}libflt/
 LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
 LIBFLT := ${LIBFT_ROOT}bin/libflt.a
 
