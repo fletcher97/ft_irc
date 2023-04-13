@@ -212,7 +212,7 @@ ft_irc::Channel::NoPrivsOnChannel::NoPrivsOnChannel() {}
 
 ft_irc::Channel::AlreadyOnChannel::AlreadyOnChannel() {}
 
-ft_irc::Channel::ClientInfo::ClientInfo(const ft_irc::Client& client) :
-	client(client),
+ft_irc::Channel::ClientInfo::ClientInfo(const ft_irc::Client& c) :
+	client(c),
 	mode()
 {}
