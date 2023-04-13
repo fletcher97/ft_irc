@@ -68,7 +68,7 @@ public:
 	const std::string&	getTopic(void) const;
 	const std::string&	getKey(void) const;
 
-	void	setName(std::string& name);
+	void	setName(const std::string& name);
 	void	setTopic(ft_irc::Client& source, std::string& topic);
 	void	setKey(std::string& key);
 	void	setClientLimit(long limit);

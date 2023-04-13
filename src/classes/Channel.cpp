@@ -14,13 +14,13 @@ ft_irc::Channel::Channel(void) :
 }
 
 ft_irc::Channel::Channel(const std::string& name) :
-	_name(name),
 	_topic(),
 	_key(),
 	_mode(),
 	_client_limit()
 {
 	LOG_DEBUG("Creating new channel")
+	this->setName(name);
 	LOG_INFO("New channel created: " << name)
 }
 
@@ -64,7 +64,7 @@ ft_irc::Channel::getKey(void) const {
 }
 
 void
-ft_irc::Channel::setName(std::string& name) {
+ft_irc::Channel::setName(const std::string& name) {
 	if (name.length() == 0)
 		throw std::invalid_argument("Name must be a non empty string");
 	if ((name.at(0) != '#' && name.at(0) != '&')
