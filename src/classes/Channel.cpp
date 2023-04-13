@@ -101,7 +101,7 @@ void
 ft_irc::Channel::setClientLimit(long limit) {
 	if (limit <= 0)
 		throw ft_irc::Channel::InvalidLimit("Invalid limit");
-	LOG_INFO("Channel's limit changed from: " << this->_limit << " to: " << limit)
+	LOG_INFO("Channel's limit changed from: " << this->_client_limit << " to: " << limit)
 	this->_client_limit = limit;
 }
 
