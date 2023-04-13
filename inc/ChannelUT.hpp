@@ -13,6 +13,8 @@ public:
 	ChannelUT(void);
 	~ChannelUT(void);
 
+	void test_constructor(void);
+
 	void test_getName(void);
 	void test_getTopic(void);
 	void test_getKey(void);
