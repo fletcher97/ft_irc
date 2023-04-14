@@ -76,6 +76,19 @@ ft_irc::ChannelUT::test_setName(void) {
 	test.at(1) = char(0x07);
 	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
 
+	LOG_TRACE("Testing setName with a Channel name with invalid character: SPACE")
+	test = "&channel 1";
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
+	LOG_TRACE("Testing setName with a Channel name with invalid character: COMMA")
+	test = "&channel,1";
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
+	LOG_TRACE("Testing setName with a Channel name with invalid character: G^BELL(0x07)")
+	test = "&channel";
+	test.at(1) = char(0x07);
+	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
+
 	LOG_TRACE("Testing setName with a valid name: #channel")
 	test = "#channel";
 	ASSERT_NOTHROW(ft_irc::Channel::setName(test))
@@ -222,6 +235,12 @@ ft_irc::ChannelUT::test_isInChannel(void) {
 	test.setNickname(test_nick);
 	test2.setNickname(test2_nick);
 
+	LOG_TRACE("Testing isInChannle with a client on an empty channel by reference")
+	ASSERT(!ft_irc::Channel::isInChannel(test))
+
+	LOG_TRACE("Testing isInChannle with a client on an empty channel by nickname")
+	ASSERT(!ft_irc::Channel::isInChannel(test.getNickname()))
+
 	ft_irc::Channel::addClient(test);
 	LOG_TRACE("Testing isInChannle with a client on channel by reference")
 	ASSERT(ft_irc::Channel::isInChannel(test))
@@ -286,8 +305,11 @@ ft_irc::ChannelUT::test_toggleMode(void) {
 	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
 	ASSERT(!(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS))
 
-	LOG_TRACE("Testing toggleMode: invalid argument")
+	LOG_TRACE("Testing toggleMode: invalid argument: -1")
 	ASSERT_THROW(ft_irc::Channel::toggleMode(-1), std::invalid_argument)
+
+	LOG_TRACE("Testing toggleMode: invalid argument: 100")
+	ASSERT_THROW(ft_irc::Channel::toggleMode(100), std::invalid_argument)
 }
 
 void
