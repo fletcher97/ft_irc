@@ -449,7 +449,26 @@ ft_irc::ParserUT::test_arguments_multi(void)
 }	// ParserUT::test_arguments_multi
 
 
-void ft_irc::ParserUT::test_arguments_missing(void) {}
+void
+ft_irc::ParserUT::test_arguments_missing(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::list< std::string > expected;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag AUTHENTICATE\r\n";
+	expected = std::list< std::string >();
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "AUTHENTICATE\r\n";
+	expected = std::list< std::string >();
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+}	// ParserUT::test_arguments_missing
+
 
 void ft_irc::ParserUT::test_arguments_colon(void) {}
 
