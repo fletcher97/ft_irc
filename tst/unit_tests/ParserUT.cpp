@@ -306,6 +306,7 @@ ft_irc::ParserUT::test_command_nocmd(void)
 {
 	std::string msg;
 
+	msg = "";
 	ASSERT_THROW(ft_irc::Parser::parse_command(NULL, msg), std::invalid_argument)
 }	// ParserUT::test_command_nocmd
 
