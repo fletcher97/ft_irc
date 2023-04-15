@@ -355,7 +355,21 @@ ft_irc::ParserUT::test_command_valid(void)
 }	// ParserUT::test_command_valid
 
 
-void ft_irc::ParserUT::test_command_invalid(void) {}
+void
+ft_irc::ParserUT::test_command_invalid(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag NOCAP\r\n";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "NOCAP\r\n";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+}	// ParserUT::test_command_invalid
+
 
 void ft_irc::ParserUT::test_command_missing(void) {}
 
@@ -366,7 +380,7 @@ ft_irc::ParserUT::test_arguments_nocmd(void)
 
 	msg = "";
 	ASSERT_THROW(ft_irc::Parser::parse_arguments(NULL, msg), std::invalid_argument)
-} // ParserUT::test_arguments_nocmd
+}	// ParserUT::test_arguments_nocmd
 
 
 void ft_irc::ParserUT::test_arguments_single(void) {}
