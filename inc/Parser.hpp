@@ -13,7 +13,7 @@ namespace ft_irc
 class Parser
 {
 public:
-	typedef struct cmd
+	typedef struct cmd_s
 	{
 		std::map<std::string, std::string> tags;
 		ft_irc::commands cmd;
