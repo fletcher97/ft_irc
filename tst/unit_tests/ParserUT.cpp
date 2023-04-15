@@ -2,7 +2,9 @@
 
 #include "ParserUT.hpp"
 
-ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
+ft_irc::ParserUT::ParserUT(void) :
+	flt::Testable< ft_irc::ParserUT >("Parser")
+{
 	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
 	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 	REGISTER(ft_irc::ParserUT, test_tag_presence)
@@ -10,12 +12,16 @@ ft_irc::ParserUT::ParserUT(void) : flt::Testable<ft_irc::ParserUT>("Parser") {
 	REGISTER(ft_irc::ParserUT, test_tag_multi_simple)
 }
 
+
 ft_irc::ParserUT::~ParserUT(void) {}
 
 void
-ft_irc::ParserUT::test_delimiter_msg(void) {
+ft_irc::ParserUT::test_delimiter_msg(void)
+{
+	std::string msg;
+
 	// Empty message
-	std::string msg = "";
+	msg = "";
 	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
 
 	// No delimiter string
@@ -41,20 +47,29 @@ ft_irc::ParserUT::test_delimiter_msg(void) {
 	// Correctly terminated string
 	msg = "Hello world!\r\n";
 	ASSERT_NOTHROW(ft_irc::Parser::check_delimiter(msg))
-}
+}	// ParserUT::test_delimiter_msg
+
 
 void
-ft_irc::ParserUT::test_tag_nocmd(void) {
+ft_irc::ParserUT::test_tag_nocmd(void)
+{
+	std::string msg;
+
 	// NULL cmd
-	std::string msg = "";
+	msg = "";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(NULL, msg), std::invalid_argument)
-}
+}	// ParserUT::test_tag_nocmd
+
 
 void
-ft_irc::ParserUT::test_tag_presence(void) {
+ft_irc::ParserUT::test_tag_presence(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+
 	// Tags not present
-	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
-	std::string msg = "";
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags.size(), 0)
 
@@ -75,87 +90,104 @@ ft_irc::ParserUT::test_tag_presence(void) {
 	msg = ":asd @abc";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags.size(), 0)
-}
+}	// ParserUT::test_tag_presence
+
 
 void
-ft_irc::ParserUT::test_tag_single_simple(void) {
+ft_irc::ParserUT::test_tag_single_simple(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::map< std::string, std::string > expected;
+
 	// Simple tag
-	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
-	std::string msg = "@abc";
-	std::map<std::string, std::string> expected;
-	expected.insert(std::pair<std::string, std::string>("abc", ""));
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("abc", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@de-f";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("de-f", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("de-f", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@+locahost/def";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("+locahost/def", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("+locahost/def", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@ab42";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("ab42", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ab42", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag with extra information
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@ghi CAP * LIST";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("ghi", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ghi", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
-}
+}	// ParserUT::test_tag_single_simple
+
 
 void
-ft_irc::ParserUT::test_tag_multi_simple(void) {
+ft_irc::ParserUT::test_tag_multi_simple(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::map< std::string, std::string > expected;
+
 	// Simple multi tag
-	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
-	std::string msg = "@abc;def;ghi";
-	std::map<std::string, std::string> expected;
-	expected.insert(std::pair<std::string, std::string>("abc", ""));
-	expected.insert(std::pair<std::string, std::string>("def", ""));
-	expected.insert(std::pair<std::string, std::string>("ghi", ""));
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc;def;ghi";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("abc", ""));
+	expected.insert(std::pair< std::string, std::string >("def", ""));
+	expected.insert(std::pair< std::string, std::string >("ghi", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple multi tag with source and command
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@abc;def :sdwa CAP * LIST";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("abc", ""));
-	expected.insert(std::pair<std::string, std::string>("def", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("abc", ""));
+	expected.insert(std::pair< std::string, std::string >("def", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple multi tag with source and command
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@+abc;+localhost/def;ab42 :sdwa CAP * LIST";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("+abc", ""));
-	expected.insert(std::pair<std::string, std::string>("+localhost/def", ""));
-	expected.insert(std::pair<std::string, std::string>("ab42", ""));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("+abc", ""));
+	expected.insert(std::pair< std::string, std::string >("+localhost/def", ""));
+	expected.insert(std::pair< std::string, std::string >("ab42", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
-}
+}	// ParserUT::test_tag_multi_simple
+
 
 void
-ft_irc::ParserUT::test_tag_single_kv(void) {
+ft_irc::ParserUT::test_tag_single_kv(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+
 	// Simple tag
-	ft_irc::Parser::cmd_t cmd = ft_irc::Parser::cmd_t();
-	std::string msg = "@abc=";
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc=";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Simple tag
@@ -165,35 +197,36 @@ ft_irc::ParserUT::test_tag_single_kv(void) {
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@def=abc";
-	std::map<std::string, std::string> expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("de-f", "abc"));
+	std::map< std::string, std::string > expected = std::map< std::string, std::string >();
+
+	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@+locahost/def=123qsd";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("+locahost/def", "123qsd"));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("+locahost/def", "123qsd"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@ab42=!34asc";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("ab42", "!34asc"));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ab42", "!34asc"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
 
 	// Simple tag with extra information
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@ghi=ghi CAP * LIST";
-	expected = std::map<std::string, std::string>();
-	expected.insert(std::pair<std::string, std::string>("ghi", "ghi"));
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ghi", "ghi"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
-}
+}	// ParserUT::test_tag_single_kv
 
 void
 ft_irc::ParserUT::test_tag_multi_kv(void) {}
@@ -222,11 +255,25 @@ ft_irc::ParserUT::test_arguments_single(void) {}
 void
 ft_irc::ParserUT::test_arguments_multi(void) {}
 
-void
-ft_irc::ParserUT::test_arguments_missing(void) {}
 
-void
-ft_irc::ParserUT::test_arguments_colon(void) {}
+void ft_irc::ParserUT::test_source_presence(void) {}
 
-void
-ft_irc::ParserUT::test_arguments_multi_colon(void) {}
+void ft_irc::ParserUT::test_command_nocmd(void) {}
+
+void ft_irc::ParserUT::test_command_valid(void) {}
+
+void ft_irc::ParserUT::test_command_invalid(void) {}
+
+void ft_irc::ParserUT::test_command_missing(void) {}
+
+void ft_irc::ParserUT::test_arguments_nocmd(void) {}
+
+void ft_irc::ParserUT::test_arguments_single(void) {}
+
+void ft_irc::ParserUT::test_arguments_multi(void) {}
+
+void ft_irc::ParserUT::test_arguments_missing(void) {}
+
+void ft_irc::ParserUT::test_arguments_colon(void) {}
+
+void ft_irc::ParserUT::test_arguments_multi_colon(void) {}
