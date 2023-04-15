@@ -401,7 +401,27 @@ ft_irc::ParserUT::test_arguments_nocmd(void)
 }	// ParserUT::test_arguments_nocmd
 
 
-void ft_irc::ParserUT::test_arguments_single(void) {}
+void
+ft_irc::ParserUT::test_arguments_single(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::list< std::string > expected;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag CAP LS\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("LS");
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+	ASSERT_EQ(cmd.args, expected)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "CAP REQ\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("REQ");
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+}	// ParserUT::test_arguments_single
+
 
 void ft_irc::ParserUT::test_arguments_multi(void) {}
 
