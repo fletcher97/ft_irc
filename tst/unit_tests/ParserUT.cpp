@@ -470,6 +470,29 @@ ft_irc::ParserUT::test_arguments_missing(void)
 }	// ParserUT::test_arguments_missing
 
 
-void ft_irc::ParserUT::test_arguments_colon(void) {}
+void
+ft_irc::ParserUT::test_arguments_colon(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::list< std::string > expected;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "PRIVMSG #chan :Hey!\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("#chan");
+	expected.push_back("Hey!");
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "PRIVMSG #chan :Hello world!\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("#chan");
+	expected.push_back("Hello world!");
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+}	// ParserUT::test_arguments_colon
+
 
 void ft_irc::ParserUT::test_arguments_multi_colon(void) {}
