@@ -412,14 +412,15 @@ ft_irc::ParserUT::test_arguments_single(void)
 	msg = "@tag CAP LS\r\n";
 	expected = std::list< std::string >();
 	expected.push_back("LS");
-	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "CAP REQ\r\n";
 	expected = std::list< std::string >();
 	expected.push_back("REQ");
-	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
 }	// ParserUT::test_arguments_single
 
 
@@ -435,7 +436,7 @@ ft_irc::ParserUT::test_arguments_multi(void)
 	expected = std::list< std::string >();
 	expected.push_back("*");
 	expected.push_back("LS");
-	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
@@ -443,7 +444,7 @@ ft_irc::ParserUT::test_arguments_multi(void)
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hey!");
-	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 }	// ParserUT::test_arguments_multi
 
