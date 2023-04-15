@@ -371,7 +371,25 @@ ft_irc::ParserUT::test_command_invalid(void)
 }	// ParserUT::test_command_invalid
 
 
-void ft_irc::ParserUT::test_command_missing(void) {}
+void
+ft_irc::ParserUT::test_command_missing(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag\r\n";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag : asd\r\n";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+}	// ParserUT::test_command_missing
+
 
 void
 ft_irc::ParserUT::test_arguments_nocmd(void)
