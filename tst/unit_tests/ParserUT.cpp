@@ -359,7 +359,15 @@ void ft_irc::ParserUT::test_command_invalid(void) {}
 
 void ft_irc::ParserUT::test_command_missing(void) {}
 
-void ft_irc::ParserUT::test_arguments_nocmd(void) {}
+void
+ft_irc::ParserUT::test_arguments_nocmd(void)
+{
+	std::string msg;
+
+	msg = "";
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(NULL, msg), std::invalid_argument)
+} // ParserUT::test_arguments_nocmd
+
 
 void ft_irc::ParserUT::test_arguments_single(void) {}
 
