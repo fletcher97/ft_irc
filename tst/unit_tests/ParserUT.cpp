@@ -301,7 +301,14 @@ ft_irc::ParserUT::test_source_presence(void)
 }	// ParserUT::test_source_presence
 
 
-void ft_irc::ParserUT::test_command_nocmd(void) {}
+void
+ft_irc::ParserUT::test_command_nocmd(void)
+{
+	std::string msg;
+
+	ASSERT_THROW(ft_irc::Parser::parse_command(NULL, msg), std::invalid_argument)
+}	// ParserUT::test_command_nocmd
+
 
 void ft_irc::ParserUT::test_command_valid(void) {}
 
