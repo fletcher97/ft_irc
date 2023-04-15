@@ -1,10 +1,13 @@
 #if !defined(NUMERICS_HPP)
 #define NUMERICS_HPP
 
+#include <string>
+
 namespace ft_irc
 {
 
-enum commands {
+enum commands
+{
 	CAP,
 	AUTHENTICATE,
 	PASS,
@@ -46,6 +49,11 @@ enum commands {
 	USERHOST,
 	WALLOPS
 };
+
+static const commands ALL_COMMANDS[] = {
+	CAP, AUTHENTICATE, PASS, NICK, USER, PING, PONG, OPER, QUIT, ERROR, JOIN, PART, TOPIC, NAMES, LIST, INVITE, KICK,
+	MOTD, VERSION, ADMIN, CONNECT, LUSERS, TIME, STATS, HELP, INFO, MODE, PRIVMSG, NOTICE, WHO, WHOIS, WHOWAS,
+	KILL, REHASH, RESTART, SQUIT, AWAY, LINKS, USERHOST, WALLOPS};
 
 enum codes{
 	RPL_WELCOME = 001,
@@ -173,6 +181,8 @@ enum codes{
 	RPL_SASLMECHS = 908
 };
 
-} // namespace ft_irc
+std::string toString(ft_irc::commands cmd);
+
+}	// namespace ft_irc
 
 #endif // NUMERICS_HPP
