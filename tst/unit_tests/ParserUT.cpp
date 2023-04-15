@@ -284,7 +284,22 @@ ft_irc::ParserUT::test_tag_multi_kv(void)
 }	// ParserUT::test_tag_multi_kv
 
 
-void ft_irc::ParserUT::test_source_presence(void) {}
+void
+ft_irc::ParserUT::test_source_presence(void)
+{
+	std::string msg;
+
+	msg = "CAP * LS\r\n";
+	ASSERT_NOTHROW(ft_irc::Parser::check_source(msg))
+
+
+	msg = "@id :abc.com CAP * LS\r\n";
+	ASSERT_THROW(ft_irc::Parser::check_source(msg), std::invalid_argument)
+
+	msg = ":abc.com CAP * LS\r\n";
+	ASSERT_THROW(ft_irc::Parser::check_source(msg), std::invalid_argument)
+}	// ParserUT::test_source_presence
+
 
 void ft_irc::ParserUT::test_command_nocmd(void) {}
 
