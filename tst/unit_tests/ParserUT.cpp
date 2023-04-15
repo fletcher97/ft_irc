@@ -228,32 +228,60 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 	ASSERT_EQ(cmd.tags, expected)
 }	// ParserUT::test_tag_single_kv
 
-void
-ft_irc::ParserUT::test_tag_multi_kv(void) {}
 
 void
-ft_irc::ParserUT::test_source_presence(void) {}
+ft_irc::ParserUT::test_tag_multi_kv(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::map< std::string, std::string > expected;
 
-void
-ft_irc::ParserUT::test_command_nocmd(void) {}
+	// Multi tag ERROR
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc=;abc=";
+	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
-void
-ft_irc::ParserUT::test_command_valid(void) {}
+	// Multi tag ERROR
+	msg = "@abc=;abc= ";
+	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
-void
-ft_irc::ParserUT::test_command_invalid(void) {}
+	// Multi tag ERROR
+	msg = "@abc=;";
+	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
-void
-ft_irc::ParserUT::test_command_missing(void) {}
+	// Multi tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@def=abc;asd";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
+	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
 
-void
-ft_irc::ParserUT::test_arguments_nocmd(void) {}
+	// Multi tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@+locahost/def=123qsd;tya";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("+locahost/def", "123qsd"));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
 
-void
-ft_irc::ParserUT::test_arguments_single(void) {}
+	// Multi tag
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@ab42=!34asc,cd33=w";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ab42", "!34asc"));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
 
-void
-ft_irc::ParserUT::test_arguments_multi(void) {}
+	// Multi tag with extra information
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@ghi=ghi;id=123 CAP * LIST";
+	expected = std::map< std::string, std::string >();
+	expected.insert(std::pair< std::string, std::string >("ghi", "ghi"));
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_EQ(cmd.tags, expected)
+}	// ParserUT::test_tag_multi_kv
 
 
 void ft_irc::ParserUT::test_source_presence(void) {}
