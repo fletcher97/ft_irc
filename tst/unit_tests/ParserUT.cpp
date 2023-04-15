@@ -495,4 +495,26 @@ ft_irc::ParserUT::test_arguments_colon(void)
 }	// ParserUT::test_arguments_colon
 
 
-void ft_irc::ParserUT::test_arguments_multi_colon(void) {}
+void
+ft_irc::ParserUT::test_arguments_multi_colon(void)
+{
+	ft_irc::Parser::cmd_t cmd;
+	std::string msg;
+	std::list< std::string > expected;
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "PRIVMSG #chan :Can colons(:) be used\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("#chan");
+	expected.push_back("Can colons(:) be used");
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "PRIVMSG #chan :Can colons with spaces : be used\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("#chan");
+	expected.push_back("Can colons with spaces : be used");
+	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
+	ASSERT_EQ(cmd.args, expected)
+}	// ParserUT::test_arguments_multi_colon
