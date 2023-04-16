@@ -119,7 +119,7 @@ VERBOSE := 1
 # trace/debug/info/warn/error/critical: set DEBUG macro to the given level
 #
 # By default debug is none.
-DEBUG_LVL := none
+LOG_LVL := none
 
 # Timer switch. Turns compilation with timer support on or off. To turn the
 # timer on simply set this variable to on. The timer in the FLT lib will be
