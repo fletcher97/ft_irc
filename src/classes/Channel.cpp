@@ -11,7 +11,8 @@ ft_irc::Channel::Channel(void) :
 	LOG_DEBUG("Creating new channel");
 }
 
-ft_irc::Channel::Channel(const ft_irc::Channel& c) :
+
+ft_irc::Channel::Channel(const ft_irc::Channel &c) :
 	_name(c._name),
 	_topic(c._topic),
 	_clients(c._clients),
@@ -19,49 +20,67 @@ ft_irc::Channel::Channel(const ft_irc::Channel& c) :
 {}
 
 ft_irc::Channel&
-ft_irc::Channel::operator=(const ft_irc::Channel& c) {
+ft_irc::Channel::operator=(const ft_irc::Channel &c)
+{
 	this->_name = c._name;
 	this->_topic = c._topic;
 	this->_clients = c._clients;
 	this->_key = c._key;
-	return *this;
-}
 
-ft_irc::Channel::~Channel(void) {
+	return *this;
+}	// =
+
+
+ft_irc::Channel::~Channel(void)
+{
 	LOG_INFO("Removed channel: " << this->_name);
 }
 
+
 const std::string&
-ft_irc::Channel::getName(void) const {
+ft_irc::Channel::getName(void) const
+{
 	return this->_name;
-}
+}	// Channel::getName
+
 
 const std::string&
-ft_irc::Channel::getTopic(void) const {
+ft_irc::Channel::getTopic(void) const
+{
 	return this->_topic;
-}
+}	// Channel::getTopic
+
 
 const std::string&
-ft_irc::Channel::getKey(void) const {
+ft_irc::Channel::getKey(void) const
+{
 	return this->_key;
-}
+}	// Channel::getKey
+
 
 void
-ft_irc::Channel::setName(std::string& name) {
+ft_irc::Channel::setName(std::string &name)
+{
 	this->_name = name;
-}
+}	// Channel::setName
+
 
 void
-ft_irc::Channel::setTopic(std::string& topic) {
+ft_irc::Channel::setTopic(std::string &topic)
+{
 	this->_topic = topic;
-}
+}	// Channel::setTopic
+
 
 void
-ft_irc::Channel::setKey(std::string& key) {
+ft_irc::Channel::setKey(std::string &key)
+{
 	this->_key = key;
-}
+}	// Channel::setKey
+
 
 bool
-ft_irc::Channel::isInChannel(const ft_irc::Client& client) {
+ft_irc::Channel::isInChannel(const ft_irc::Client &client)
+{
 	return this->_clients.count(client.getFd());
-}
+}	// Channel::isInChannel

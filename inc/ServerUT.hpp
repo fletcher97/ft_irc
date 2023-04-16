@@ -8,15 +8,16 @@
 namespace ft_irc
 {
 
-class ServerUT : public flt::Testable<ServerUT>, ft_irc::Server
+class ServerUT :
+	public flt::Testable< ServerUT >, ft_irc::Server
 {
 public:
 	ServerUT(void);
 	~ServerUT(void);
 
 	void test_42(void);
-};
+};	// class ServerUT
 
-} // namespace ft_irc
+}	// namespace ft_irc
 
 #endif // SERVERUT_HPP
