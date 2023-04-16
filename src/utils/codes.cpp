@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "codes.hpp"
 
 std::string
@@ -162,6 +164,10 @@ toString(ft_irc::commands cmd)
 
 		case ft_irc::WALLOPS: {
 				return "WALLOPS";
+			}
+
+		default: {
+				throw std::invalid_argument("Command given was not a valid command enum");
 			}
 	}	// switch
 }	// toString
