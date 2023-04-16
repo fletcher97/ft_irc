@@ -30,6 +30,8 @@ flt::TestCollection::test(void)
 		(*it)->run();
 		(*it)->term();
 		this->_count++;
+		this->_failed = (*it)->get_failed_count();
+		this->_passed = (*it)->get_passed_count();
 	}
 }	// TestCollection::test
 
@@ -42,3 +44,17 @@ flt::TestCollection::report(std::ostream &out) const
 		(*it)->report(out);
 	}
 }	// TestCollection::report
+
+
+unsigned long
+flt::TestCollection::get_failed_count() const
+{
+	return this->_failed;
+}	// TestCollection::get_failed_count
+
+
+unsigned long
+flt::TestCollection::get_passed_count() const
+{
+	return this->_passed;
+}	// TestCollection::get_passed_count

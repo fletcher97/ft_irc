@@ -6,9 +6,14 @@
 # Version: 5.2
 # Repo: www.github.com/fletcher97/utils
 
-# v.5.2:
+# v.5.2: Added libflt seccion. All libflt specific configurations are now
+# separated. Added timer configuration for libflt. A new task to generate
+# coverage reports with lcov was added. All files generated will be stored in
+# REP_ROOT. A new section dedicated to running tasks at the start was added
+# (init). This was required fot the new vars task. Also fixed minor bugs when
+# using iMac.
 
-# v5: Added testing capabilities to the makefile. You can now places Tests in
+# v5: Added testing capabilities to the makefile. You can now place Tests in
 # TST_ROOT or a subfolder and treat it the same as you would SRC_ROOT. For each
 # executable a test executable is now generated. It will use the TST_DIRS that
 # have the same index as SRC_DIRS to test them. An important change is that main
@@ -149,10 +154,11 @@ LANG := C++
 # Specify the compiler to use. In conjuntion with the language it can pick the
 # right compiler and the right version of the compiler (i.e. gcc vs g++).
 # Supported option: LLVM, GNU
-ifeq ($(shell uname),Linux)
-	COMPILER=GNU
-else ifeq ($(shell uname),Darwin)
-	COMPILER=LLVM
+COMPILER = GNU
+
+# If we are on OSX force compiler to be LLVM.
+ifeq ($(shell uname),Darwin)
+	COMPILER := LLVM
 endif
 
 ################################################################################
@@ -235,6 +241,7 @@ LIB_ROOT := lib/
 OBJ_ROOT := obj/
 SRC_ROOT := src/
 COV_ROOT := cov/
+REP_ROOT := rep/
 TST_ROOT := tst/
 
 ################################################################################
@@ -476,6 +483,9 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 		-name "*.gcda" -delete -o -name "*.gcno" -delete ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
 	${AT}find ${COV_ROOT} -type f -name "*.gcov" -delete ${BLOCK}
+	${AT}mkdir -p ${REP_ROOT} ${BLOCK}
+	${AT}find ${REP_ROOT} -type f -delete ${BLOCK}
+	${AT}rm -f coverage.info ${BLOCK}
 
 fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
@@ -498,18 +508,21 @@ re: fclean all
 debug: CFLAGS += ${DFLAGS}
 debug: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
-debug_cov: CFLAGS += ${COVFLAGS} -O0
+debug_tests: CFLAGS += ${DFLAGS}
+debug_tests: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) tests
+
+debug_cov: CFLAGS += ${COVFLAGS}
 debug_cov: tests
 
-cov: debug_cov
+cov:
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
-	${AT}gcov -arHs src obj/**/*.gc* ${BLOCK}
+	${AT}gcov -arHs $$(find ${OBJ_ROOT} -name "*.gc*") ${BLOCK}
 	${AT}mv *.gcov ${COV_ROOT} ${BLOCK}
 
-lcov: debug_cov
-	${AT}lcov -c -b . -d . -o report.info --no-external --rc lcov_branch_coverage=1 --filter branch,function --ignore-errors mismatch${BLOCK}
-	${AT}mkdir -p html ${BLOCK}
-	${AT}genhtml report.info -o html --rc genhtml_branch_coverage=1 --demangle-cpp --legend --filter branch,function --dark-mode${BLOCK}
+lcov:
+	${AT}lcov -c -b . -d . -o coverage.info --no-external --rc lcov_branch_coverage=1 --filter branch,function --ignore-errors mismatch${BLOCK}
+	${AT}mkdir -p ${REP_ROOT} ${BLOCK}
+	${AT}genhtml coverage.info -o ${REP_ROOT} --rc genhtml_branch_coverage=1 --demangle-cpp --legend --filter branch,function --dark-mode${BLOCK}
 
 obj/asan/asan.o: src/asan/asan.c
 	${AT}mkdir -p ${@D} ${BLOCK}
@@ -517,11 +530,7 @@ obj/asan/asan.o: src/asan/asan.c
 
 debug_asan: CFLAGS += ${DFLAGS} ${ASAN}
 debug_asan: ASAN_FILE = obj/asan/asan.o
-debug_asan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) ${ASAN_FILE} all
-
-debug_asan_tests: CFLAGS += ${DFLAGS} ${ASAN}
-debug_asan_tests: ASAN_FILE = obj/asan/asan.o
-debug_asan_tests: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) ${ASAN_FILE} tests
+debug_asan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) obj/asan/asan.o all
 
 debug_tsan: CFLAGS += ${DFLAGS} ${TSAN}
 debug_tsan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
@@ -531,9 +540,9 @@ debug_msan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
 debug_re: fclean debug
 
-debug_cov_re: fclean debug_cov
+debug_tests_re: fclean debug_tests
 
-debug_cov_tests_re: fclean debug_cov_tests
+debug_cov_re: fclean debug_cov
 
 debug_asan_re: fclean debug_asan
 
@@ -550,6 +559,9 @@ debug_msan_re: fclean debug_msan
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
 	${AT}mkdir -p ${DEP_ROOT} ${BLOCK}
 	${AT}mkdir -p ${INC_ROOT} ${BLOCK}
+	${AT}mkdir -p ${TPL_ROOT} ${BLOCK}
+	${AT}mkdir -p ${IMP_ROOT} ${BLOCK}
+	${AT}mkdir -p ${LIB_ROOT} ${BLOCK}
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
@@ -581,12 +593,18 @@ targets:
 		| sort
 
 vars:
-	$(foreach v,$(sort $(filter-out ${DEFAULT_VARS} ${IGNORE_VARS},${.VARIABLES})),$(info ${v} = ${${v}}))
+	$(foreach v,\
+		$(sort $(filter-out ${DEFAULT_VARS} ${IGNORE_VARS},${.VARIABLES})),\
+		$(info ${v} = ${${v}}))
 
 compile-test: CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
 compile-test: CFLAGS += -DFLT_TIMER
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TST_PREFIX},${NAMES}}
+
+uncrustify-check:
+	${AT}find . -name "*.[chit]pp" > uncrustify-targets.txt ${BLOCK}
+	${AT}uncrustify -c uncrustify.cfg --check -F uncrustify-targets.txt -l CPP -q${BLOCK}
 
 ################################################################################
 # .PHONY
@@ -597,18 +615,19 @@ compile-test: ${addprefix compile-test/${TST_PREFIX},${NAMES}}
 
 # Phony debug targets
 .PHONY: debug debug_re debug_asan debug_asan_re debug_tsan debug_tsan_re
+.PHONY: debug_msan debug_msan_re
 
 # Phony cov targets
-.PHONY: debug_cov debug_cov_re cov
+.PHONY: debug_cov debug_cov_re cov lcov
 
 # Phony utility targets
-.PHONY: targets .FORCE compile-test
+.PHONY: targets .FORCE compile-test vars uncrustify-check
 
 # Phony execution targets
-.PHONY: re all
+.PHONY: re all tests
 
 ################################################################################
-# Constantes
+# Constants
 ################################################################################
 
 NULL =

@@ -16,6 +16,8 @@ class TestCollection
 private:
 	std::list< flt::ITestable* > _tests;
 	unsigned long _count;
+	unsigned long _failed;
+	unsigned long _passed;
 
 private:
 	TestCollection(void);
@@ -29,6 +31,9 @@ public:
 	void addTest(flt::ITestable &t);
 	void test(void);
 	void report(std::ostream &out) const;
+
+	unsigned long get_failed_count() const;
+	unsigned long get_passed_count() const;
 };	// class TestCollection
 
 }	// namespace flt

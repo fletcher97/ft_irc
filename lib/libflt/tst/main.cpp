@@ -157,6 +157,10 @@ main(void)
 	flt::TestCollection::instance().test();
 	flt::TestCollection::instance().report(std::cout);
 
+	if (flt::TestCollection::instance().get_failed_count()) {
+		return 1;
+	}
+
 	// test_logs();
 	// return 0;
 	// FLT_TIME("main")

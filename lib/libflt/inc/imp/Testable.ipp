@@ -15,7 +15,7 @@ flt::Testable< T >::Testable(const std::string name) :
 
 
 template< typename T >
-flt::Testable< T >::~Testable(void)
+flt::Testable< T >::Testable::~Testable(void)
 {}
 
 template< typename T >
@@ -34,6 +34,13 @@ flt::Testable< T >::run(void)
 
 
 template< typename T >
+void flt::Testable< T >::init(void) {}
+
+template< typename T >
+void flt::Testable< T >::term(void) {}
+
+
+template< typename T >
 void
 flt::Testable< T >::report(std::ostream &out) const
 {
@@ -42,9 +49,18 @@ flt::Testable< T >::report(std::ostream &out) const
 
 
 template< typename T >
-void flt::Testable< T >::init(void) {}
+unsigned long
+flt::Testable< T >::get_failed_count() const
+{
+	return this->_batch.get_failed_count();
+}	// get_failed_count
+
 
 template< typename T >
-void flt::Testable< T >::term(void) {}
+unsigned long
+flt::Testable< T >::get_passed_count() const
+{
+	return this->_batch.get_passed_count();
+}	// get_passed_count
 
 #endif // TESTABLE_IPP

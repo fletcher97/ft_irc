@@ -13,6 +13,8 @@ public:
 	virtual void term(void) = 0;
 	virtual void run(void) = 0;
 	virtual void report(std::ostream &out) const = 0;
+	virtual unsigned long get_failed_count() const = 0;
+	virtual unsigned long get_passed_count() const = 0;
 };	// class ITestable
 
 }	// namespace flt

@@ -29,6 +29,8 @@ public:
 	virtual void init(void);
 	virtual void term(void);
 	virtual void report(std::ostream &out) const;
+	virtual unsigned long get_failed_count() const;
+	virtual unsigned long get_passed_count() const;
 };	// class Testable
 
 }	// namespace flt
