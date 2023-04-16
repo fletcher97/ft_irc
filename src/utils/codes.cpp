@@ -3,7 +3,7 @@
 #include "codes.hpp"
 
 std::string
-toString(ft_irc::commands cmd)
+ft_irc::toString(ft_irc::commands cmd)
 {
 	switch (cmd) {
 		case ft_irc::CAP: {
