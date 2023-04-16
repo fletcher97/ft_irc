@@ -1,17 +1,34 @@
 #include "codes.hpp"
 
-#include "Parser.hpp"
 #include "ParserUT.hpp"
+#include "Parser.hpp"
 
 ft_irc::ParserUT::ParserUT(void) :
 	flt::Testable< ft_irc::ParserUT >("Parser")
 {
 	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
+
 	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 	REGISTER(ft_irc::ParserUT, test_tag_presence)
 	REGISTER(ft_irc::ParserUT, test_tag_single_simple)
 	REGISTER(ft_irc::ParserUT, test_tag_multi_simple)
-}
+	REGISTER(ft_irc::ParserUT, test_tag_single_kv)
+	REGISTER(ft_irc::ParserUT, test_tag_multi_kv)
+
+	REGISTER(ft_irc::ParserUT, test_source_presence)
+
+	REGISTER(ft_irc::ParserUT, test_command_nocmd)
+	REGISTER(ft_irc::ParserUT, test_command_valid)
+	REGISTER(ft_irc::ParserUT, test_command_invalid)
+	REGISTER(ft_irc::ParserUT, test_command_missing)
+
+	REGISTER(ft_irc::ParserUT, test_arguments_nocmd)
+	REGISTER(ft_irc::ParserUT, test_arguments_single)
+	REGISTER(ft_irc::ParserUT, test_arguments_multi)
+	REGISTER(ft_irc::ParserUT, test_arguments_missing)
+	REGISTER(ft_irc::ParserUT, test_arguments_colon)
+	REGISTER(ft_irc::ParserUT, test_arguments_multi_colon)
+}	// ParserUT::ParserUT
 
 
 ft_irc::ParserUT::~ParserUT(void) {}
