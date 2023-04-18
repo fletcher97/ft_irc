@@ -338,27 +338,27 @@ ft_irc::ParserUT::test_command_valid(void)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "CAP * LS\r\n";
-	expected = CAP;
+	expected = ft_irc::CMD_CAP;
 	ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = ":abc.com CAP * LS\r\n";
-	expected = CAP;
+	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@id :abc.com CAP * LS\r\n";
-	expected = CAP;
+	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@id CAP * LS\r\n";
-	expected = CAP;
+	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 
-	for (int i = 0; ALL_COMMANDS[i] != WALLOPS; i++) {
+	for (int i = 0; ALL_COMMANDS[i] != ft_irc::CMD_WALLOPS; i++) {
 		cmd = ft_irc::Parser::cmd_t();
 		msg = "@tag " + toString(ALL_COMMANDS[i]) + "\r\n";
 		ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
@@ -367,9 +367,9 @@ ft_irc::ParserUT::test_command_valid(void)
 
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag " + toString(WALLOPS) + "\r\n";
+	msg = "@tag " + toString(ft_irc::CMD_WALLOPS) + "\r\n";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
-	ASSERT_EQ(cmd.cmd, WALLOPS)
+	ASSERT_EQ(cmd.cmd, ft_irc::CMD_WALLOPS)
 }	// ParserUT::test_command_valid
 
 

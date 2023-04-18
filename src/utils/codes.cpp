@@ -6,163 +6,163 @@ std::string
 ft_irc::toString(ft_irc::commands cmd)
 {
 	switch (cmd) {
-		case ft_irc::CAP: {
+		case ft_irc::CMD_CAP: {
 				return "CAP";
 			}
 
-		case ft_irc::AUTHENTICATE: {
+		case ft_irc::CMD_AUTHENTICATE: {
 				return "AUTHENTICATE";
 			}
 
-		case ft_irc::PASS: {
+		case ft_irc::CMD_PASS: {
 				return "PASS";
 			}
 
-		case ft_irc::NICK: {
+		case ft_irc::CMD_NICK: {
 				return "NICK";
 			}
 
-		case ft_irc::USER: {
+		case ft_irc::CMD_USER: {
 				return "USER";
 			}
 
-		case ft_irc::PING: {
+		case ft_irc::CMD_PING: {
 				return "PING";
 			}
 
-		case ft_irc::PONG: {
+		case ft_irc::CMD_PONG: {
 				return "PONG";
 			}
 
-		case ft_irc::OPER: {
+		case ft_irc::CMD_OPER: {
 				return "OPER";
 			}
 
-		case ft_irc::QUIT: {
+		case ft_irc::CMD_QUIT: {
 				return "QUIT";
 			}
 
-		case ft_irc::ERROR: {
+		case ft_irc::CMD_ERROR: {
 				return "ERROR";
 			}
 
-		case ft_irc::JOIN: {
+		case ft_irc::CMD_JOIN: {
 				return "JOIN";
 			}
 
-		case ft_irc::PART: {
+		case ft_irc::CMD_PART: {
 				return "PART";
 			}
 
-		case ft_irc::TOPIC: {
+		case ft_irc::CMD_TOPIC: {
 				return "TOPIC";
 			}
 
-		case ft_irc::NAMES: {
+		case ft_irc::CMD_NAMES: {
 				return "NAMES";
 			}
 
-		case ft_irc::LIST: {
+		case ft_irc::CMD_LIST: {
 				return "LIST";
 			}
 
-		case ft_irc::INVITE: {
+		case ft_irc::CMD_INVITE: {
 				return "INVITE";
 			}
 
-		case ft_irc::KICK: {
+		case ft_irc::CMD_KICK: {
 				return "KICK";
 			}
 
-		case ft_irc::MOTD: {
+		case ft_irc::CMD_MOTD: {
 				return "MOTD";
 			}
 
-		case ft_irc::VERSION: {
+		case ft_irc::CMD_VERSION: {
 				return "VERSION";
 			}
 
-		case ft_irc::ADMIN: {
+		case ft_irc::CMD_ADMIN: {
 				return "ADMIN";
 			}
 
-		case ft_irc::CONNECT: {
+		case ft_irc::CMD_CONNECT: {
 				return "CONNECT";
 			}
 
-		case ft_irc::LUSERS: {
+		case ft_irc::CMD_LUSERS: {
 				return "LUSERS";
 			}
 
-		case ft_irc::TIME: {
+		case ft_irc::CMD_TIME: {
 				return "TIME";
 			}
 
-		case ft_irc::STATS: {
+		case ft_irc::CMD_STATS: {
 				return "STATS";
 			}
 
-		case ft_irc::HELP: {
+		case ft_irc::CMD_HELP: {
 				return "HELP";
 			}
 
-		case ft_irc::INFO: {
+		case ft_irc::CMD_INFO: {
 				return "INFO";
 			}
 
-		case ft_irc::MODE: {
+		case ft_irc::CMD_MODE: {
 				return "MODE";
 			}
 
-		case ft_irc::PRIVMSG: {
+		case ft_irc::CMD_PRIVMSG: {
 				return "PRIVMSG";
 			}
 
-		case ft_irc::NOTICE: {
+		case ft_irc::CMD_NOTICE: {
 				return "NOTICE";
 			}
 
-		case ft_irc::WHO: {
+		case ft_irc::CMD_WHO: {
 				return "WHO";
 			}
 
-		case ft_irc::WHOIS: {
+		case ft_irc::CMD_WHOIS: {
 				return "WHOIS";
 			}
 
-		case ft_irc::WHOWAS: {
+		case ft_irc::CMD_WHOWAS: {
 				return "WHOWAS";
 			}
 
-		case ft_irc::KILL: {
+		case ft_irc::CMD_KILL: {
 				return "KILL";
 			}
 
-		case ft_irc::REHASH: {
+		case ft_irc::CMD_REHASH: {
 				return "REHASH";
 			}
 
-		case ft_irc::RESTART: {
+		case ft_irc::CMD_RESTART: {
 				return "RESTART";
 			}
 
-		case ft_irc::SQUIT: {
+		case ft_irc::CMD_SQUIT: {
 				return "SQUIT";
 			}
 
-		case ft_irc::AWAY: {
+		case ft_irc::CMD_AWAY: {
 				return "AWAY";
 			}
 
-		case ft_irc::LINKS: {
+		case ft_irc::CMD_LINKS: {
 				return "LINKS";
 			}
 
-		case ft_irc::USERHOST: {
+		case ft_irc::CMD_USERHOST: {
 				return "USERHOST";
 			}
 
-		case ft_irc::WALLOPS: {
+		case ft_irc::CMD_WALLOPS: {
 				return "WALLOPS";
 			}
 

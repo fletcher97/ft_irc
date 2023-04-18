@@ -1,13 +1,14 @@
 #if !defined(PARSERUT_HPP)
 #define PARSERUT_HPP
 
-#include "Testable.tpp"
 #include "Parser.hpp"
+#include "Testable.tpp"
 
 namespace ft_irc
 {
 
-class ParserUT : public flt::Testable<ft_irc::ParserUT>, ft_irc::Parser
+class ParserUT :
+	public flt::Testable< ft_irc::ParserUT >, ft_irc::Parser
 {
 public:
 	ParserUT(void);
@@ -35,9 +36,8 @@ public:
 	void test_arguments_missing(void);
 	void test_arguments_colon(void);
 	void test_arguments_multi_colon(void);
+};	// class ParserUT
 
-};
-
-} // namespace ft_irc
+}	// namespace ft_irc
 
 #endif // PARSERUT_HPP
