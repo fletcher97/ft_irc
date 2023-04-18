@@ -128,3 +128,10 @@ ft_irc::Client::setStatus(ft_irc::Client::Status status)
 {
 	this->_status = status;
 }	// Client::setStatus
+
+
+std::string
+ft_irc::Client::getMask(void) const
+{
+	return this->_nickname + "!" + this->_username + "@" + this->_address;
+}	// Client::getMask
