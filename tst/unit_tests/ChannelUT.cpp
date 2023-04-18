@@ -3,7 +3,10 @@
 #include "ChannelUT.hpp"
 #include "Log.hpp"
 
-ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc::Channel() {
+ft_irc::ChannelUT::ChannelUT(void) :
+	flt::Testable< ChannelUT >("Channel"),
+	ft_irc::Channel()
+{
 	REGISTER(ChannelUT, test_constructor)
 
 	REGISTER(ChannelUT, test_setName)
@@ -23,12 +26,14 @@ ft_irc::ChannelUT::ChannelUT(void) : flt::Testable<ChannelUT>("Channel"), ft_irc
 	REGISTER(ChannelUT, test_join)
 }
 
+
 ft_irc::ChannelUT::~ChannelUT(void) {}
 
 void
-ft_irc::ChannelUT::test_constructor(void) {
-	std::string	test1 = "#channel1";
-	std::string	test2 = "#channel2";
+ft_irc::ChannelUT::test_constructor(void)
+{
+	std::string test1 = "#channel1";
+	std::string test2 = "#channel2";
 
 	ft_irc::Channel channel1(test1);
 	ft_irc::Channel channel2(test2);
@@ -46,17 +51,21 @@ ft_irc::ChannelUT::test_constructor(void) {
 
 	LOG_TRACE("Testing that copy constructo")
 	ft_irc::Channel channel3(channel1);
+
 	ASSERT_EQ(channel1.getName(), channel3.getName())
 
 	LOG_TRACE("Testing that copy constructor is a deep copy")
 	channel3.setName(test2);
 	ASSERT_NEQ(channel1.getName(), channel3.getName())
-}
+}	// ChannelUT::test_constructor
+
 
 void
-ft_irc::ChannelUT::test_setName(void) {
+ft_irc::ChannelUT::test_setName(void)
+{
 	LOG_TRACE("Testing setName with empty string")
 	std::string test = "";
+
 	ASSERT_THROW(ft_irc::Channel::setName(test), std::invalid_argument)
 
 	LOG_TRACE("Testing setName with an invalid Channel name")
@@ -98,10 +107,12 @@ ft_irc::ChannelUT::test_setName(void) {
 	test = "&channel";
 	ASSERT_NOTHROW(ft_irc::Channel::setName(test);)
 	ASSERT_EQ(ft_irc::Channel::_name, test)
-}
+}	// ChannelUT::test_setName
+
 
 void
-ft_irc::ChannelUT::test_setTopic(void) {
+ft_irc::ChannelUT::test_setTopic(void)
+{
 	ft_irc::Client test(42, sockaddr_in());
 	std::string topic = "";
 
@@ -139,11 +150,14 @@ ft_irc::ChannelUT::test_setTopic(void) {
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
 	ft_irc::Channel::_clients.clear();
-}
+}	// ChannelUT::test_setTopic
+
 
 void
-ft_irc::ChannelUT::test_setKey(void) {
+ft_irc::ChannelUT::test_setKey(void)
+{
 	std::string test = "";
+
 	LOG_TRACE("Testing setKey with empty string")
 	ASSERT_THROW(ft_irc::Channel::setKey(test), std::invalid_argument)
 
@@ -156,10 +170,12 @@ ft_irc::ChannelUT::test_setKey(void) {
 	LOG_TRACE("Testing setKey with 'marvin'")
 	ft_irc::Channel::setKey(test);
 	ASSERT_EQ(ft_irc::Channel::_key, test)
-}
+}	// ChannelUT::test_setKey
+
 
 void
-ft_irc::ChannelUT::test_setClientLimit(void) {
+ft_irc::ChannelUT::test_setClientLimit(void)
+{
 	LOG_TRACE("Testing setClientLimit invalid argumnets: 0")
 	ASSERT_THROW(ft_irc::Channel::setClientLimit(0), std::invalid_argument)
 	LOG_TRACE("Testing setClientLimit invalid argumnets: -10")
@@ -173,10 +189,12 @@ ft_irc::ChannelUT::test_setClientLimit(void) {
 	LOG_TRACE("Testing setClientLimit with: 10")
 	ASSERT_EQ(ft_irc::Channel::_client_limit, 10)
 	ft_irc::Channel::_client_limit = 0;
-}
+}	// ChannelUT::test_setClientLimit
+
 
 void
-ft_irc::ChannelUT::test_getName(void) {
+ft_irc::ChannelUT::test_getName(void)
+{
 	ft_irc::Channel::_name = "gemartin";
 	LOG_TRACE("Testing getName: gmartin")
 	ASSERT_EQ(ft_irc::Channel::getName(), "gemartin")
@@ -184,10 +202,12 @@ ft_irc::ChannelUT::test_getName(void) {
 	ft_irc::Channel::_name = "marvin";
 	LOG_TRACE("Testing getName: marvin")
 	ASSERT_EQ(ft_irc::Channel::getName(), "marvin")
-}
+}	// ChannelUT::test_getName
+
 
 void
-ft_irc::ChannelUT::test_getTopic(void) {
+ft_irc::ChannelUT::test_getTopic(void)
+{
 	ft_irc::Channel::_topic = "gemartin";
 	LOG_TRACE("Testing getTopic: gmartin")
 	ASSERT_EQ(ft_irc::Channel::getTopic(), "gemartin")
@@ -195,10 +215,12 @@ ft_irc::ChannelUT::test_getTopic(void) {
 	ft_irc::Channel::_topic = "marvin";
 	LOG_TRACE("Testing getTopic: marvin")
 	ASSERT_EQ(ft_irc::Channel::getTopic(), "marvin")
-}
+}	// ChannelUT::test_getTopic
+
 
 void
-ft_irc::ChannelUT::test_getKey(void) {
+ft_irc::ChannelUT::test_getKey(void)
+{
 	ft_irc::Channel::_key = "gemartin";
 	LOG_TRACE("Testing getKey: gmartin")
 	ASSERT_EQ(ft_irc::Channel::getKey(), "gemartin")
@@ -207,10 +229,12 @@ ft_irc::ChannelUT::test_getKey(void) {
 	LOG_TRACE("Testing getKey: marvin")
 	ASSERT_EQ(ft_irc::Channel::getKey(), "marvin")
 	ft_irc::Channel::_key = "";
-}
+}	// ChannelUT::test_getKey
+
 
 void
-ft_irc::ChannelUT::test_addClient(void) {
+ft_irc::ChannelUT::test_addClient(void)
+{
 	Client test(42, sockaddr_in());
 
 	LOG_TRACE("Testing addClient valid input")
@@ -224,14 +248,17 @@ ft_irc::ChannelUT::test_addClient(void) {
 	LOG_TRACE("Testing addClient dosen't add a client that is already on channel")
 	ASSERT(!ft_irc::Channel::addClient(test))
 	ft_irc::Channel::_clients.clear();
-}
+}	// ChannelUT::test_addClient
+
 
 void
-ft_irc::ChannelUT::test_isInChannel(void) {
+ft_irc::ChannelUT::test_isInChannel(void)
+{
 	Client test(42, sockaddr_in());
 	Client test2(84, sockaddr_in());
-	std::string	test_nick = "42";
-	std::string	test2_nick = "84";
+	std::string test_nick = "42";
+	std::string test2_nick = "84";
+
 	test.setNickname(test_nick);
 	test2.setNickname(test2_nick);
 
@@ -254,10 +281,12 @@ ft_irc::ChannelUT::test_isInChannel(void) {
 	LOG_TRACE("Testing isInChannle with a client not on channel by nickname")
 	ASSERT(!ft_irc::Channel::isInChannel(test2.getNickname()))
 	ft_irc::Channel::_clients.clear();
-}
+}	// ChannelUT::test_isInChannel
+
 
 void
-ft_irc::ChannelUT::test_banMask(void) {
+ft_irc::ChannelUT::test_banMask(void)
+{
 	std::string test = "smiro!*@*";
 
 	LOG_TRACE("Testing banMask with correct input")
@@ -268,52 +297,56 @@ ft_irc::ChannelUT::test_banMask(void) {
 	ft_irc::Channel::_masks.clear();
 
 	LOG_TRACE("Testing banMask with a mask that is already in mask map but not banned")
-	ft_irc::Channel::_masks.insert(std::make_pair<std::string, mask_mode>(test, INVITE));
+	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(test, INVITE));
 	ASSERT(ft_irc::Channel::banMask(test))
 	ft_irc::Channel::_masks.clear();
-}
+}	// ChannelUT::test_banMask
+
 
 void
-ft_irc::ChannelUT::test_toggleMode(void) {
+ft_irc::ChannelUT::test_toggleMode(void)
+{
 	LOG_TRACE("Testing toggleMode: INVITE_ONLY")
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(ft_irc::Channel::_mode & INVITE_ONLY)
+	ASSERT(ft_irc::Channel::_mode &INVITE_ONLY)
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(!(ft_irc::Channel::_mode & INVITE_ONLY))
+	ASSERT(!(ft_irc::Channel::_mode &INVITE_ONLY))
 
 	LOG_TRACE("Testing toggleMode: MODERATE")
 	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(ft_irc::Channel::_mode & MODERATE)
+	ASSERT(ft_irc::Channel::_mode &MODERATE)
 	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(!(ft_irc::Channel::_mode & MODERATE))
+	ASSERT(!(ft_irc::Channel::_mode &MODERATE))
 
 	LOG_TRACE("Testing toggleMode: SECRET")
 	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(ft_irc::Channel::_mode & SECRET)
+	ASSERT(ft_irc::Channel::_mode &SECRET)
 	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(!(ft_irc::Channel::_mode & SECRET))
+	ASSERT(!(ft_irc::Channel::_mode &SECRET))
 
 	LOG_TRACE("Testing toggleMode: PROTECTED_TOPIC")
 	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(ft_irc::Channel::_mode & PROTECTED_TOPIC)
+	ASSERT(ft_irc::Channel::_mode &PROTECTED_TOPIC)
 	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(!(ft_irc::Channel::_mode & PROTECTED_TOPIC))
+	ASSERT(!(ft_irc::Channel::_mode &PROTECTED_TOPIC))
 
 	LOG_TRACE("Testing toggleMode: NOT_EXTERNAL_MSGS")
 	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS)
+	ASSERT(ft_irc::Channel::_mode &NOT_EXTERNAL_MSGS)
 	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(!(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS))
+	ASSERT(!(ft_irc::Channel::_mode &NOT_EXTERNAL_MSGS))
 
 	LOG_TRACE("Testing toggleMode: invalid argument: -1")
 	ASSERT_THROW(ft_irc::Channel::toggleMode(-1), std::invalid_argument)
 
 	LOG_TRACE("Testing toggleMode: invalid argument: 100")
 	ASSERT_THROW(ft_irc::Channel::toggleMode(100), std::invalid_argument)
-}
+}	// ChannelUT::test_toggleMode
+
 
 void
-ft_irc::ChannelUT::test_invite(void) {
+ft_irc::ChannelUT::test_invite(void)
+{
 	Client client(42, sockaddr_in());
 	std::string nickname = "smiro";
 
@@ -324,7 +357,7 @@ ft_irc::ChannelUT::test_invite(void) {
 	ft_irc::Channel::_clients.at(client.getFd()).mode ^= OPERATOR;
 
 	LOG_TRACE("Testing invite a nickname that is already tracked but not invited")
-	ft_irc::Channel::_masks.insert(std::make_pair<std::string, mask_mode>(nickname, BAN));
+	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(nickname, BAN));
 	ASSERT(ft_irc::Channel::invite(client, nickname))
 	ft_irc::Channel::_masks.clear();
 
@@ -344,15 +377,17 @@ ft_irc::ChannelUT::test_invite(void) {
 	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::AlreadyOnChannel)
 	ft_irc::Channel::_masks.clear();
 	ft_irc::Channel::_clients.clear();
+}	// ChannelUT::test_invite
 
-}
 
 void
-ft_irc::ChannelUT::test_join(void) {
+ft_irc::ChannelUT::test_join(void)
+{
 	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
 	ft_irc::Client tmp = ft_irc::Client(20, sockaddr_in());
 	std::string name = "test";
 	std::string key = "1234";
+
 	test.setNickname(name);
 
 	LOG_TRACE("Testing join with a banned client")
@@ -391,4 +426,4 @@ ft_irc::ChannelUT::test_join(void) {
 	LOG_TRACE("Testing join doesnt join a client that is already on channel")
 	ASSERT(!ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
-}
+}	// ChannelUT::test_join

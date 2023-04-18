@@ -4,10 +4,12 @@
 #include "Channel.hpp"
 
 #include "Testable.tpp"
+
 namespace ft_irc
 {
 
-class ChannelUT : public flt::Testable<ChannelUT>, ft_irc::Channel
+class ChannelUT :
+	public flt::Testable< ChannelUT >, ft_irc::Channel
 {
 public:
 	ChannelUT(void);
@@ -30,8 +32,8 @@ public:
 	void test_invite(void);
 	void test_join(void);
 	void test_setClientLimit(void);
-};
+};	// class ChannelUT
 
-} // namespace ft_irc
+}	// namespace ft_irc
 
 #endif // CHANNELUT_HPP
