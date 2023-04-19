@@ -202,6 +202,7 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
+	std::map< std::string, std::string > expected;
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
@@ -215,8 +216,7 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@def=abc AUTHENTICATE";
-	std::map< std::string, std::string > expected = std::map< std::string, std::string >();
-
+	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags, expected)
