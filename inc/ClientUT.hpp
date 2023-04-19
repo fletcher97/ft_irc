@@ -19,6 +19,7 @@ public:
 	void test_setUsername(void);
 	void test_setRealname(void);
 	void test_setStatus(void);
+	void test_toggleMode(void);
 
 	void test_getFd(void);
 	void test_getHostname(void);
@@ -27,7 +28,7 @@ public:
 	void test_getRealname(void);
 	void test_getStatus(void);
 	void test_getMask(void);
-};
+};	// class ClientUT
 
 }	// namespace ft_irc
 
