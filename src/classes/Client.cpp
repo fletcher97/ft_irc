@@ -23,11 +23,11 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	LOG_DEBUG("Creating new client")
 	this->_hostname = inet_ntoa(socket.sin_addr);
 	this->_mode &= W;
-	LOG_INFO("New client created: " << this->_address)
+	LOG_INFO("New client created: " << this->_hostname)
 }
 
 
-ft_irc::Client::Client(const ft_irc::Client &c) :
+ ft_irc::Client::Client(const ft_irc::Client &c) :
 	_fd(c._fd),
 	_hostname(c._hostname),
 	_nickname(c._nickname),
