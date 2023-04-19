@@ -20,19 +20,60 @@ ft_irc::Parser::check_delimiter(std::string &msg)
 void
 ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 {
-	LOG_TRACE("Parsing tags")
+	std::string tags;
+	std::string tag;
+	std::string key;
+
+	// Error checking
+	LOG_DEBUG("Parsing tags for \"" + msg + "\"")
 	if (!cmd) {
 		LOG_ERROR("NULL command passed to tags parsing");
 		throw std::invalid_argument("NULL command passed to tags parsing");
 	}
 	if (*msg.begin() != '@') {
-		LOG_TRACE("Parsing tags: No tags found")
+		LOG_TRACE("No tags found")
 
 		return;
 	}
-	(void) cmd;
-	(void) msg;
-	throw std::exception();
+	if (msg.find_first_of(' ') == msg.npos) {
+		LOG_ERROR("No spaces found to split tags with");
+		throw std::invalid_argument("Msg contains no spaces");
+	}
+	if ((msg[msg.find_first_of(' ') - 1] == '=') || (msg[msg.find_first_of(' ') - 1] == ';')) {
+		LOG_ERROR("Tags section ends with a '='");
+		throw std::invalid_argument("Tag section ends with =");
+	}
+
+	// Tag parsing
+	tags = msg.substr(1, msg.find_first_of(' ') - 1);
+	LOG_TRACE("Splitting tags")
+	do {
+		LOG_TRACE("Parsing next tag")
+		// Getting first tag
+		if (*tags.begin() == ';') {
+			tags = tags.substr(1, tags.size());
+		}
+		if (tags.find_first_of(';') != tags.npos) {
+			tag = tags.substr(0, tags.find_first_of(';'));
+		} else {
+			tag = tags;
+		}
+		// Checking key
+		if (tag.find_first_of('=') != tag.npos) {
+			tag = tag.substr(0, tag.find_first_of('='));
+			key = tag.substr(tag.find_first_of('=') + 1, tag.size());
+		} else {
+			key = "";
+		}
+		// Adding tag to cmd
+		LOG_DEBUG("Adding tag: [" + tag + ";" + key + "]")
+		cmd->tags.insert(std::pair< std::string, std::string >(tag, key));
+		if (tags.find_first_of(';') != tags.npos) {
+			LOG_TRACE("Tag deimiter detected")
+			tags = tags.substr(tags.find_first_of(';'), tags.size());
+		}
+	} while (tags.find_first_of(';') != tags.npos);
+	LOG_TRACE("Tag parsing completed")
 }	// Parser::parse_tags
 
 
