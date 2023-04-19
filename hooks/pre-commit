@@ -7,5 +7,12 @@ then
 	exit 1
 fi
 
+echo "Testing uncrustify"
+if ! make uncrustify-check;
+then
+	echo "ERROR: Code must comply with uncrustify's config. Run \`make uncrustify-check\` to see what's wrong."
+	exit 1
+fi
+
 echo "All OK"
 exit 0
