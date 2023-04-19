@@ -26,6 +26,7 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	LOG_INFO("New client created: " << this->_address)
 }
 
+
 ft_irc::Client::Client(const ft_irc::Client &c) :
 	_fd(c._fd),
 	_hostname(c._hostname),
@@ -36,81 +37,100 @@ ft_irc::Client::Client(const ft_irc::Client &c) :
 {}
 
 ft_irc::Client&
-ft_irc::Client::operator=(const ft_irc::Client &c) {
+ft_irc::Client::operator=(const ft_irc::Client &c)
+{
 	this->_fd = c._fd;
 	this->_hostname = c._hostname;
 	this->_nickname = c._nickname;
 	this->_username = c._username;
 	this->_realname = c._realname;
 	this->_status = c._status;
-	return *this;
-}
 
-ft_irc::Client::~Client(void) {
+	return *this;
+}	// =
+
+
+ft_irc::Client::~Client(void)
+{
 	close(this->_fd);
 	LOG_INFO("Removed client: " << this->_nickname)
 }
 
+
 int
-ft_irc::Client::getFd(void) const {
+ft_irc::Client::getFd(void) const
+{
 	return this->_fd;
-}
+}	// Client::getFd
+
 
 const std::string&
 ft_irc::Client::getHostname(void) const {
 	return this->_hostname;
-}
+}	// Client::getHostname
+
 
 const std::string&
-ft_irc::Client::getNickname(void) const {
+ft_irc::Client::getNickname(void) const
+{
 	return this->_nickname;
-}
+}	// Client::getNickname
+
 
 const std::string&
-ft_irc::Client::getUsername(void) const {
+ft_irc::Client::getUsername(void) const
+{
 	return this->_username;
-}
+}	// Client::getUsername
+
 
 const std::string&
-ft_irc::Client::getRealname(void) const {
+ft_irc::Client::getRealname(void) const
+{
 	return this->_realname;
-}
+}	// Client::getRealname
+
 
 ft_irc::Client::Status
-ft_irc::Client::getStatus(void) const {
+ft_irc::Client::getStatus(void) const
+{
 	return this->_status;
-}
+}	// Client::getStatus
+
 
 void
 ft_irc::Client::setNickname(const std::string& nickname) {
 	if (nickname.length() == 0)
-		throw EmptyArgument("Nickname must be a non empty string");
+		throw std::invalid_argument("Nickname must be a non empty string");
 	this->_nickname = nickname;
-}
+}	// Client::setNickname
+
 
 void
 ft_irc::Client::setUsername(const std::string& username) {
 	if (username.length() == 0)
-		throw EmptyArgument("Username must be a non empty string");
+		throw std::invalid_argument("Username must be a non empty string");
 	this->_username = username;
-}
+}	// Client::setUsername
+
 
 void
 ft_irc::Client::setRealname(const std::string& realname) {
 	if (realname.length() == 0)
-		throw EmptyArgument("Realname must be a non empty string");
+		throw std::invalid_argument("Realname must be a non empty string");
 	this->_realname = realname;
-}
+}	// Client::setRealname
+
 
 void
-ft_irc::Client::setStatus(ft_irc::Client::Status status) {
+ft_irc::Client::setStatus(ft_irc::Client::Status status)
+{
 	this->_status = status;
-}
+}	// Client::setStatus
+
 
 std::string
-ft_irc::Client::getMask(void) const {
+ft_irc::Client::getMask(void) const
+{
 	return this->_nickname + "!" + this->_username + "@" + this->_hostname;
-}
-
-ft_irc::Client::EmptyArgument::EmptyArgument(std::string msg) : std::invalid_argument(msg)
-{}
+}	// Client::getMask

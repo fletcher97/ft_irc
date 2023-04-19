@@ -10,7 +10,7 @@ namespace ft_irc
 class Client
 {
 public:
-	enum	Status
+	enum    Status
 	{
 		PASSWORD,
 		REGISTER,
@@ -34,8 +34,10 @@ protected:
 
 public:
 	Client(int fd, struct sockaddr_in socket);
-	Client(const Client& c);
-	Client& operator=(const Client& c);
+	Client(const Client &c);
+
+	Client& operator=(const Client &c);
+
 	~Client(void);
 
 	int	getFd(void) const;
@@ -51,13 +53,6 @@ public:
 	void	setUsername(const std::string& username);
 	void	setRealname(const std::string& realname);
 	void	setStatus(Client::Status status);
-
-public:
-	class EmptyArgument : public std::invalid_argument
-	{
-	public:
-			EmptyArgument(std::string msg);
-	};
 };
 
 } // namespace ft_irc

@@ -8,7 +8,8 @@
 namespace ft_irc
 {
 
-class ClientUT : public flt::Testable<ClientUT>, ft_irc::Client
+class ClientUT :
+	public flt::Testable< ClientUT >, ft_irc::Client
 {
 public:
 	ClientUT(void);
@@ -28,6 +29,6 @@ public:
 	void test_getMask(void);
 };
 
-} // namespace ft_irc
+}	// namespace ft_irc
 
 #endif // CLIENTUT_HPP

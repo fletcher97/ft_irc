@@ -15,6 +15,7 @@ ft_irc::ClientUT::ClientUT(void) : flt::Testable<ClientUT>("Client"), Client() {
 	REGISTER(ClientUT, test_getMask)
 }
 
+
 ft_irc::ClientUT::~ClientUT(void) {}
 
 void
