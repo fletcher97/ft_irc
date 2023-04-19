@@ -97,6 +97,12 @@ ft_irc::ParserUT::test_tag_presence(void)
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_NEQ(cmd.tags.size(), 0)
 
+	// Tags no space
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@abc";
+	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
+	ASSERT_NEQ(cmd.tags.size(), 0)
+
 	// Tags present not at begining (shouldn't be detected)
 	cmd = ft_irc::Parser::cmd_t();
 	msg = " @abc AUTHENTICATE";
