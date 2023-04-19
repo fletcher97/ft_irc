@@ -502,6 +502,8 @@ clean_all: fclean clean_dep
 
 re: fclean all
 
+tests_re: fclean tests
+
 ################################################################################
 # Debug Targets
 ################################################################################
@@ -625,7 +627,7 @@ uncrustify-check:
 .PHONY: targets .FORCE compile-test vars uncrustify-check
 
 # Phony execution targets
-.PHONY: re all tests
+.PHONY: re tests_re all tests
 
 ################################################################################
 # Constants
