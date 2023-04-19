@@ -15,6 +15,7 @@ public:
 	ClientUT(void);
 	~ClientUT(void);
 
+	void test_constructor(void);
 	void test_setNickname(void);
 	void test_setUsername(void);
 	void test_setRealname(void);

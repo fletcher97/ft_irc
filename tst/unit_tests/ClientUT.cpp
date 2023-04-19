@@ -1,3 +1,5 @@
+#include <netinet/in.h>
+
 #include "Log.hpp"
 
 #include "ClientUT.hpp"
@@ -6,6 +8,7 @@ ft_irc::ClientUT::ClientUT(void) :
 	flt::Testable< ClientUT >("Client"),
 	Client()
 {
+	REGISTER(ClientUT, test_constructor)
 	REGISTER(ClientUT, test_setNickname)
 	REGISTER(ClientUT, test_setUsername)
 	REGISTER(ClientUT, test_setRealname)
@@ -23,6 +26,40 @@ ft_irc::ClientUT::ClientUT(void) :
 
 
 ft_irc::ClientUT::~ClientUT(void) {}
+
+
+void
+ft_irc::ClientUT::test_constructor(void)
+{
+	ft_irc::Client client1(42, sockaddr_in());
+	ft_irc::Client client2(84, sockaddr_in());
+
+	client1.setNickname("client1");
+	client2.setNickname("client2");
+	LOG_TRACE("test client constructor: different clients")
+	ASSERT_NEQ(client1.getFd(), client2.getFd())
+	ASSERT_NEQ(client1.getNickname(), client2.getNickname())
+
+	LOG_TRACE("test client constructor: asign operator")
+	client1 = client2;
+	ASSERT_EQ(client1.getFd(), client2.getFd())
+	ASSERT_EQ(client1.getNickname(), client2.getNickname())
+
+	LOG_TRACE("test client constructor: asign operator: deep copy")
+	client1.setNickname("client1");
+	ASSERT_NEQ(client1.getNickname(), client2.getNickname())
+
+	LOG_TRACE("test client constructor: copy constructor")
+	ft_irc::Client client3(client1);
+
+	ASSERT_EQ(client1.getNickname(), client3.getNickname())
+
+	client3.setNickname("client3");
+
+	LOG_TRACE("test client constructor: copy constructor: deep copy")
+	ASSERT_NEQ(client1.getNickname(), client3.getNickname())
+}	// ChannelUT::test_constructor
+
 
 void
 ft_irc::ClientUT::test_setNickname(void)
