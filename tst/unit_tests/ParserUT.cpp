@@ -93,19 +93,19 @@ ft_irc::ParserUT::test_tag_presence(void)
 
 	// Tags present
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@abc";
+	msg = "@abc AUTHENTICATE";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_NEQ(cmd.tags.size(), 0)
 
 	// Tags present not at begining (shouldn't be detected)
 	cmd = ft_irc::Parser::cmd_t();
-	msg = " @abc";
+	msg = " @abc AUTHENTICATE";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags.size(), 0)
 
 	// Tags present not at begining (shouldn't be detected)
 	cmd = ft_irc::Parser::cmd_t();
-	msg = ":asd @abc";
+	msg = ":asd @abc AUTHENTICATE";
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
 	ASSERT_EQ(cmd.tags.size(), 0)
 }	// ParserUT::test_tag_presence
@@ -120,7 +120,7 @@ ft_irc::ParserUT::test_tag_single_simple(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@abc";
+	msg = "@abc AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("abc", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -128,7 +128,7 @@ ft_irc::ParserUT::test_tag_single_simple(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@de-f";
+	msg = "@de-f AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("de-f", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -136,7 +136,7 @@ ft_irc::ParserUT::test_tag_single_simple(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@+locahost/def";
+	msg = "@+locahost/def AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("+locahost/def", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -144,7 +144,7 @@ ft_irc::ParserUT::test_tag_single_simple(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@ab42";
+	msg = "@ab42 AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("ab42", ""));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -168,7 +168,7 @@ ft_irc::ParserUT::test_tag_multi_simple(void)
 
 	// Simple multi tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@abc;def;ghi";
+	msg = "@abc;def;ghi AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("abc", ""));
 	expected.insert(std::pair< std::string, std::string >("def", ""));
@@ -205,16 +205,16 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@abc=";
+	msg = "@abc= AUTHENTICATE";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Simple tag
-	msg = "@abc= ";
+	msg = "@abc= AUTHENTICATE";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@def=abc";
+	msg = "@def=abc AUTHENTICATE";
 	std::map< std::string, std::string > expected = std::map< std::string, std::string >();
 
 	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
@@ -223,7 +223,7 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@+locahost/def=123qsd";
+	msg = "@+locahost/def=123qsd AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("+locahost/def", "123qsd"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -231,7 +231,7 @@ ft_irc::ParserUT::test_tag_single_kv(void)
 
 	// Simple tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@ab42=!34asc";
+	msg = "@ab42=!34asc AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("ab42", "!34asc"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -256,20 +256,20 @@ ft_irc::ParserUT::test_tag_multi_kv(void)
 
 	// Multi tag ERROR
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@abc=;abc=";
+	msg = "@abc=;abc= AUTHENTICATE";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Multi tag ERROR
-	msg = "@abc=;abc= ";
+	msg = "@abc=;abc= AUTHENTICATE";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Multi tag ERROR
-	msg = "@abc=;";
+	msg = "@abc=; AUTHENTICATE";
 	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Multi tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@def=abc;asd";
+	msg = "@def=abc;asd AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
 	expected.insert(std::pair< std::string, std::string >("de-f", "abc"));
@@ -278,7 +278,7 @@ ft_irc::ParserUT::test_tag_multi_kv(void)
 
 	// Multi tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@+locahost/def=123qsd;tya";
+	msg = "@+locahost/def=123qsd;tya AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("+locahost/def", "123qsd"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
@@ -286,7 +286,7 @@ ft_irc::ParserUT::test_tag_multi_kv(void)
 
 	// Multi tag
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@ab42=!34asc,cd33=w";
+	msg = "@ab42=!34asc,cd33=w AUTHENTICATE";
 	expected = std::map< std::string, std::string >();
 	expected.insert(std::pair< std::string, std::string >("ab42", "!34asc"));
 	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
