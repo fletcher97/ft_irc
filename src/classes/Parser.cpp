@@ -120,7 +120,7 @@ ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 			throw std::invalid_argument("Failed tag removal due to missing spaces");
 		}
 	}
-	if ((tmp.size() > 1) && (tmp[0] == ':') && (tmp[1] != ' ')) {
+	if ((tmp.size() > 1) && (tmp[0] == ':')) {
 		try {
 			LOG_TRACE("Removing source from msg")
 			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
