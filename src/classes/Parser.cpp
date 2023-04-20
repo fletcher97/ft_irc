@@ -11,8 +11,8 @@ ft_irc::Parser::check_delimiter(std::string &msg)
 		throw std::invalid_argument("Delimiter couldn't be found");
 	}
 	if ((msg.find_first_of('\r') != (msg.size() - 2)) || (msg.find_first_of('\n') != (msg.size() - 1))) {
-		LOG_ERROR("Message parsing error: Delimiter not at the end of message")
-   throw std::invalid_argument("Delimiter not at the end of message");
+		LOG_ERROR("Message parsing error: Delimiter not at the end of message");
+		throw std::invalid_argument("Delimiter not at the end of message");
 	}
 }	// Parser::check_delimiter
 
@@ -212,10 +212,10 @@ ft_irc::Parser::parse_msg(std::string &msg)
 		ft_irc::Parser::parse_arguments(ret, msg);
 
 		return ret;
-	} catch (const std::exception &e) {
+	} catch (...) {
 		if (ret) {
 			delete ret;
 		}
-		throw e;
+		throw;
 	}
 }	// Parser::parse_msg
