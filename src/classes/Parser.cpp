@@ -60,8 +60,8 @@ ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		}
 		// Checking key
 		if (tag.find_first_of('=') != tag.npos) {
-			tag = tag.substr(0, tag.find_first_of('='));
 			key = tag.substr(tag.find_first_of('=') + 1, tag.size());
+			tag = tag.substr(0, tag.find_first_of('='));
 		} else {
 			key = "";
 		}
