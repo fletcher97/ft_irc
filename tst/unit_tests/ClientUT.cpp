@@ -178,7 +178,7 @@ ft_irc::ClientUT::test_toggleMode(void)
 
 	LOG_TRACE("test toggleMode: 'CL_NETWORK_OPER'")
 	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_NETWORK_OPER))
-	ASSERT(ft_irc::Client::_mode & CL_NETWORK_OPER)
+	ASSERT(ft_irc::Client::_mode & (CL_NETWORK_OPER))
 
 	LOG_TRACE("test toggleMode: 'CL_LOCAL_OPER'")
 	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_LOCAL_OPER))

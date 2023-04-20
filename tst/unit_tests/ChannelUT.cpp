@@ -241,9 +241,9 @@ ft_irc::ChannelUT::test_addClient(void)
 	ASSERT(ft_irc::Channel::addClient(test))
 
 	LOG_TRACE("Testing addClient, first client has FOUNDER mode")
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & FOUNDER)
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (FOUNDER))
 	LOG_TRACE("Testing addClient, first client has OPERATOR mode")
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & OPERATOR)
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (OPERATOR))
 
 	LOG_TRACE("Testing addClient dosen't add a client that is already on channel")
 	ASSERT(!ft_irc::Channel::addClient(test))
@@ -308,33 +308,33 @@ ft_irc::ChannelUT::test_toggleMode(void)
 {
 	LOG_TRACE("Testing toggleMode: INVITE_ONLY")
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(ft_irc::Channel::_mode & INVITE_ONLY)
+	ASSERT(ft_irc::Channel::_mode & (INVITE_ONLY))
 	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(!(ft_irc::Channel::_mode & INVITE_ONLY))
+	ASSERT(!(ft_irc::Channel::_mode & (INVITE_ONLY)))
 
 	LOG_TRACE("Testing toggleMode: MODERATE")
 	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(ft_irc::Channel::_mode & MODERATE)
+	ASSERT(ft_irc::Channel::_mode & (MODERATE))
 	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(!(ft_irc::Channel::_mode & MODERATE))
+	ASSERT(!(ft_irc::Channel::_mode & (MODERATE)))
 
 	LOG_TRACE("Testing toggleMode: SECRET")
 	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(ft_irc::Channel::_mode & SECRET)
+	ASSERT(ft_irc::Channel::_mode & (SECRET))
 	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(!(ft_irc::Channel::_mode & SECRET))
+	ASSERT(!(ft_irc::Channel::_mode & (SECRET)))
 
 	LOG_TRACE("Testing toggleMode: PROTECTED_TOPIC")
 	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(ft_irc::Channel::_mode & PROTECTED_TOPIC)
+	ASSERT(ft_irc::Channel::_mode & (PROTECTED_TOPIC))
 	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(!(ft_irc::Channel::_mode & PROTECTED_TOPIC))
+	ASSERT(!(ft_irc::Channel::_mode & (PROTECTED_TOPIC)))
 
 	LOG_TRACE("Testing toggleMode: NOT_EXTERNAL_MSGS")
 	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS)
+	ASSERT(ft_irc::Channel::_mode & (NOT_EXTERNAL_MSGS))
 	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(!(ft_irc::Channel::_mode & NOT_EXTERNAL_MSGS))
+	ASSERT(!(ft_irc::Channel::_mode & (NOT_EXTERNAL_MSGS)))
 
 	LOG_TRACE("Testing toggleMode: invalid argument: -1")
 	ASSERT_THROW(ft_irc::Channel::toggleMode(-1), std::invalid_argument)
