@@ -414,6 +414,10 @@ ft_irc::ParserUT::test_command_missing(void)
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tag : asd\r\n";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag : CAP\r\n";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 }	// ParserUT::test_command_missing
 
 
