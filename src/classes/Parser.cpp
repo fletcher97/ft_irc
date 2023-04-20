@@ -203,6 +203,7 @@ ft_irc::Parser::parse_msg(std::string &msg)
 {
 	ft_irc::Parser::cmd_t *ret = NULL;
 
+	LOG_DEBUG("parsing msg: \"" + msg + "\"")
 	try {
 		check_delimiter(msg);
 		ret = new ft_irc::Parser::cmd_t();
@@ -213,6 +214,7 @@ ft_irc::Parser::parse_msg(std::string &msg)
 
 		return ret;
 	} catch (...) {
+		LOG_ERROR("Failed to parse msg: \"" + msg + "\"")
 		if (ret) {
 			delete ret;
 		}
