@@ -36,6 +36,9 @@ public:
 	void test_arguments_missing(void);
 	void test_arguments_colon(void);
 	void test_arguments_multi_colon(void);
+
+	void test_parser_valid(void);
+	void test_parser_invalid(void);
 };	// class ParserUT
 
 }	// namespace ft_irc
