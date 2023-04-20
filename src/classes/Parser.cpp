@@ -7,8 +7,8 @@ void
 ft_irc::Parser::check_delimiter(std::string &msg)
 {
 	if ((msg.find_first_of('\r') == std::string::npos) || (msg.find_first_of('\n') == std::string::npos)) {
-		LOG_ERROR("Message parsing error: Delimiter couldn't be found")
-   throw std::invalid_argument("Delimiter couldn't be found");
+		LOG_ERROR("Message parsing error: Delimiter couldn't be found");
+		throw std::invalid_argument("Delimiter couldn't be found");
 	}
 	if ((msg.find_first_of('\r') != (msg.size() - 2)) || (msg.find_first_of('\n') != (msg.size() - 1))) {
 		LOG_ERROR("Message parsing error: Delimiter not at the end of message")
@@ -85,7 +85,7 @@ ft_irc::Parser::check_source(std::string &msg)
 	LOG_TRACE("Checking source presence for msg \"" + msg + "\"")
 	if (msg[0] == ':') {
 		LOG_ERROR("First char is a colon ':'");
-		throw std::invalid_argument("Clients MUST NOT use source");
+		throw std::invalid_argument("First char is a colon ':'");
 	}
 	if (msg[0] != '@') {
 		LOG_TRACE("No tag or source found")
@@ -94,7 +94,7 @@ ft_irc::Parser::check_source(std::string &msg)
 	}
 	if (msg[msg.find_first_not_of(' ', msg.find_first_of(' '))] == ':') {
 		LOG_ERROR("Source's colon ':' found in middle of msg");
-		throw std::invalid_argument("Clients MUST NOT use source");
+		throw std::invalid_argument("Source's colon ':' found in middle of msg");
 	}
 }	// Parser::check_source
 
@@ -116,7 +116,7 @@ ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 			LOG_TRACE("Removing tags from msg")
 			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
 		} catch (std::exception &e) {
-			LOG_ERROR("Removing tags from msg failed due to missing spaces");
+			LOG_ERROR("Failed tag removal due to missing spaces");
 			throw std::invalid_argument("Failed tag removal due to missing spaces");
 		}
 	}
@@ -125,7 +125,7 @@ ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 			LOG_TRACE("Removing source from msg")
 			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
 		} catch (std::exception &e) {
-			LOG_ERROR("Removing source from msg failed due to missing spaces");
+			LOG_ERROR("Failed source removal due to missing spaces");
 			throw std::invalid_argument("Failed source removal due to missing spaces");
 		}
 	}
@@ -135,7 +135,7 @@ ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		cmd->cmd = commandFromString(tmp);
 	} catch (std::invalid_argument &e) {
 		LOG_ERROR("\"" + tmp + "\" is not a valid command");
-		throw std::invalid_argument("Failed to get command enum");
+		throw std::invalid_argument("\"" + tmp + "\" is not a valid command");
 	}
 }	// Parser::parse_command
 
