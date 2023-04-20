@@ -18,6 +18,7 @@ ft_irc::ChannelUT::ChannelUT(void) :
 	REGISTER(ChannelUT, test_getTopic)
 	REGISTER(ChannelUT, test_getKey)
 	REGISTER(ChannelUT, test_addClient)
+	REGISTER(ChannelUT, test_deleteClient)
 	REGISTER(ChannelUT, test_banMask)
 	REGISTER(ChannelUT, test_toggleMode)
 	REGISTER(ChannelUT, test_isInChannel)
@@ -249,6 +250,28 @@ ft_irc::ChannelUT::test_addClient(void)
 	ASSERT(!ft_irc::Channel::addClient(test))
 	ft_irc::Channel::_clients.clear();
 }	// ChannelUT::test_addClient
+
+
+void
+ft_irc::ChannelUT::test_deleteClient(void)
+{
+	Client test1(42, sockaddr_in());
+	Client test2(84, sockaddr_in());
+
+	LOG_TRACE("test deleteClient: client not in channel")
+	ASSERT_THROW(ft_irc::Channel::deleteClient(test1), ft_irc::Channel::NotOnChannel)
+
+	ft_irc::Channel::addClient(test1);
+	ft_irc::Channel::addClient(test2);
+
+	LOG_TRACE("test deleteClient: delete one of two")
+	ASSERT(!ft_irc::Channel::deleteClient(test1))
+	ASSERT_THROW(ft_irc::Channel::deleteClient(test1), ft_irc::Channel::NotOnChannel)
+
+	LOG_TRACE("test deleteClient: delete last client")
+	ASSERT(ft_irc::Channel::deleteClient(test2))
+	ASSERT_THROW(ft_irc::Channel::deleteClient(test2), ft_irc::Channel::NotOnChannel)
+}
 
 
 void

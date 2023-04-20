@@ -15,7 +15,9 @@ public:
 	ServerUT(void);
 	~ServerUT(void);
 
-	void test_42(void);
+	void test_constructor(void);
+	void test_getClient_fd(void);
+	void test_getClient_nick(void);
 };	// class ServerUT
 
 }	// namespace ft_irc

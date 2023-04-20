@@ -87,7 +87,7 @@ ft_irc::Channel::setName(const std::string &name)
 	   || (name.find(0x07) != std::string::npos) || (name.find(',') != std::string::npos))
 	{
 		LOG_WARN("setName called with an invalid character")
-   throw ft_irc::Channel::InvalidChannelName("Invalid channel  name: " + name);
+   throw ft_irc::Channel::InvalidChannelName("Invalid channel name: " + name);
 	}
 	LOG_INFO("Channel's name changed from: " << this->_name << " to: " << name)
 	this->_name = name;
@@ -189,6 +189,19 @@ ft_irc::Channel::addClient(const ft_irc::Client &client)
 
 	return true;
 }	// Channel::addClient
+
+
+bool
+ft_irc::Channel::deleteClient(const Client &client)
+{
+	if (this->_clients.erase(client.getFd()) == 0)
+	{
+		LOG_WARN("deleteClient: client not in channel: " << client.getNickname())
+		throw ft_irc::Channel::NotOnChannel();
+	}
+	LOG_INFO("deleteClient: client deleted: " << client.getNickname())
+	return this->_clients.empty();
+}	// Channel::deleteClient
 
 
 bool

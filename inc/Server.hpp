@@ -5,21 +5,23 @@
 #include <string>
 
 #include "Client.hpp"
+#include "Channel.hpp"
+
+#define MAX_CLIENTS 124
 
 namespace ft_irc
 {
 
 class Server
 {
-private:
-	std::map< int, ft_irc::Client* > _clients;
-
 protected:
 	Server(void);
 	Server(const Server &s);
 	~Server(void);
 
 	Server& operator=(const Server &s);
+	std::map<int, Client*> _clients;
+	std::map<std::string, ft_irc::Channel*> _channels;
 
 public:
 	static Server& getInstance(void);
@@ -30,6 +32,11 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	void newClient(void);
+	bool newChannel(const std::string &channel);
+	bool isClient(const std::string &nickname) const;
+	ft_irc::Channel& getChannel(const std::string &channel);
+
+	void deleteClient(int fd);
 };	// class Server
 
 }	// namespace ft_irc

@@ -5,8 +5,6 @@
 #include <vector>
 #include <poll.h>
 
-#define MAX_CLIENTS 124
-
 namespace ft_irc
 {
 

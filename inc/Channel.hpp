@@ -82,6 +82,7 @@ public:
 	bool isInChannel(const Client &client);
 	bool isInChannel(const std::string &nickname);
 	bool addClient(const Client &client);
+	bool deleteClient(const Client &client);
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);
 
