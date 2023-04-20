@@ -324,7 +324,7 @@ endif
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := log/:classes/
+DIRS := log/:classes/:utils/
 
 # List of directories with tests. Formating follows the same rules as DIRS
 # above. All folders are relative to TST_ROOT. Each group of folder should only
@@ -502,6 +502,8 @@ clean_all: fclean clean_dep
 
 re: fclean all
 
+tests_re: fclean tests
+
 ################################################################################
 # Debug Targets
 ################################################################################
@@ -625,7 +627,7 @@ uncrustify-check:
 .PHONY: targets .FORCE compile-test vars uncrustify-check
 
 # Phony execution targets
-.PHONY: re all tests
+.PHONY: re tests_re all tests
 
 ################################################################################
 # Constants
