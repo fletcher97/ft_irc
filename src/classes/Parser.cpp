@@ -143,9 +143,58 @@ ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 void
 ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 {
-	(void) cmd;
-	(void) msg;
-	throw std::exception();
+	std::string tmp;
+
+	LOG_DEBUG("Parsing args for \"" + msg + "\"")
+	if (!cmd) {
+		LOG_ERROR("NULL command passed to command parsing");
+		throw std::invalid_argument("NULL command passed to command parsing");
+	}
+
+	tmp = msg;
+	// Skip tag
+	if (tmp.size() && (tmp[0] == '@')) {
+		try {
+			LOG_TRACE("Removing tags from msg")
+			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
+		} catch (std::exception &e) {
+			LOG_ERROR("Failed tag removal due to missing spaces");
+			throw std::invalid_argument("Failed tag removal due to missing spaces");
+		}
+	}
+	// Skip source
+	if ((tmp.size() > 1) && (tmp[0] == ':')) {
+		try {
+			LOG_TRACE("Removing source from msg")
+			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
+		} catch (std::exception &e) {
+			LOG_ERROR("Failed source removal due to missing spaces");
+			throw std::invalid_argument("Failed source removal due to missing spaces");
+		}
+	}
+	// Skip command
+	try {
+		LOG_TRACE("Removing command from msg")
+		tmp = tmp.substr(tmp.find_first_not_of(' ', std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))),
+			tmp.size());
+	} catch (std::exception &e) {
+		LOG_ERROR("Failed command removal");
+		throw std::invalid_argument("Failed command removal");
+	}
+
+	while (tmp.size() > 2) {
+		LOG_TRACE("Extracting next param from " + tmp);
+		if (tmp[0] == ':') {
+			cmd->args.push_back(tmp.substr(1, tmp.size() - 3));	// Remove the trailing crlf
+			LOG_TRACE("Added ---" + cmd->args.back() + "---")
+			break;
+		} else {
+			cmd->args.push_back(tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))));
+			LOG_TRACE("Added ---" + cmd->args.back() + "---")
+		}
+		tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.find_first_of('\r')),
+			tmp.size());
+	}
 }	// Parser::parse_arguments
 
 
