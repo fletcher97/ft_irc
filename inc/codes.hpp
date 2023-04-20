@@ -185,6 +185,7 @@ enum codes
 };
 
 std::string toString(ft_irc::commands cmd);
+ft_irc::commands commandFromString(const std::string &cmd);
 
 }	// namespace ft_irc
 
