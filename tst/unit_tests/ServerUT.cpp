@@ -1,19 +1,22 @@
-#include "ServerUT.hpp"
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include <iostream>
+#include "ServerUT.hpp"
 
-
-ServerUT::ServerUT(void) : flt::Testable<ServerUT>("Server"), Server() {
+ft_irc::ServerUT::ServerUT(void) :
+	flt::Testable< ft_irc::ServerUT >("Server"),
+	ft_irc::Server()
+{
 	REGISTER(ServerUT, test_getClient_fd)
 	REGISTER(ServerUT, test_getClient_nick)
 }
 
-ServerUT::~ServerUT(void) {}
 
-void ServerUT::test_getClient_fd(void) {
+ft_irc::ServerUT::~ServerUT(void) {}
+
+
+void
+ft_irc::ServerUT::test_getClient_fd(void) {
 	struct sockaddr_in clientSocket;
 	int clientFd = 15;
 	std::string nickname = "gemartin42";
@@ -36,7 +39,9 @@ void ServerUT::test_getClient_fd(void) {
 	ASSERT_EQ(&client1, &client2)
 }
 
-void ServerUT::test_getClient_nick(void) {
+
+void
+ft_irc::ServerUT::test_getClient_nick(void) {
 	struct sockaddr_in clientSocket;
 	int clientFd = 18;
 	std::string nickname = "gemartin42";
@@ -52,10 +57,9 @@ void ServerUT::test_getClient_nick(void) {
 
 	ASSERT_EQ(this->_clients[clientFd]->getNickname(), nickname)
     delete this->_clients[clientFd];
-	
+
 	Client& client1 = *(this->_clients[clientFd]);
 	Client& client2 = getClient(nickname);
 
 	ASSERT_EQ(&client1, &client2)
 }
-

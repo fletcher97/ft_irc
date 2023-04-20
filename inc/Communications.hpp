@@ -7,32 +7,37 @@
 
 #define MAX_CLIENTS 124
 
+namespace ft_irc
+{
+
 class Communications
 {
 private:
 	int _fd;
-	std::vector<pollfd> _pfds;
+	std::vector< pollfd > _pfds;
 	std::string _psswd;
 
-	typedef std::vector<pollfd>::iterator	pfds_iterator;
+	typedef std::vector< pollfd >::iterator pfds_iterator;
 
 	void write_error(const char *s);
 
 protected:
 	Communications(void);
-	Communications(const Communications& s);
+	Communications(const Communications &s);
 	~Communications(void);
 
-	Communications& operator=(const Communications& s);
+	Communications& operator=(const Communications &s);
 
 public:
-	static Communications&	getInstance(void);
+	static Communications& getInstance(void);
 
-	bool init(int port, const char* psswd);
+	bool init(int port, const char *psswd);
 	void run(void);
 
-	int	getFd(void) const;
-	void	addPfd(int fd);
-};
+	int getFd(void) const;
+	void addPfd(int fd);
+};	// class Communications
 
-#endif
+}	// namespace ft_irc
+
+#endif // if !defined(COMMUNICATIONS_HPP)
