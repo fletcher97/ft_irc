@@ -89,10 +89,6 @@ public:
 	static void fatal(const std::stringstream &msg);
 };	// class Log
 
-// class Log
-
-// class Log
-
 }	// namespace flt
 
 #endif // LOG_HPP
