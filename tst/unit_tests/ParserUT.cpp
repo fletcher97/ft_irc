@@ -49,6 +49,14 @@ ft_irc::ParserUT::test_delimiter_msg(void)
 	msg = "Hello world!";
 	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
 
+	// Only cr
+	msg = "Hello world!\r";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
+	// Only lf
+	msg = "Hello world!\n";
+	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
+
 	// Multy delimiter string
 	msg = "Hello\r\nworld!\r\n";
 	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
@@ -447,6 +455,24 @@ ft_irc::ParserUT::test_arguments_single(void)
 	expected.push_back("LS");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tagCAP\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("LS");
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag :sourceCAP\r\n";
+	expected = std::list< std::string >();
+	expected.push_back("LS");
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag :source CAP";
+	expected = std::list< std::string >();
+	expected.push_back("LS");
+	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "CAP REQ\r\n";
