@@ -80,8 +80,22 @@ ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 void
 ft_irc::Parser::check_source(std::string &msg)
 {
-	(void) msg;
-	throw std::exception();
+	std::string tmp;
+
+	LOG_TRACE("Checking source presence for msg \"" + msg + "\"")
+	if (msg[0] == ':') {
+		LOG_ERROR("First char is a colon ':'");
+		throw std::invalid_argument("Clients MUST NOT use source");
+	}
+	if (msg[0] != '@') {
+		LOG_TRACE("No tag or source found")
+
+		return;
+	}
+	if (msg[msg.find_first_not_of(' ', msg.find_first_of(' '))] == ':') {
+		LOG_ERROR("Source's colon ':' found in middle of msg");
+		throw std::invalid_argument("Clients MUST NOT use source");
+	}
 }	// Parser::check_source
 
 
