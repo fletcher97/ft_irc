@@ -102,9 +102,41 @@ ft_irc::Parser::check_source(std::string &msg)
 void
 ft_irc::Parser::parse_command(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 {
-	(void) cmd;
-	(void) msg;
-	throw std::exception();
+	std::string tmp;
+
+	LOG_DEBUG("Parsing command for \"" + msg + "\"")
+	if (!cmd) {
+		LOG_ERROR("NULL command passed to command parsing");
+		throw std::invalid_argument("NULL command passed to command parsing");
+	}
+
+	tmp = msg;
+	if (tmp.size() && (tmp[0] == '@')) {
+		try {
+			LOG_TRACE("Removing tags from msg")
+			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
+		} catch (std::exception &e) {
+			LOG_ERROR("Removing tags from msg failed due to missing spaces");
+			throw std::invalid_argument("Failed tag removal due to missing spaces");
+		}
+	}
+	if ((tmp.size() > 1) && (tmp[0] == ':') && (tmp[1] != ' ')) {
+		try {
+			LOG_TRACE("Removing source from msg")
+			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
+		} catch (std::exception &e) {
+			LOG_ERROR("Removing source from msg failed due to missing spaces");
+			throw std::invalid_argument("Failed source removal due to missing spaces");
+		}
+	}
+	tmp = tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.find_first_of('\r')));
+	try {
+		LOG_TRACE("Getting command \"" + tmp + "\"")
+		cmd->cmd = commandFromString(tmp);
+	} catch (std::invalid_argument &e) {
+		LOG_ERROR("\"" + tmp + "\" is not a valid command");
+		throw std::invalid_argument("Failed to get command enum");
+	}
 }	// Parser::parse_command
 
 
