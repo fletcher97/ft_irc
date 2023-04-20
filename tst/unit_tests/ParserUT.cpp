@@ -100,8 +100,7 @@ ft_irc::ParserUT::test_tag_presence(void)
 	// Tags no space
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@abc";
-	ASSERT_NOTHROW(ft_irc::Parser::parse_tags(&cmd, msg))
-	ASSERT_NEQ(cmd.tags.size(), 0)
+	ASSERT_THROW(ft_irc::Parser::parse_tags(&cmd, msg), std::invalid_argument)
 
 	// Tags present not at begining (shouldn't be detected)
 	cmd = ft_irc::Parser::cmd_t();
