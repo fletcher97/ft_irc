@@ -31,7 +31,7 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	void newClient(void);
-	void deleteClient(int fd);
+	void quit(int fd);
 
 	void sendMsg(int fd, const std::string &msg);
 
