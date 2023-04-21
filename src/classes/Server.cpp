@@ -88,12 +88,14 @@ ft_irc::Server::newClient(void)
 	communications.addPfd(clientFd);
 }	// Server::newClient
 
+
 void
 ft_irc::Server::quit(int fd)
 {
 	delete this->_clients[fd];
 	LOG_INFO("Deleting client: " << fd)
-}
+}	// Server::quit
+
 
 void
 ft_irc::Server::sendMsg(int fd, const std::string &msg)
@@ -112,4 +114,3 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			}
 	}	// switch
 }	// Server::excecute
-
