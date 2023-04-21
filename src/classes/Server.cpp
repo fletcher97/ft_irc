@@ -87,3 +87,30 @@ ft_irc::Server::newClient(void)
 	this->_clients[clientFd] = new ft_irc::Client(clientFd, clientAddress);
 	communications.addPfd(clientFd);
 }	// Server::newClient
+
+
+void
+ft_irc::Server::quit(int fd)
+{
+	delete this->_clients[fd];
+	LOG_INFO("Deleting client: " << fd)
+}	// Server::quit
+
+
+void
+ft_irc::Server::sendMsg(int fd, const std::string &msg)
+{
+	ft_irc::Communications::getInstance().sendMsg(fd, msg);
+}	// Server::send
+
+
+void
+ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
+{
+	(void) fd;
+	switch (cmd->cmd) {
+		default: {
+				LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
+			}
+	}	// switch
+}	// Server::excecute
