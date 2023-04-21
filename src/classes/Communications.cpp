@@ -100,12 +100,12 @@ ft_irc::Communications::recvMsg(int fd)
 		cmd = ft_irc::Parser::parse_msg(line);
 		try {
 			ft_irc::Server::getInstance().excecute(fd, cmd);
-		}
-		catch (...)
-		{
+		} catch (...) {
 			delete cmd;
-			return ;
+
+			return;
 		}
+
 		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
 		delete cmd;
 	}
@@ -136,8 +136,7 @@ ft_irc::Communications::run(void)
 			server.newClient();
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
-				if (it->revents & POLLNVAL)
-				{
+				if (it->revents & POLLNVAL) {
 					this->_pfds.erase(it);
 					break;
 				}

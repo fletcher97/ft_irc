@@ -21,5 +21,4 @@ public:
 
 }	// namespace ft_irc
 
-
 #endif // SERVERUT_HPP

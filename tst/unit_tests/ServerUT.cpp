@@ -1,5 +1,5 @@
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
 
 #include "ServerUT.hpp"
 
@@ -16,7 +16,8 @@ ft_irc::ServerUT::~ServerUT(void) {}
 
 
 void
-ft_irc::ServerUT::test_getClient_fd(void) {
+ft_irc::ServerUT::test_getClient_fd(void)
+{
 	struct sockaddr_in clientSocket;
 	int clientFd = 15;
 	std::string nickname = "gemartin42";
@@ -33,15 +34,16 @@ ft_irc::ServerUT::test_getClient_fd(void) {
 	ASSERT_EQ(this->_clients[clientFd]->getFd(), clientFd)
 	delete this->_clients[clientFd];
 
-	Client& client1 = *(this->_clients[clientFd]);
-	Client& client2 = getClient(clientFd);
+	Client &client1 = *(this->_clients[clientFd]);
+	Client &client2 = getClient(clientFd);
 
 	ASSERT_EQ(&client1, &client2)
-}
+}	// ServerUT::test_getClient_fd
 
 
 void
-ft_irc::ServerUT::test_getClient_nick(void) {
+ft_irc::ServerUT::test_getClient_nick(void)
+{
 	struct sockaddr_in clientSocket;
 	int clientFd = 18;
 	std::string nickname = "gemartin42";
@@ -56,10 +58,10 @@ ft_irc::ServerUT::test_getClient_nick(void) {
 	this->_clients[clientFd]->setStatus(status);
 
 	ASSERT_EQ(this->_clients[clientFd]->getNickname(), nickname)
-    delete this->_clients[clientFd];
+	delete this->_clients[clientFd];
 
-	Client& client1 = *(this->_clients[clientFd]);
-	Client& client2 = getClient(nickname);
+	Client &client1 = *(this->_clients[clientFd]);
+	Client &client2 = getClient(nickname);
 
 	ASSERT_EQ(&client1, &client2)
-}
+}	// ServerUT::test_getClient_nick

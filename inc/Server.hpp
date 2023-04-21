@@ -17,8 +17,9 @@ protected:
 	Server(const Server &s);
 	~Server(void);
 
-	Server& operator=(const Server& s);
-	std::map<int, Client*> _clients;
+	Server& operator=(const Server &s);
+
+	std::map< int, Client* > _clients;
 
 public:
 	static Server& getInstance(void);
