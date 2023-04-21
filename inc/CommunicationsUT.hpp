@@ -16,15 +16,7 @@ public:
 	~CommunicationsUT(void);
 
 	void test_getFd(void);
-
 	void test_addPfd(void);
-
-	class EmptyArgument :
-		public std::invalid_argument
-	{
-public:
-		EmptyArgument(std::string msg);
-	};	// class EmptyArgument
 };	// class CommunicationsUT
 
 }	// namespace ft_irc
