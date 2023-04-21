@@ -96,7 +96,7 @@ ft_irc::Communications::recvMsg(int fd)
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
 	msg = buffer;
 	while (msg.size()) {
-		line = msg.substr(0, msg.find("\r\n") + 2);
+		line = msg.substr(0, msg.find("\r\n"));
 		cmd = ft_irc::Parser::parse_msg(line);
 		ft_irc::Server::getInstance().excecute(fd, cmd);
 		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
