@@ -89,8 +89,9 @@ ft_irc::Server::newClient(void)
 }	// Server::newClient
 
 void
-ft_irc::Server::deleteClient(int fd)
+ft_irc::Server::quit(int fd)
 {
+	delete this->_clients[fd];
 	LOG_INFO("Deleting client: " << fd)
 }
 
