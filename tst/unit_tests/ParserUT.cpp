@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "codes.hpp"
 
 #include "ParserUT.hpp"
@@ -326,14 +328,14 @@ ft_irc::ParserUT::test_source_presence(void)
 {
 	std::string msg;
 
-	msg = "CAP * LS\r\n";
+	msg = "CAP * LS";
 	ASSERT_NOTHROW(ft_irc::Parser::check_source(msg))
 
 
-	msg = "@id :abc.com CAP * LS\r\n";
+	msg = "@id :abc.com CAP * LS";
 	ASSERT_THROW(ft_irc::Parser::check_source(msg), std::invalid_argument)
 
-	msg = ":abc.com CAP * LS\r\n";
+	msg = ":abc.com CAP * LS";
 	ASSERT_THROW(ft_irc::Parser::check_source(msg), std::invalid_argument)
 }	// ParserUT::test_source_presence
 
@@ -356,37 +358,37 @@ ft_irc::ParserUT::test_command_valid(void)
 	ft_irc::commands expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "CAP * LS\r\n";
+	msg = "CAP * LS";
 	expected = ft_irc::CMD_CAP;
 	ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = ":abc.com CAP * LS\r\n";
+	msg = ":abc.com CAP * LS";
 	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@id :abc.com CAP * LS\r\n";
+	msg = "@id :abc.com CAP * LS";
 	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@id CAP * LS\r\n";
+	msg = "@id CAP * LS";
 	expected = ft_irc::CMD_CAP;
 	ASSERT_EQ(cmd.cmd, expected)
 
 
 	for (int i = 0; ALL_COMMANDS[i] != ft_irc::CMD_WALLOPS; i++) {
 		cmd = ft_irc::Parser::cmd_t();
-		msg = "@tag " + toString(ALL_COMMANDS[i]) + "\r\n";
+		msg = "@tag " + toString(ALL_COMMANDS[i]) + "";
 		ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
 		ASSERT_EQ(cmd.cmd, ALL_COMMANDS[i])
 	}	// ParserUT::test_command_nocmd
 
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag " + toString(ft_irc::CMD_WALLOPS) + "\r\n";
+	msg = "@tag " + toString(ft_irc::CMD_WALLOPS);
 	ASSERT_NOTHROW(ft_irc::Parser::parse_command(&cmd, msg))
 	ASSERT_EQ(cmd.cmd, ft_irc::CMD_WALLOPS)
 }	// ParserUT::test_command_valid
@@ -399,11 +401,19 @@ ft_irc::ParserUT::test_command_invalid(void)
 	std::string msg;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag NOCAP\r\n";
+	msg = "@tag NOCAP";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "NOCAP\r\n";
+	msg = "@tag :source";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "@tag :sourceNOCAP";
+	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
+
+	cmd = ft_irc::Parser::cmd_t();
+	msg = "NOCAP";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 }	// ParserUT::test_command_invalid
 
@@ -415,7 +425,7 @@ ft_irc::ParserUT::test_command_missing(void)
 	std::string msg;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag\r\n";
+	msg = "@tag";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
@@ -423,11 +433,11 @@ ft_irc::ParserUT::test_command_missing(void)
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag : asd\r\n";
+	msg = "@tag : asd";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag :\r\n";
+	msg = "@tag :";
 	ASSERT_THROW(ft_irc::Parser::parse_command(&cmd, msg), std::invalid_argument)
 }	// ParserUT::test_command_missing
 
@@ -450,32 +460,26 @@ ft_irc::ParserUT::test_arguments_single(void)
 	std::list< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag CAP LS\r\n";
+	msg = "@tag CAP LS";
 	expected = std::list< std::string >();
 	expected.push_back("LS");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tagCAP\r\n";
+	msg = "@tagCAP";
 	expected = std::list< std::string >();
 	expected.push_back("LS");
 	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag :sourceCAP\r\n";
+	msg = "@tag :sourceCAP";
 	expected = std::list< std::string >();
 	expected.push_back("LS");
 	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag :source CAP";
-	expected = std::list< std::string >();
-	expected.push_back("LS");
-	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
-
-	cmd = ft_irc::Parser::cmd_t();
-	msg = "CAP REQ\r\n";
+	msg = "CAP REQ";
 	expected = std::list< std::string >();
 	expected.push_back("REQ");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -491,7 +495,7 @@ ft_irc::ParserUT::test_arguments_multi(void)
 	std::list< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag CAP * LS\r\n";
+	msg = "@tag CAP * LS";
 	expected = std::list< std::string >();
 	expected.push_back("*");
 	expected.push_back("LS");
@@ -499,7 +503,7 @@ ft_irc::ParserUT::test_arguments_multi(void)
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "PRIVMSG #chan Hey!\r\n";
+	msg = "PRIVMSG #chan Hey!";
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hey!");
@@ -516,13 +520,13 @@ ft_irc::ParserUT::test_arguments_missing(void)
 	std::list< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "@tag AUTHENTICATE\r\n";
+	msg = "@tag AUTHENTICATE";
 	expected = std::list< std::string >();
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "AUTHENTICATE\r\n";
+	msg = "AUTHENTICATE";
 	expected = std::list< std::string >();
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
@@ -537,7 +541,7 @@ ft_irc::ParserUT::test_arguments_colon(void)
 	std::list< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "PRIVMSG #chan :Hey!\r\n";
+	msg = "PRIVMSG #chan :Hey!";
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hey!");
@@ -545,7 +549,7 @@ ft_irc::ParserUT::test_arguments_colon(void)
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "PRIVMSG #chan :Hello world!\r\n";
+	msg = "PRIVMSG #chan :Hello world!";
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hello world!");
@@ -562,7 +566,7 @@ ft_irc::ParserUT::test_arguments_multi_colon(void)
 	std::list< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "PRIVMSG #chan :Can colons(:) be used\r\n";
+	msg = "PRIVMSG #chan :Can colons(:) be used";
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Can colons(:) be used");
@@ -570,7 +574,7 @@ ft_irc::ParserUT::test_arguments_multi_colon(void)
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
-	msg = "PRIVMSG #chan :Can colons with spaces : be used\r\n";
+	msg = "PRIVMSG #chan :Can colons with spaces : be used";
 	expected = std::list< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Can colons with spaces : be used");
@@ -586,7 +590,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ft_irc::Parser::cmd_t expected;
 	std::string msg;
 
-	msg = "CAP LS\r\n";
+	msg = "CAP LS";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_CAP;
 	expected.args.push_back("LS");
@@ -596,7 +600,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "PASS\r\n";
+	msg = "PASS";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_PASS;
 	ASSERT_NOTHROW(cmd = ft_irc::Parser::parse_msg(msg))
@@ -605,7 +609,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK smiro\r\n";
+	msg = "NICK smiro";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	expected.args.push_back("smiro");
@@ -615,7 +619,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK       smiro\r\n";
+	msg = "NICK       smiro";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	expected.args.push_back("smiro");
@@ -625,7 +629,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK\r\n";
+	msg = "NICK";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	ASSERT_NOTHROW(cmd = ft_irc::Parser::parse_msg(msg))
@@ -634,7 +638,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK :\r\n";
+	msg = "NICK :";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	expected.args.push_back("");
@@ -644,7 +648,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK @ @\r\n";
+	msg = "NICK @ @";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	expected.args.push_back("@");
@@ -655,7 +659,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "USER smiro smiro 127.0.0.1 :Sebastian Miro\r\n";
+	msg = "USER smiro smiro 127.0.0.1 :Sebastian Miro";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_USER;
 	expected.args.push_back("smiro");
@@ -668,7 +672,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "USER smiro 0 * :Sebastian Miro\r\n";
+	msg = "USER smiro 0 * :Sebastian Miro";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_USER;
 	expected.args.push_back("smiro");
@@ -681,7 +685,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "MODE smiro +i\r\n";
+	msg = "MODE smiro +i";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_MODE;
 	expected.args.push_back("smiro");
@@ -692,7 +696,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "PING 127.0.0.1\r\n";
+	msg = "PING 127.0.0.1";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_PING;
 	expected.args.push_back("127.0.0.1");
@@ -702,7 +706,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "JOIN #hola\r\n";
+	msg = "JOIN #hola";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_JOIN;
 	expected.args.push_back("#hola");
@@ -712,7 +716,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "JOIN #hola 1234\r\n";
+	msg = "JOIN #hola 1234";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_JOIN;
 	expected.args.push_back("#hola");
@@ -723,7 +727,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "JOIN #hola,&adios 1234,*\r\n";
+	msg = "JOIN #hola,&adios 1234,*";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_JOIN;
 	expected.args.push_back("#hola,&adios");
@@ -734,7 +738,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "NICK USER :\r\n";
+	msg = "NICK USER :";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_NICK;
 	expected.args.push_back("USER");
@@ -745,7 +749,7 @@ ft_irc::ParserUT::test_parser_valid(void)
 	ASSERT_EQ(cmd->args, expected.args)
 	delete cmd;
 
-	msg = "PRIVMSG #chan ::-)\r\n";
+	msg = "PRIVMSG #chan ::-)";
 	expected = ft_irc::Parser::cmd_t();
 	expected.cmd = ft_irc::CMD_PRIVMSG;
 	expected.args.push_back("#chan");
@@ -763,21 +767,24 @@ ft_irc::ParserUT::test_parser_invalid(void)
 {
 	std::string msg;
 
+	msg = "@id=234AB :dan!d@localhostPRIVMSG #chan :Hey what's up!";
+	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
+
+	msg = "@id=234AB:dan!d@localhostPRIVMSG#chan:Heywhat'sup!";
+	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
+
 	msg = "@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!";
 	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
 
-	msg = "@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!\r\n";
+	msg = ":NICK smiro";
 	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
 
-	msg = ":NICK smiro\r\n";
+	msg = "@NICK smiro";
 	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
 
-	msg = "@NICK smiro\r\n";
+	msg = ":dan!d@localhost PRIVMSG #chan ::-)";
 	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
 
-	msg = ":dan!d@localhost PRIVMSG #chan ::-)\r\n";
-	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
-
-	msg = ":dan!d@localhost PRIVMSG #chan :-)\r\n";
+	msg = ":dan!d@localhost PRIVMSG #chan :-)";
 	ASSERT_THROW(ft_irc::Parser::parse_msg(msg), std::invalid_argument)
 }	// ParserUT::test_parser_invalid

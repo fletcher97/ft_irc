@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "Parser.hpp"
@@ -163,7 +164,7 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		}
 	}
 	// Skip source
-	if ((tmp.size() > 1) && (tmp[0] == ':')) {
+	if ((tmp.size()) && (tmp[0] == ':')) {
 		try {
 			LOG_TRACE("Removing source from msg")
 			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
@@ -173,27 +174,20 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		}
 	}
 	// Skip command
-	try {
-		LOG_TRACE("Removing command from msg")
-		tmp = tmp.substr(tmp.find_first_not_of(' ', std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))),
-			tmp.size());
-	} catch (std::exception &e) {
-		LOG_ERROR("Failed command removal");
-		throw std::invalid_argument("Failed command removal");
-	}
+	LOG_TRACE("Removing command from msg")
+	tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size()), tmp.size());
 
-	while (tmp.size() > 2) {
+	while (tmp.size()) {
 		LOG_TRACE("Extracting next param from " + tmp);
 		if (tmp[0] == ':') {
-			cmd->args.push_back(tmp.substr(1, tmp.size() - 3));	// Remove the trailing crlf
+			cmd->args.push_back(tmp.substr(1, tmp.size()));
 			LOG_TRACE("Added ---" + cmd->args.back() + "---")
 			break;
 		} else {
-			cmd->args.push_back(tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))));
+			cmd->args.push_back(tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.size())));
 			LOG_TRACE("Added ---" + cmd->args.back() + "---")
 		}
-		tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.find_first_of('\r')),
-			tmp.size());
+		tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size()), tmp.size());
 	}
 }	// Parser::parse_arguments
 
@@ -203,8 +197,8 @@ ft_irc::Parser::parse_msg(std::string &msg)
 {
 	ft_irc::Parser::cmd_t *ret = NULL;
 
+	msg = msg.substr(0, std::min(msg.find("\r\n"), msg.size()));
 	try {
-		check_delimiter(msg);
 		ret = new ft_irc::Parser::cmd_t();
 		ft_irc::Parser::parse_tags(ret, msg);
 		ft_irc::Parser::check_source(msg);
