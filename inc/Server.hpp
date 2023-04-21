@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Client.hpp"
+#include "Parser.hpp"
 
 namespace ft_irc
 {
@@ -30,6 +31,10 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	void newClient(void);
+
+	void send(int fd, const std::string& msg);
+
+	void excecute(int fd, ft_irc::Parser::cmd_t *cmd);
 };	// class Server
 
 }	// namespace ft_irc

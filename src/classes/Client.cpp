@@ -5,6 +5,7 @@
 #include "Log.hpp"
 
 #include "Client.hpp"
+#include "Server.hpp"
 
 ft_irc::Client::Client(void) {}
 
@@ -135,3 +136,9 @@ ft_irc::Client::getMask(void) const
 {
 	return this->_nickname + "!" + this->_username + "@" + this->_address;
 }	// Client::getMask
+
+void
+ft_irc::Client::send(const std::string &msg)
+{
+	ft_irc::Server::getInstance().send(this->_fd, msg);
+}

@@ -51,6 +51,8 @@ public:
 	void setUsername(std::string &username);
 	void setRealname(std::string &realname);
 	void setStatus(Client::Status status);
+
+	void send(const std::string &msg);
 };	// class Client
 
 }	// namespace ft_irc
