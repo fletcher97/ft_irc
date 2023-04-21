@@ -15,7 +15,7 @@ class Communications
 {
 protected:
 	int _fd;
-	std::vector<pollfd> _pfds;
+	std::vector< pollfd > _pfds;
 	std::string _psswd;
 
 	typedef std::vector< pollfd >::iterator pfds_iterator;
@@ -32,7 +32,7 @@ public:
 	bool init(int port, const char *psswd);
 	void run(void);
 	void read(int fd);
-	void send(int fd, const std::string& msg);
+	void send(int fd, const std::string &msg);
 
 	int getFd(void) const;
 	void addPfd(int fd);

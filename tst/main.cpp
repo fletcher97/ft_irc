@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "ChannelUT.hpp"
-#include "CommunicationsUT.hpp"
 #include "ClientUT.hpp"
+#include "CommunicationsUT.hpp"
 #include "ParserUT.hpp"
 #include "ServerUT.hpp"
 

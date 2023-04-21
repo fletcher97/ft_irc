@@ -4,8 +4,8 @@
 #include "Log.hpp"
 
 #include "Communications.hpp"
-#include "Server.hpp"
 #include "Parser.hpp"
+#include "Server.hpp"
 
 ft_irc::Communications&
 ft_irc::Communications::getInstance(void)
@@ -79,39 +79,41 @@ ft_irc::Communications::init(int port, const char *psswd)
 
 
 void
-ft_irc::Communications::read(int fd) {
-	char	buffer[COMS_MAX_READ];
-	ssize_t	size;
-	std::string	msg;
-	std::string	line
+ft_irc::Communications::read(int fd)
+{
+	char buffer[COMS_MAX_READ];
+	ssize_t size;
+	std::string msg;
+	std::string line;
 	ft_irc::Parser::cmd_t *cmd;
 
 	if ((size = recv(fd, &buffer, COMS_MAX_READ, 0)) == -1) {
 		LOG_ERROR("Error recv")
-		return ;
+
+		return;
 	}
 	buffer[size] = '\0';
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
 	msg = buffer;
-	while (msg.size())
-	{
+	while (msg.size()) {
 		line = msg.substr(0, msg.find("\r\n") + 2);
 		cmd = ft_irc::Parser::parse_msg(line);
 		ft_irc::Server::getInstance().excecute(fd, cmd);
 		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
 		delete cmd;
 	}
-}
+}	// Communications::read
+
 
 void
 ft_irc::Communications::send(int fd, const std::string &msg)
 {
-	if (::send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1)
-	{
+	if (::send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1) {
 		LOG_ERROR("send faild")
-		throw std::exception();
+   throw std::exception();
 	}
-}
+}	// Communications::send
+
 
 void
 ft_irc::Communications::run(void)
@@ -119,28 +121,23 @@ ft_irc::Communications::run(void)
 	ft_irc::Server &server = ft_irc::Server::getInstance();
 
 	while (42) {
-		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1)
-		{
+		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
 			continue;
 		}
-		if (this->_pfds[0].revents == POLLIN)
-		{
+		if (this->_pfds[0].revents == POLLIN) {
 			server.newClient();
-		}
-		else
-		{
-			for(pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++)
-			{
-				if (it->revents & POLLHUP)
-				{
+		} else {
+			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
+				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
 					delete &server.getClient(it->fd);
 					this->_pfds.erase(it);
-					break ;
+					break;
 				}
-				if (it->revents & POLLIN)
+				if (it->revents & POLLIN) {
 					this->read(it->fd);
+				}
 			}
 		}
 	}
