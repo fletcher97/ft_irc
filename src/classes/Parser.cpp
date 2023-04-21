@@ -53,7 +53,7 @@ ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 			key = "";
 		}
 		// Adding tag to cmd
-		LOG_DEBUG("Adding tag: [" + tag + ";" + key + "]")
+		LOG_TRACE("Adding tag: [" + tag + ";" + key + "]")
 		cmd->tags.insert(std::pair< std::string, std::string >(tag, key));
 		if (tags.find_first_of(';') != tags.npos) {
 			LOG_TRACE("Tag deimiter detected")
@@ -183,7 +183,7 @@ ft_irc::Parser::parse_msg(std::string &msg)
 {
 	ft_irc::Parser::cmd_t *ret = NULL;
 
-	msg = msg.substr(0, std::min(msg.find("\r\n"), msg.size()));
+	LOG_INFO("parsing msg: \"" + msg + "\"")
 	try {
 		ret = new ft_irc::Parser::cmd_t();
 		ft_irc::Parser::parse_tags(ret, msg);
@@ -193,6 +193,7 @@ ft_irc::Parser::parse_msg(std::string &msg)
 
 		return ret;
 	} catch (...) {
+		LOG_ERROR("Failed to parse msg: \"" + msg + "\"")
 		if (ret) {
 			delete ret;
 		}
