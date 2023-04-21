@@ -97,7 +97,7 @@ ft_irc::Server::sendMsg(int fd, const std::string &msg)
 
 
 void
-ft_irc::Server::excecute(int fd, ft_irc::Parser::cmd_t *cmd)
+ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
 	(void) fd;
 	switch (cmd->cmd) {

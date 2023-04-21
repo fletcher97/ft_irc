@@ -34,7 +34,7 @@ public:
 
 	void sendMsg(int fd, const std::string &msg);
 
-	void excecute(int fd, ft_irc::Parser::cmd_t *cmd);
+	void excecute(int fd, const ft_irc::Parser::cmd_t *cmd);
 };	// class Server
 
 }	// namespace ft_irc
