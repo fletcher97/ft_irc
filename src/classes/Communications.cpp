@@ -4,6 +4,7 @@
 #include "Log.hpp"
 
 #include "Communications.hpp"
+#include "Parser.hpp"
 #include "Server.hpp"
 
 ft_irc::Communications&
@@ -24,8 +25,7 @@ ft_irc::Communications::Communications(void)
 
 ft_irc::Communications::Communications(const ft_irc::Communications &s) :
 	_fd(s._fd),
-	_pfds(s._pfds),
-	_psswd(s._psswd)
+	_pfds(s._pfds)
 {}
 
 ft_irc::Communications&
@@ -79,6 +79,43 @@ ft_irc::Communications::init(int port, const char *psswd)
 
 
 void
+ft_irc::Communications::recvMsg(int fd)
+{
+	char buffer[COMS_MAX_READ];
+	ssize_t size;
+	std::string msg;
+	std::string line;
+	ft_irc::Parser::cmd_t *cmd;
+
+	if ((size = recv(fd, &buffer, COMS_MAX_READ, 0)) == -1) {
+		LOG_ERROR("Error recv")
+
+		return;
+	}
+	buffer[size] = '\0';
+	LOG_INFO("Message: '" << buffer << "' from: " << fd)
+	msg = buffer;
+	while (msg.size()) {
+		line = msg.substr(0, msg.find("\r\n") + 2);
+		cmd = ft_irc::Parser::parse_msg(line);
+		ft_irc::Server::getInstance().excecute(fd, cmd);
+		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
+		delete cmd;
+	}
+}	// Communications::read
+
+
+void
+ft_irc::Communications::sendMsg(int fd, const std::string &msg)
+{
+	if (send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1) {
+		LOG_ERROR("send faild");
+		throw std::exception();
+	}
+}	// Communications::send
+
+
+void
 ft_irc::Communications::run(void)
 {
 	ft_irc::Server &server = ft_irc::Server::getInstance();
@@ -92,8 +129,14 @@ ft_irc::Communications::run(void)
 			server.newClient();
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
-				if ((*it).revents == POLLIN) {
-					server.getClient(it->fd);
+				if (it->revents & POLLHUP) {
+					LOG_INFO("Client disconnected: " << it->fd)
+					server.quit(it->fd);
+					this->_pfds.erase(it);
+					break;
+				}
+				if (it->revents & POLLIN) {
+					this->recvMsg(it->fd);
 				}
 			}
 		}
