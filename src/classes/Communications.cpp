@@ -110,7 +110,7 @@ ft_irc::Communications::sendMsg(int fd, const std::string &msg)
 {
 	if (send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1) {
 		LOG_ERROR("send faild");
-   		throw std::exception();
+		throw std::exception();
 	}
 }	// Communications::send
 
