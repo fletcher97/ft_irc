@@ -20,7 +20,6 @@ public:
 		std::list< std::string > args;
 	} cmd_t;
 protected:
-	static void check_delimiter(std::string &msg);
 	static void parse_tags(cmd_t *cmd, std::string &msg);
 	static void check_source(std::string &msg);
 	static void parse_command(cmd_t *cmd, std::string &msg);
