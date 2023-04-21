@@ -88,6 +88,11 @@ ft_irc::Server::newClient(void)
 	communications.addPfd(clientFd);
 }	// Server::newClient
 
+void
+ft_irc::Server::deleteClient(int fd)
+{
+	LOG_INFO("Deleting client: " << fd)
+}
 
 void
 ft_irc::Server::sendMsg(int fd, const std::string &msg)
@@ -101,28 +106,9 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
 	(void) fd;
 	switch (cmd->cmd) {
-		case ft_irc::CMD_CAP: {
-				LOG_INFO("Ignoring CAP")
-				break;
-			}
-
-		case ft_irc::CMD_NICK: {
-				LOG_INFO("Excecuting NICK")
-				break;
-			}
-
-		case ft_irc::CMD_USER: {
-				LOG_INFO("Excecuting USER")
-				break;
-			}
-
-		case ft_irc::CMD_QUIT: {
-				LOG_INFO("Excecuting QUIT")
-				break;
-			}
-
 		default: {
 				LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
 			}
 	}	// switch
 }	// Server::excecute
+

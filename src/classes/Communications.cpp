@@ -131,6 +131,7 @@ ft_irc::Communications::run(void)
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
+					server.deleteClient(it->fd);
 					delete &server.getClient(it->fd);
 					this->_pfds.erase(it);
 					break;
