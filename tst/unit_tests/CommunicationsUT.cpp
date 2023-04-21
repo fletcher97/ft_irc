@@ -24,11 +24,9 @@ ft_irc::CommunicationsUT::test_getFd(void)
 void
 ft_irc::CommunicationsUT::test_addPfd(void)
 {
-	struct pollfd miPollfd = {
-		.fd = 42, .events = POLLIN, .revents = 0};
+	struct pollfd miPollfd = {42, POLLIN, 0};
 
-	struct pollfd miPollfd2 = {
-		.fd = 42, .events = POLLIN, .revents = 0};
+	struct pollfd miPollfd2 = {42, POLLIN, 0};
 
 	this->addPfd(miPollfd.fd);
 	ASSERT_EQ(this->_pfds[this->_pfds.size() - 1].fd, miPollfd.fd);
