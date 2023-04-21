@@ -6,9 +6,9 @@
 
 #include "Client.hpp"
 
-Client::Client(void) {}
+ft_irc::Client::Client(void) {}
 
-Client::Client(int fd, struct sockaddr_in socket) :
+ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	_fd(fd),
 	_nickname(),
 	_username(),
@@ -20,7 +20,8 @@ Client::Client(int fd, struct sockaddr_in socket) :
 	LOG_INFO("New client created: " << this->_hostname)
 }
 
-Client::Client(const Client &c) :
+
+ft_irc::Client::Client(const ft_irc::Client &c) :
 	_fd(c._fd),
 	_address(c._address),
 	_hostname(c._hostname),
@@ -30,8 +31,9 @@ Client::Client(const Client &c) :
 	_status(c._status)
 {}
 
-Client&
-Client::operator=(const Client &c) {
+ft_irc::Client&
+ft_irc::Client::operator=(const ft_irc::Client &c)
+{
 	this->_fd = c._fd;
 	this->_address = c._address;
 	this->_hostname = c._hostname;
@@ -39,65 +41,97 @@ Client::operator=(const Client &c) {
 	this->_username = c._username;
 	this->_realname = c._realname;
 	this->_status = c._status;
-	return *this;
-}
 
-Client::~Client(void) {
+	return *this;
+}	// =
+
+
+ft_irc::Client::~Client(void)
+{
 	close(this->_fd);
 	LOG_INFO("Removed client: " << this->_nickname)
 }
 
+
 int
-Client::getFd(void) const {
+ft_irc::Client::getFd(void) const
+{
 	return this->_fd;
-}
+}	// Client::getFd
+
 
 const std::string&
-Client::getAddress(void) const {
+ft_irc::Client::getAddress(void) const
+{
 	return this->_address;
-}
+}	// Client::getAddress
+
 
 const std::string&
-Client::getHostname(void) const {
+ft_irc::Client::getHostname(void) const
+{
 	return this->_hostname;
-}
+}	// Client::getHostname
+
 
 const std::string&
-Client::getNickname(void) const {
+ft_irc::Client::getNickname(void) const
+{
 	return this->_nickname;
-}
+}	// Client::getNickname
+
 
 const std::string&
-Client::getUsername(void) const {
+ft_irc::Client::getUsername(void) const
+{
 	return this->_username;
-}
+}	// Client::getUsername
+
 
 const std::string&
-Client::getRealname(void) const {
+ft_irc::Client::getRealname(void) const
+{
 	return this->_realname;
-}
+}	// Client::getRealname
 
-Client::Status
-Client::getStatus(void) const {
+
+ft_irc::Client::Status
+ft_irc::Client::getStatus(void) const
+{
 	return this->_status;
-}
+}	// Client::getStatus
+
 
 void
-Client::setNickname(std::string& nickname) {
+ft_irc::Client::setNickname(std::string &nickname)
+{
 	this->_nickname = nickname;
-}
+}	// Client::setNickname
+
 
 void
-Client::setUsername(std::string& username) {
+ft_irc::Client::setUsername(std::string &username)
+{
 	this->_username = username;
-}
+}	// Client::setUsername
+
 
 void
-Client::setRealname(std::string& realname) {
+ft_irc::Client::setRealname(std::string &realname)
+{
 	this->_realname = realname;
-}
+}	// Client::setRealname
+
 
 void
-Client::setStatus(Client::Status status) {
+ft_irc::Client::setStatus(ft_irc::Client::Status status)
+{
 	this->_status = status;
-}
+}	// Client::setStatus
+
+
+std::string
+ft_irc::Client::getMask(void) const
+{
+	return this->_nickname + "!" + this->_username + "@" + this->_address;
+}	// Client::getMask

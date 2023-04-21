@@ -1,32 +1,37 @@
 #if !defined(SERVER_HPP)
 #define SERVER_HPP
 
-#include <string>
 #include <map>
+#include <string>
 
 #include "Client.hpp"
+
+namespace ft_irc
+{
 
 class Server
 {
 private:
-	std::map<int, Client*> _clients;
+	std::map< int, ft_irc::Client* > _clients;
 
 protected:
 	Server(void);
-	Server(const Server& s);
+	Server(const Server &s);
 	~Server(void);
 
-	Server& operator=(const Server& s);
+	Server& operator=(const Server &s);
 
 public:
-	static Server&	getInstance(void);
+	static Server& getInstance(void);
 
-	void	run(void);
+	void run(void);
 
-	Client&	getClient(const std::string& nickname) const;
-	Client&	getClient(int fd) const;
+	ft_irc::Client& getClient(const std::string &nickname) const;
+	ft_irc::Client& getClient(int fd) const;
 
-	void	newClient(void);
-};
+	void newClient(void);
+};	// class Server
+
+}	// namespace ft_irc
 
 #endif // SERVER_HPP

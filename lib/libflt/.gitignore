@@ -1,6 +1,6 @@
 .DS_Store
 a.out
-*.o 
+*.o
 *.gcda
 *.gcno
 *.gcov
@@ -8,4 +8,3 @@ a.out
 *.ignore
 .vscode/
 bin/
-uncrustify-targets.txt
