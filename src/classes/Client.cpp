@@ -139,7 +139,7 @@ ft_irc::Client::getMask(void) const
 
 
 void
-ft_irc::Client::send(const std::string &msg)
+ft_irc::Client::sendMsg(const std::string &msg)
 {
-	ft_irc::Server::getInstance().send(this->_fd, msg);
+	ft_irc::Server::getInstance().sendMsg(this->_fd, msg);
 }	// Client::send

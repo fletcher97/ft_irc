@@ -79,7 +79,7 @@ ft_irc::Communications::init(int port, const char *psswd)
 
 
 void
-ft_irc::Communications::read(int fd)
+ft_irc::Communications::recvMsg(int fd)
 {
 	char buffer[COMS_MAX_READ];
 	ssize_t size;
@@ -106,11 +106,11 @@ ft_irc::Communications::read(int fd)
 
 
 void
-ft_irc::Communications::send(int fd, const std::string &msg)
+ft_irc::Communications::sendMsg(int fd, const std::string &msg)
 {
-	if (::send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1) {
-		LOG_ERROR("send faild")
-   throw std::exception();
+	if (send(fd, (msg + "\r\n").c_str(), msg.size() + 2, 0) == -1) {
+		LOG_ERROR("send faild");
+   		throw std::exception();
 	}
 }	// Communications::send
 
@@ -136,7 +136,7 @@ ft_irc::Communications::run(void)
 					break;
 				}
 				if (it->revents & POLLIN) {
-					this->read(it->fd);
+					this->recvMsg(it->fd);
 				}
 			}
 		}
