@@ -29,11 +29,16 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	void newClient(void);
-	void quit(int fd);
 
 	void sendMsg(int fd, const std::string &msg);
 
 	void excecute(int fd, const ft_irc::Parser::cmd_t *cmd);
+
+	void pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void error(ft_irc::Client &client, const std::string reason);
 };	// class Server
 
 }	// namespace ft_irc

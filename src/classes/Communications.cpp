@@ -98,7 +98,14 @@ ft_irc::Communications::recvMsg(int fd)
 	while (msg.size()) {
 		line = msg.substr(0, msg.find("\r\n"));
 		cmd = ft_irc::Parser::parse_msg(line);
-		ft_irc::Server::getInstance().excecute(fd, cmd);
+		try {
+			ft_irc::Server::getInstance().excecute(fd, cmd);
+		}
+		catch (...)
+		{
+			delete cmd;
+			return ;
+		}
 		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
 		delete cmd;
 	}
@@ -129,9 +136,14 @@ ft_irc::Communications::run(void)
 			server.newClient();
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
+				if (it->revents & POLLNVAL)
+				{
+					this->_pfds.erase(it);
+					break;
+				}
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
-					server.quit(it->fd);
+					server.quit(server.getClient(it->fd), NULL);
 					this->_pfds.erase(it);
 					break;
 				}
@@ -149,6 +161,13 @@ ft_irc::Communications::getFd(void) const
 {
 	return this->_fd;
 }	// Communications::getFd
+
+
+const std::string&
+ft_irc::Communications::getPsswd(void) const
+{
+	return this->_psswd;
+}	// Communications::getPsswd
 
 
 void
