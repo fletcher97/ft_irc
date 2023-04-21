@@ -5,20 +5,6 @@
 #include "Log.hpp"
 
 void
-ft_irc::Parser::check_delimiter(std::string &msg)
-{
-	if ((msg.find_first_of('\r') == std::string::npos) || (msg.find_first_of('\n') == std::string::npos)) {
-		LOG_ERROR("Message parsing error: Delimiter couldn't be found");
-		throw std::invalid_argument("Delimiter couldn't be found");
-	}
-	if ((msg.find_first_of('\r') != (msg.size() - 2)) || (msg.find_first_of('\n') != (msg.size() - 1))) {
-		LOG_ERROR("Message parsing error: Delimiter not at the end of message");
-		throw std::invalid_argument("Delimiter not at the end of message");
-	}
-}	// Parser::check_delimiter
-
-
-void
 ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 {
 	std::string tags;

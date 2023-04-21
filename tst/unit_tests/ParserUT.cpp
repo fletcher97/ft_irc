@@ -8,8 +8,6 @@
 ft_irc::ParserUT::ParserUT(void) :
 	flt::Testable< ft_irc::ParserUT >("Parser")
 {
-	REGISTER(ft_irc::ParserUT, test_delimiter_msg)
-
 	REGISTER(ft_irc::ParserUT, test_tag_nocmd)
 	REGISTER(ft_irc::ParserUT, test_tag_presence)
 	REGISTER(ft_irc::ParserUT, test_tag_single_simple)
@@ -37,49 +35,6 @@ ft_irc::ParserUT::ParserUT(void) :
 
 
 ft_irc::ParserUT::~ParserUT(void) {}
-
-void
-ft_irc::ParserUT::test_delimiter_msg(void)
-{
-	std::string msg;
-
-	// Empty message
-	msg = "";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// No delimiter string
-	msg = "Hello world!";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Only cr
-	msg = "Hello world!\r";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Only lf
-	msg = "Hello world!\n";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Multy delimiter string
-	msg = "Hello\r\nworld!\r\n";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Not delimiter terminated string
-	msg = "Hello\r\nworld!";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Delimiter char in middle of string
-	msg = "Hello\rworld!\r\n";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Delimiter char in middle of string
-	msg = "Hello\nworld!\r\n";
-	ASSERT_THROW(ft_irc::Parser::check_delimiter(msg), std::invalid_argument)
-
-	// Correctly terminated string
-	msg = "Hello world!\r\n";
-	ASSERT_NOTHROW(ft_irc::Parser::check_delimiter(msg))
-}	// ParserUT::test_delimiter_msg
-
 
 void
 ft_irc::ParserUT::test_tag_nocmd(void)
