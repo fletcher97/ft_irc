@@ -88,6 +88,7 @@ ft_irc::Server::newClient(void)
 	communications.addPfd(clientFd);
 }	// Server::newClient
 
+
 void
 ft_irc::Server::quit(int fd)
 {
@@ -112,4 +113,3 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			}
 	}	// switch
 }	// Server::excecute
-
