@@ -31,8 +31,8 @@ public:
 
 	bool init(int port, const char *psswd);
 	void run(void);
-	void read(int fd);
-	void send(int fd, const std::string &msg);
+	void recvMsg(int fd);
+	void sendMsg(int fd, const std::string &msg);
 
 	int getFd(void) const;
 	void addPfd(int fd);

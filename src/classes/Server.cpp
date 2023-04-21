@@ -90,9 +90,9 @@ ft_irc::Server::newClient(void)
 
 
 void
-ft_irc::Server::send(int fd, const std::string &msg)
+ft_irc::Server::sendMsg(int fd, const std::string &msg)
 {
-	ft_irc::Communications::getInstance().send(fd, msg);
+	ft_irc::Communications::getInstance().sendMsg(fd, msg);
 }	// Server::send
 
 
