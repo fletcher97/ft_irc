@@ -6,22 +6,20 @@
 #include <poll.h>
 
 #define MAX_CLIENTS 124
+#define COMS_MAX_READ 4096
 
 namespace ft_irc
 {
 
 class Communications
 {
-private:
+protected:
 	int _fd;
 	std::vector< pollfd > _pfds;
 	std::string _psswd;
 
 	typedef std::vector< pollfd >::iterator pfds_iterator;
 
-	void write_error(const char *s);
-
-protected:
 	Communications(void);
 	Communications(const Communications &s);
 	~Communications(void);
@@ -33,6 +31,8 @@ public:
 
 	bool init(int port, const char *psswd);
 	void run(void);
+	void recvMsg(int fd);
+	void sendMsg(int fd, const std::string &msg);
 
 	int getFd(void) const;
 	void addPfd(int fd);
