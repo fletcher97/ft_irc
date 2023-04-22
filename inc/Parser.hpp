@@ -1,9 +1,9 @@
 #if !defined(PARSER_HPP)
 #define PARSER_HPP
 
-#include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "codes.hpp"
 
@@ -17,7 +17,7 @@ public:
 	{
 		std::map< std::string, std::string > tags;
 		ft_irc::commands cmd;
-		std::list< std::string > args;
+		std::vector< std::string > args;
 	} cmd_t;
 protected:
 	static void parse_tags(cmd_t *cmd, std::string &msg);

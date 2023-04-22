@@ -412,30 +412,30 @@ ft_irc::ParserUT::test_arguments_single(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
-	std::list< std::string > expected;
+	std::vector< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tag CAP LS";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("LS");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tagCAP";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("LS");
 	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tag :sourceCAP";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("LS");
 	ASSERT_THROW(ft_irc::Parser::parse_arguments(&cmd, msg), std::invalid_argument)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "CAP REQ";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("REQ");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
@@ -447,11 +447,11 @@ ft_irc::ParserUT::test_arguments_multi(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
-	std::list< std::string > expected;
+	std::vector< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tag CAP * LS";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("*");
 	expected.push_back("LS");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -459,7 +459,7 @@ ft_irc::ParserUT::test_arguments_multi(void)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "PRIVMSG #chan Hey!";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hey!");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -472,17 +472,17 @@ ft_irc::ParserUT::test_arguments_missing(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
-	std::list< std::string > expected;
+	std::vector< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "@tag AUTHENTICATE";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "AUTHENTICATE";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
 	ASSERT_EQ(cmd.args, expected)
 }	// ParserUT::test_arguments_missing
@@ -493,11 +493,11 @@ ft_irc::ParserUT::test_arguments_colon(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
-	std::list< std::string > expected;
+	std::vector< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "PRIVMSG #chan :Hey!";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hey!");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -505,7 +505,7 @@ ft_irc::ParserUT::test_arguments_colon(void)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "PRIVMSG #chan :Hello world!";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Hello world!");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -518,11 +518,11 @@ ft_irc::ParserUT::test_arguments_multi_colon(void)
 {
 	ft_irc::Parser::cmd_t cmd;
 	std::string msg;
-	std::list< std::string > expected;
+	std::vector< std::string > expected;
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "PRIVMSG #chan :Can colons(:) be used";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Can colons(:) be used");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
@@ -530,7 +530,7 @@ ft_irc::ParserUT::test_arguments_multi_colon(void)
 
 	cmd = ft_irc::Parser::cmd_t();
 	msg = "PRIVMSG #chan :Can colons with spaces : be used";
-	expected = std::list< std::string >();
+	expected = std::vector< std::string >();
 	expected.push_back("#chan");
 	expected.push_back("Can colons with spaces : be used");
 	ASSERT_NOTHROW(ft_irc::Parser::parse_arguments(&cmd, msg))
