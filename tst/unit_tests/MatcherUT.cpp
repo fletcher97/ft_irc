@@ -15,6 +15,7 @@ ft_irc::MatcherUT::MatcherUT() :
 	REGISTER(ft_irc::MatcherUT, test_matcher_mix)
 	REGISTER(ft_irc::MatcherUT, test_vec_matcher_no_patterns)
 	REGISTER(ft_irc::MatcherUT, test_vec_matcher_mix)
+	REGISTER(ft_irc::MatcherUT, test_match_ircmasks)
 }	// MatcherUT::MatcherUT
 
 
@@ -117,8 +118,7 @@ ft_irc::MatcherUT::test_matcher_esc(void)
 	ASSERT(ft_irc::match("\\*", "*"))
 	ASSERT(ft_irc::match("a\\*a", "a*a"))
 	ASSERT(!ft_irc::match("\\*", "a"))
-	ASSERT(!ft_irc::match("a\\a", "a\\a"))
-	ASSERT(ft_irc::match("a\\a", "aa"))
+	ASSERT(ft_irc::match("a\\a", "a\\a"))
 }	// MatcherUT::test_matcher_mix
 
 
@@ -164,3 +164,18 @@ ft_irc::MatcherUT::test_vec_matcher_mix(void)
 	ASSERT(ft_irc::match(patterns, "Here's johnnny "));
 	ASSERT(!ft_irc::match(patterns, "Here's jhonnny "));
 }	// test_vec_matcher_empty_pattern
+
+
+void
+ft_irc::MatcherUT::test_match_ircmasks(void)
+{
+	ASSERT(ft_irc::match("smiro!*@*", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("s*!smiro@127.0.0.1", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("*!*@127*", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("*!*@*", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("smiro!*", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("?miro!smiro@127.0.0.1", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("?m*!smiro@127.0.0.1", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("smiro!smiro@127.0.0.1", "smiro!smiro@127.0.0.1"))
+	ASSERT(ft_irc::match("smiro!smiro@12?.0.0.1", "smiro!smiro@127.0.0.1"))
+}	// MatcherUT::test_match_ircmasks

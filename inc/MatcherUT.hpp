@@ -23,6 +23,7 @@ public:
 
 	void test_vec_matcher_no_patterns(void);
 	void test_vec_matcher_mix(void);
+	void test_match_ircmasks(void);
 };	// class MatcherUT
 
 }	// namespace ft_irc
