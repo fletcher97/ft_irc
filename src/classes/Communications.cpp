@@ -92,6 +92,9 @@ ft_irc::Communications::recvMsg(int fd)
 
 		return;
 	}
+	if (!size) {
+		throw std::exception();
+	}
 	buffer[size] = '\0';
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
 	msg = buffer;
@@ -149,7 +152,15 @@ ft_irc::Communications::run(void)
 					break;
 				}
 				if (it->revents & POLLIN) {
-					this->recvMsg(it->fd);
+					try {
+						this->recvMsg(it->fd);
+					} catch (...) {
+						LOG_INFO("Client disconnected: " << it->fd)
+
+						server.quit(server.getClient(it->fd), NULL);
+						this->_pfds.erase(it);
+						break;
+					}
 				}
 			}
 		}
