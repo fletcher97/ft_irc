@@ -1,21 +1,8 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "Parser.hpp"
 #include "Log.hpp"
-
-void
-ft_irc::Parser::check_delimiter(std::string &msg)
-{
-	if ((msg.find_first_of('\r') == std::string::npos) || (msg.find_first_of('\n') == std::string::npos)) {
-		LOG_ERROR("Message parsing error: Delimiter couldn't be found");
-		throw std::invalid_argument("Delimiter couldn't be found");
-	}
-	if ((msg.find_first_of('\r') != (msg.size() - 2)) || (msg.find_first_of('\n') != (msg.size() - 1))) {
-		LOG_ERROR("Message parsing error: Delimiter not at the end of message");
-		throw std::invalid_argument("Delimiter not at the end of message");
-	}
-}	// Parser::check_delimiter
-
 
 void
 ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
@@ -66,7 +53,7 @@ ft_irc::Parser::parse_tags(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 			key = "";
 		}
 		// Adding tag to cmd
-		LOG_DEBUG("Adding tag: [" + tag + ";" + key + "]")
+		LOG_TRACE("Adding tag: [" + tag + ";" + key + "]")
 		cmd->tags.insert(std::pair< std::string, std::string >(tag, key));
 		if (tags.find_first_of(';') != tags.npos) {
 			LOG_TRACE("Tag deimiter detected")
@@ -163,7 +150,7 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		}
 	}
 	// Skip source
-	if ((tmp.size() > 1) && (tmp[0] == ':')) {
+	if ((tmp.size()) && (tmp[0] == ':')) {
 		try {
 			LOG_TRACE("Removing source from msg")
 			tmp = tmp.substr(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size());
@@ -173,27 +160,20 @@ ft_irc::Parser::parse_arguments(ft_irc::Parser::cmd_t *cmd, std::string &msg)
 		}
 	}
 	// Skip command
-	try {
-		LOG_TRACE("Removing command from msg")
-		tmp = tmp.substr(tmp.find_first_not_of(' ', std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))),
-			tmp.size());
-	} catch (std::exception &e) {
-		LOG_ERROR("Failed command removal");
-		throw std::invalid_argument("Failed command removal");
-	}
+	LOG_TRACE("Removing command from msg")
+	tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size()), tmp.size());
 
-	while (tmp.size() > 2) {
+	while (tmp.size()) {
 		LOG_TRACE("Extracting next param from " + tmp);
 		if (tmp[0] == ':') {
-			cmd->args.push_back(tmp.substr(1, tmp.size() - 3));	// Remove the trailing crlf
+			cmd->args.push_back(tmp.substr(1, tmp.size()));
 			LOG_TRACE("Added ---" + cmd->args.back() + "---")
 			break;
 		} else {
-			cmd->args.push_back(tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.find_first_of('\r'))));
+			cmd->args.push_back(tmp.substr(0, std::min(tmp.find_first_of(' '), tmp.size())));
 			LOG_TRACE("Added ---" + cmd->args.back() + "---")
 		}
-		tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.find_first_of('\r')),
-			tmp.size());
+		tmp = tmp.substr(std::min(tmp.find_first_not_of(' ', tmp.find_first_of(' ')), tmp.size()), tmp.size());
 	}
 }	// Parser::parse_arguments
 
@@ -203,8 +183,8 @@ ft_irc::Parser::parse_msg(std::string &msg)
 {
 	ft_irc::Parser::cmd_t *ret = NULL;
 
+	LOG_INFO("parsing msg: \"" + msg + "\"")
 	try {
-		check_delimiter(msg);
 		ret = new ft_irc::Parser::cmd_t();
 		ft_irc::Parser::parse_tags(ret, msg);
 		ft_irc::Parser::check_source(msg);
@@ -213,6 +193,7 @@ ft_irc::Parser::parse_msg(std::string &msg)
 
 		return ret;
 	} catch (...) {
+		LOG_ERROR("Failed to parse msg: \"" + msg + "\"")
 		if (ret) {
 			delete ret;
 		}

@@ -1,6 +1,6 @@
 .DS_Store
 a.out
-*.o 
+*.o
 *.gcda
 *.gcno
 *.gcov
@@ -9,3 +9,6 @@ a.out
 .vscode/
 bin/
 uncrustify-targets.txt
+*.log
+coverage.info
+rep/

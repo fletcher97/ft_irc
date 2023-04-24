@@ -271,7 +271,7 @@ ft_irc::ChannelUT::test_deleteClient(void)
 	LOG_TRACE("test deleteClient: delete last client")
 	ASSERT(ft_irc::Channel::deleteClient(test2))
 	ASSERT_THROW(ft_irc::Channel::deleteClient(test2), ft_irc::Channel::NotOnChannel)
-}
+}	// ChannelUT::test_deleteClient
 
 
 void

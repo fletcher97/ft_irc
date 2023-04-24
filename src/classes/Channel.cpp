@@ -194,12 +194,12 @@ ft_irc::Channel::addClient(const ft_irc::Client &client)
 bool
 ft_irc::Channel::deleteClient(const Client &client)
 {
-	if (this->_clients.erase(client.getFd()) == 0)
-	{
+	if (this->_clients.erase(client.getFd()) == 0) {
 		LOG_WARN("deleteClient: client not in channel: " << client.getNickname())
-		throw ft_irc::Channel::NotOnChannel();
+   throw ft_irc::Channel::NotOnChannel();
 	}
 	LOG_INFO("deleteClient: client deleted: " << client.getNickname())
+
 	return this->_clients.empty();
 }	// Channel::deleteClient
 

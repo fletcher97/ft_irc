@@ -5,6 +5,7 @@
 #include "Log.hpp"
 
 #include "Client.hpp"
+#include "Server.hpp"
 
 ft_irc::Client::Client(void) :
 	_mode()
@@ -169,6 +170,13 @@ ft_irc::Client::getMask(void) const
 {
 	return this->_nickname + "!" + this->_username + "@" + this->_hostname;
 }	// Client::getMask
+
+
+void
+ft_irc::Client::sendMsg(const std::string &msg)
+{
+	ft_irc::Server::getInstance().sendMsg(this->_fd, msg);
+}	// Client::send
 
 
 ft_irc::Client::InvalidMode::InvalidMode(std::string msg) :

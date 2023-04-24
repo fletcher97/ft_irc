@@ -59,6 +59,7 @@ public:
 	void setRealname(const std::string &realname);
 	void setStatus(Client::Status status);
 	void toggleMode(const client_mode mode);
+	void sendMsg(const std::string &msg);
 
 public:
 	class InvalidMode :
