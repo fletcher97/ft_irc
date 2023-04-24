@@ -97,8 +97,8 @@ ft_irc::Communications::recvMsg(int fd)
 	msg = buffer;
 	while (msg.size()) {
 		line = msg.substr(0, msg.find("\r\n"));
-		cmd = ft_irc::Parser::parse_msg(line);
 		try {
+			cmd = ft_irc::Parser::parse_msg(line);
 			ft_irc::Server::getInstance().excecute(fd, cmd);
 		} catch (...) {
 			delete cmd;

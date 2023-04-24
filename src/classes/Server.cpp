@@ -101,32 +101,48 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
 	ft_irc::Client &client = this->getClient(fd);
 
+	if (  (client.getStatus() == ft_irc::Client::PASSWORD)
+	   && ((cmd->cmd != ft_irc::CMD_PASS) && (cmd->cmd != ft_irc::CMD_CAP)))
+	{
+		LOG_DEBUG(ft_irc::toString(cmd->cmd))
+		this->error(client, "Password required");
+		this->quit(client, NULL);
+		throw std::exception();
+
+		return;
+	}
+
 	switch (cmd->cmd) {
 		case ft_irc::CMD_CAP: {
 				LOG_INFO("execute: CAP Ignored")
+
 				break;
 			}
 
 		case ft_irc::CMD_PASS: {
 				LOG_INFO("execute: executing PASS")
+
 				this->pass(client, cmd);
 				break;
 			}
 
 		case ft_irc::CMD_NICK: {
 				LOG_INFO("execute: executing NICK")
+
 				this->nick(client, cmd);
 				break;
 			}
 
 		case ft_irc::CMD_USER: {
 				LOG_INFO("execute: executing USER")
+
 				this->user(client, cmd);
 				break;
 			}
 
 		case ft_irc::CMD_QUIT: {
 				LOG_INFO("execute: executing QUIT")
+
 				this->quit(client, cmd);
 				break;
 			}
@@ -153,6 +169,7 @@ ft_irc::Server::pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	}
 	if (cmd->args.front() != ft_irc::Communications::getInstance().getPsswd()) {
 		LOG_WARN("pass: 464: password mismatch: " << cmd->args.front())
+
 		client.sendMsg("464: ");
 		this->error(client, "Password mismatch");
 		this->quit(client, NULL);
@@ -188,8 +205,8 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		return client.sendMsg("432: ");
 	}
 
-	LOG_INFO("nick: " << old_nick << " set to " << cmd->args.front());
-	client.sendMsg(old_nick + ": " + ft_irc::toString(cmd->cmd) + " " + client.getNickname());
+	LOG_INFO("nick: " << old_nick << " set to " << cmd->args.front())
+	client.sendMsg(":" + old_nick + " " + ft_irc::toString(cmd->cmd) + " " + client.getNickname());
 }	// Server::nick
 
 
@@ -208,7 +225,6 @@ ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	}
 	client.setUsername(cmd->args.front());
 	client.setRealname(cmd->args.back());
-	client.sendMsg("001 " + client.getNickname() + " :Welcome " + client.getMask());
 	client.setStatus(ft_irc::Client::ONLINE);
 }	// Server::user
 
