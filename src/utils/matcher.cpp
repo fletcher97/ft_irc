@@ -60,7 +60,7 @@ priv_match(const std::string &pattern, const std::string &value)
 
 		return false;
 	}
-	if (pattern[0] == '\\') {
+	if ((pattern[0] == '\\') && ((pattern[1] == '*') || (pattern[1] == '?'))) {
 		if (!value.size() || (pattern[1] != value[0])) {
 			LOG_TRACE("No match found")
 
