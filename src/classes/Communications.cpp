@@ -147,7 +147,7 @@ ft_irc::Communications::run(void)
 				}
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
-					server.quit(server.getClient(it->fd), NULL);
+					server.deleteClient(it->fd);
 					this->_pfds.erase(it);
 					break;
 				}
@@ -157,7 +157,7 @@ ft_irc::Communications::run(void)
 					} catch (...) {
 						LOG_INFO("Client disconnected: " << it->fd)
 
-						server.quit(server.getClient(it->fd), NULL);
+						server.deleteClient(it->fd);
 						this->_pfds.erase(it);
 						break;
 					}

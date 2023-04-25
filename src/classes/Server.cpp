@@ -101,17 +101,6 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
 	ft_irc::Client &client = this->getClient(fd);
 
-	if (  (client.getStatus() == ft_irc::Client::PASSWORD)
-	   && ((cmd->cmd != ft_irc::CMD_PASS) && (cmd->cmd != ft_irc::CMD_CAP)))
-	{
-		LOG_DEBUG(ft_irc::toString(cmd->cmd))
-		this->error(client, "Password required");
-		this->quit(client, NULL);
-		throw std::exception();
-
-		return;
-	}
-
 	switch (cmd->cmd) {
 		case ft_irc::CMD_CAP: {
 				LOG_INFO("execute: CAP Ignored")
@@ -171,10 +160,11 @@ ft_irc::Server::pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		LOG_WARN("pass: 464: password mismatch: " << cmd->args.front())
 
 		client.sendMsg("464: ");
-		this->error(client, "Password mismatch");
+		client.sendMsg("ERROR :Password mismatch");
 		this->quit(client, NULL);
 		throw std::invalid_argument("Password mismatch");
 	}
+	LOG_INFO("pass: " << client.getFd() << " correct password: " << cmd->args.front())
 	client.setStatus(ft_irc::Client::REGISTER);
 }	// Server::pass
 
@@ -184,6 +174,11 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
 	std::string old_nick;
 
+	if (client.getStatus() == ft_irc::Client::PASSWORD) {
+		LOG_ERROR("user: Client didn't set the password yet")
+
+		return client.sendMsg("ERROR :Password required");
+	}
 	if (cmd->args.empty()) {
 		LOG_WARN("nick: 431: need more param")
 
@@ -213,12 +208,17 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 void
 ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
+	if (client.getStatus() == ft_irc::Client::PASSWORD) {
+		LOG_ERROR("user: Client didn't set the password yet")
+
+		return client.sendMsg("ERROR :Password required");
+	}
 	if (client.getStatus() != ft_irc::Client::REGISTER) {
 		LOG_WARN("user: 462: client already registered: " << cmd->args.front())
 
 		return client.sendMsg("462: ");
 	}
-	if (cmd->args.empty() || cmd->args.front().empty()) {
+	if ((cmd->args.size() < 4) || cmd->args.front().empty()) {
 		LOG_WARN("user: 461: Need more params")
 
 		return client.sendMsg("461: ");
@@ -226,26 +226,23 @@ ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	client.setUsername(cmd->args.front());
 	client.setRealname(cmd->args.back());
 	client.setStatus(ft_irc::Client::ONLINE);
+	LOG_INFO("user: " << client.getMask() << " is online")
 }	// Server::user
 
 
 void
 ft_irc::Server::quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
-	int fd;
-
-	if (cmd) {
-		this->error(client, cmd->args.front());
-	}
-	LOG_INFO("Deleting client: " << client.getNickname())
-	fd = client.getFd();
-	delete this->_clients[fd];
-	this->_clients.erase(fd);
+	LOG_INFO("quit: " << client.getNickname() << " leaving")
+	client.sendMsg("ERROR :" + cmd->args.front());
+	this->deleteClient(client.getFd());
 }	// Server::quit
 
 
 void
-ft_irc::Server::error(ft_irc::Client &client, const std::string reason)
+ft_irc::Server::deleteClient(int fd)
 {
-	client.sendMsg("ERROR :" + reason);
-}	// Server::error
+	LOG_INFO("Deleting client: " << fd)
+	delete this->_clients[fd];
+	this->_clients.erase(fd);
+}	// Server::deleteClient
