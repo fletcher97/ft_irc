@@ -300,6 +300,7 @@ void
 ft_irc::Server::deleteClient(int fd, const std::string &reason)
 {
 	std::map< std::string, Channel* >::iterator it = this->_channels.begin();
+	std::string channel_name;
 
 	LOG_TRACE("deleteClient: Quitting channels")
 	while (it != this->_channels.end()) {
@@ -308,8 +309,10 @@ ft_irc::Server::deleteClient(int fd, const std::string &reason)
 			if (it->second->part(this->getClient(fd), reason)) {
 				LOG_DEBUG("deleteClient: Deleting empty channel: " << it->second->getName())
 
+				channel_name = it->second->getName();
 				delete it->second;
-				it = this->_channels.erase(it);
+				it++;
+				this->_channels.erase(channel_name);
 				continue;
 			}
 		}
