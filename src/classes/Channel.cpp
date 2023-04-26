@@ -101,9 +101,9 @@ ft_irc::Channel::setTopic(ft_irc::Client &source, std::string &topic)
 		LOG_WARN("setTopic called with a client not on channel")
    throw ft_irc::Channel::NotOnChannel();
 	}
-	if (  this->_mode & PROTECTED_TOPIC && !(this->_clients.at(source.getFd()).mode & OPERATOR)
-	   && !(this->_clients.at(source.getFd()).mode & HALFOP)
-	   && !(this->_clients.at(source.getFd()).mode & PROTECTED))
+	if (  this->_mode & CH_PROTECTED_TOPIC && !(this->_clients.at(source.getFd()).mode & CH_OPERATOR)
+	   && !(this->_clients.at(source.getFd()).mode & CH_HALFOP)
+	   && !(this->_clients.at(source.getFd()).mode & CH_PROTECTED))
 	{
 		LOG_WARN("setTopic called with a client with no privileges")
    throw ft_irc::Channel::NoPrivsOnChannel();
@@ -140,7 +140,7 @@ ft_irc::Channel::setClientLimit(long limit)
 void
 ft_irc::Channel::toggleMode(const char mode)
 {
-	if ((mode > (INVITE | MODERATE | SECRET | PROTECTED_TOPIC | NOT_EXTERNAL_MSGS)) || (mode <= 0)) {
+	if ((mode > (CH_INVITE | CH_MODERATE | CH_SECRET | CH_PROTECTED_TOPIC | CH_NOT_EXTERNAL_MSGS)) || (mode <= 0)) {
 		LOG_WARN("setClientLimit with an invalid mode: " << mode)
    throw ft_irc::Channel::InvalidMode("Invalid mode");
 	}
@@ -184,7 +184,7 @@ ft_irc::Channel::addClient(const ft_irc::Client &client)
 	LOG_INFO("New client added to channel: " << client.getNickname())
 	if (this->_clients.size() == 1) {
 		LOG_INFO("addClient first client in channel: " << client.getNickname())
-		this->_clients.begin()->second.mode = (FOUNDER | OPERATOR);
+		this->_clients.begin()->second.mode = (CH_FOUNDER | CH_OPERATOR);
 	}
 
 	return true;
@@ -195,14 +195,14 @@ bool
 ft_irc::Channel::banMask(const std::string &mask)
 {
 	if (this->_masks.count(mask)) {
-		if (this->_masks[mask] & BAN) {
+		if (this->_masks[mask] & CH_BAN) {
 			LOG_WARN("banMask mask already banned in channel: " << mask)
 
 			return false;
 		}
-		this->_masks[mask] ^= BAN;
+		this->_masks[mask] ^= CH_BAN;
 	} else {
-		this->_masks.insert(std::make_pair< std::string, mask_mode >(mask, BAN));
+		this->_masks.insert(std::make_pair< std::string, mask_mode >(mask, CH_BAN));
 	}
 	LOG_INFO("Mask banned from channel: " << mask)
 
@@ -217,7 +217,7 @@ ft_irc::Channel::invite(const Client &source, const std::string &nick)
 		LOG_WARN("invite, source not on channel: " << source.getNickname())
    throw ft_irc::Channel::NotOnChannel();
 	}
-	if (this->_mode & INVITE_ONLY && !(this->_clients.at(source.getFd()).mode & OPERATOR)) {
+	if (this->_mode & CH_INVITE_ONLY && !(this->_clients.at(source.getFd()).mode & CH_OPERATOR)) {
 		LOG_WARN("invite, source doesent have privileges: " << source.getNickname())
    throw ft_irc::Channel::NoPrivsOnChannel();
 	}
@@ -226,14 +226,14 @@ ft_irc::Channel::invite(const Client &source, const std::string &nick)
    throw ft_irc::Channel::AlreadyOnChannel();
 	}
 	if (this->_masks.count(nick)) {
-		if (this->_masks[nick] & INVITE) {
+		if (this->_masks[nick] & CH_INVITE) {
 			LOG_WARN("invite, client already invited to channel: " << nick)
 
 			return false;
 		}
-		this->_masks[nick] ^= INVITE;
+		this->_masks[nick] ^= CH_INVITE;
 	} else {
-		this->_masks.insert(std::make_pair< std::string, mask_mode >(nick, INVITE));
+		this->_masks.insert(std::make_pair< std::string, mask_mode >(nick, CH_INVITE));
 	}
 	LOG_INFO("invite, client invited to channel: " << nick)
 
@@ -249,12 +249,12 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 
 		return false;
 	}
-	if (this->_masks.count(client.getMask()) && this->_masks[client.getMask()] & BAN) {
+	if (this->_masks.count(client.getMask()) && this->_masks[client.getMask()] & CH_BAN) {
 		LOG_WARN("join, client banned from channel: " << client.getNickname())
    throw ft_irc::Channel::BannedClient();
 	}
-	if (  this->_mode & INVITE_ONLY
-	   && (!this->_masks.count(client.getMask()) || !(this->_masks[client.getMask()] & INVITE)))
+	if (  this->_mode & CH_INVITE_ONLY
+	   && (!this->_masks.count(client.getMask()) || !(this->_masks[client.getMask()] & CH_INVITE)))
 	{
 		LOG_WARN("join, client not invited to channel: " << client.getNickname())
    throw ft_irc::Channel::InviteOnlyChannel();
@@ -272,6 +272,39 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 
 	return true;
 }	// Channel::join
+
+
+bool
+ft_irc::Channel::part(const ft_irc::Client &client, const std::string &reason)
+{
+	LOG_TRACE("part: Checking if " << client.getNickname() << " is in " << this->_name)
+	if (!this->_clients.count(client.getFd())) {
+		LOG_WARN("part: 442: Not on channel: " << client.getNickname())
+
+		client.sendMsg("442");
+
+		return false;
+	}
+	LOG_INFO("part: " << client.getNickname() << " leaves " << this->_name)
+
+	this->_clients.erase(client.getFd());
+	this->broadcast(client.getNickname(), ft_irc::CMD_PART, reason);
+	LOG_TRACE("part: " << this->_name << " has " << this->_clients.size() << " clients")
+
+	return this->_clients.empty();
+}	// Channel::part
+
+
+void
+ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg) const
+{
+	LOG_DEBUG("broadcast: " << source << " " << ft_irc::toString(cmd) << " " << arg)
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
+
+		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+	}
+}	// Channel::broadcast
 
 
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) :
