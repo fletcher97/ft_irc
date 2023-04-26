@@ -80,16 +80,14 @@ void
 ft_irc::Channel::setName(const std::string &name)
 {
 	if (name.length() == 0) {
-		LOG_WARN("setName called with empty string")
-
-	   throw std::invalid_argument("Name must be a non empty string");
+		LOG_WARN("setName called with empty string");
+		throw std::invalid_argument("Name must be a non empty string");
 	}
 	if (  ((name.at(0) != '#') && (name.at(0) != '&')) || (name.find(' ') != std::string::npos)
 	   || (name.find(0x07) != std::string::npos) || (name.find(',') != std::string::npos))
 	{
-		LOG_WARN("setName called with an invalid character")
-
-	   throw ft_irc::Channel::InvalidChannelName("Invalid channel  name: " + name);
+		LOG_WARN("setName called with an invalid character");
+		throw ft_irc::Channel::InvalidChannelName("Invalid channel  name: " + name);
 	}
 	LOG_INFO("Channel's name changed from: " << this->_name << " to: " << name)
 	this->_name = name;
@@ -100,17 +98,15 @@ void
 ft_irc::Channel::setTopic(ft_irc::Client &source, std::string &topic)
 {
 	if (!this->_clients.count(source.getFd())) {
-		LOG_WARN("setTopic called with a client not on channel")
-
-	   throw ft_irc::Channel::NotOnChannel();
+		LOG_WARN("setTopic called with a client not on channel");
+		throw ft_irc::Channel::NotOnChannel();
 	}
 	if (  this->_mode & CH_PROTECTED_TOPIC && !(this->_clients.at(source.getFd()).mode & CH_OPERATOR)
 	   && !(this->_clients.at(source.getFd()).mode & CH_HALFOP)
 	   && !(this->_clients.at(source.getFd()).mode & CH_PROTECTED))
 	{
-		LOG_WARN("setTopic called with a client with no privileges")
-
-	   throw ft_irc::Channel::NoPrivsOnChannel();
+		LOG_WARN("setTopic called with a client with no privileges");
+		throw ft_irc::Channel::NoPrivsOnChannel();
 	}
 	LOG_INFO("Channel's topic changed from: " << this->_topic << " to: " << topic)
 	this->_topic = topic;
@@ -121,9 +117,8 @@ void
 ft_irc::Channel::setKey(std::string &key)
 {
 	if (key.length() == 0) {
-		LOG_WARN("setKet with an empty string")
-
-	   throw std::invalid_argument("Key must be a non empty string");
+		LOG_WARN("setKet with an empty string");
+		throw std::invalid_argument("Key must be a non empty string");
 	}
 	LOG_INFO("Channel's key changed from: " << this->_key << " to: " << key)
 	this->_key = key;
@@ -134,9 +129,8 @@ void
 ft_irc::Channel::setClientLimit(long limit)
 {
 	if (limit <= 0) {
-		LOG_WARN("setClientLimit with an invalid number: " << limit)
-
-	   throw ft_irc::Channel::InvalidLimit("Invalid limit");
+		LOG_WARN("setClientLimit with an invalid number: " << limit);
+		throw ft_irc::Channel::InvalidLimit("Invalid limit");
 	}
 	LOG_INFO("Channel's limit changed from: " << this->_client_limit << " to: " << limit)
 	this->_client_limit = limit;
@@ -147,9 +141,8 @@ void
 ft_irc::Channel::toggleMode(const char mode)
 {
 	if ((mode > (CH_INVITE | CH_MODERATE | CH_SECRET | CH_PROTECTED_TOPIC | CH_NOT_EXTERNAL_MSGS)) || (mode <= 0)) {
-		LOG_WARN("setClientLimit with an invalid mode: " << mode)
-
-	   throw ft_irc::Channel::InvalidMode("Invalid mode");
+		LOG_WARN("setClientLimit with an invalid mode: " << mode);
+		throw ft_irc::Channel::InvalidMode("Invalid mode");
 	}
 	this->_mode ^= mode;
 }	// Channel::toggleMode
@@ -222,19 +215,16 @@ bool
 ft_irc::Channel::invite(const Client &source, const std::string &nick)
 {
 	if (!this->_clients.count(source.getFd())) {
-		LOG_WARN("invite, source not on channel: " << source.getNickname())
-
-	   throw ft_irc::Channel::NotOnChannel();
+		LOG_WARN("invite, source not on channel: " << source.getNickname());
+		throw ft_irc::Channel::NotOnChannel();
 	}
 	if (this->_mode & CH_INVITE_ONLY && !(this->_clients.at(source.getFd()).mode & CH_OPERATOR)) {
-		LOG_WARN("invite, source doesent have privileges: " << source.getNickname())
-
-	   throw ft_irc::Channel::NoPrivsOnChannel();
+		LOG_WARN("invite, source doesent have privileges: " << source.getNickname());
+		throw ft_irc::Channel::NoPrivsOnChannel();
 	}
 	if (this->isInChannel(nick)) {
-		LOG_WARN("invite, client already on channel: " << nick)
-
-	   throw ft_irc::Channel::AlreadyOnChannel();
+		LOG_WARN("invite, client already on channel: " << nick);
+		throw ft_irc::Channel::AlreadyOnChannel();
 	}
 	if (this->_masks.count(nick)) {
 		if (this->_masks[nick] & CH_INVITE) {
@@ -261,26 +251,22 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 		return false;
 	}
 	if (this->_masks.count(client.getMask()) && this->_masks[client.getMask()] & CH_BAN) {
-		LOG_WARN("join, client banned from channel: " << client.getNickname())
-
-	   throw ft_irc::Channel::BannedClient();
+		LOG_WARN("join, client banned from channel: " << client.getNickname());
+		throw ft_irc::Channel::BannedClient();
 	}
 	if (  this->_mode & CH_INVITE_ONLY
 	   && (!this->_masks.count(client.getMask()) || !(this->_masks[client.getMask()] & CH_INVITE)))
 	{
-		LOG_WARN("join, client not invited to channel: " << client.getNickname())
-
-	   throw ft_irc::Channel::InviteOnlyChannel();
+		LOG_WARN("join, client not invited to channel: " << client.getNickname());
+		throw ft_irc::Channel::InviteOnlyChannel();
 	}
 	if ((this->_client_limit != 0) && (this->_client_limit >= this->_clients.size())) {
-		LOG_WARN("join, client can't join, channel is full: " << client.getNickname())
-
-	   throw ft_irc::Channel::ChannelIsFull();
+		LOG_WARN("join, client can't join, channel is full: " << client.getNickname());
+		throw ft_irc::Channel::ChannelIsFull();
 	}
 	if (!this->_key.empty() && (this->_key != key)) {
-		LOG_WARN("join, client " << client.getNickname() << " can't join, invalid key: " << key)
-
-	   throw ft_irc::Channel::InvalidKey("Incorrect channel key");
+		LOG_WARN("join, client " << client.getNickname() << " can't join, invalid key: " << key);
+		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
 	}
 	LOG_INFO("Client joined to channel: " << client.getNickname())
 	this->addClient(client);
@@ -294,8 +280,7 @@ ft_irc::Channel::part(const ft_irc::Client &client, const std::string &reason)
 {
 	LOG_TRACE("part: Checking if " << client.getNickname() << " is in " << this->_name)
 	if (!this->_clients.count(client.getFd())) {
-		LOG_WARN("part: 442: Not on channel: " << client.getNickname())
-
+		LOG_WARN("part: 442: Not on channel: " << client.getNickname());
 		throw ft_irc::Channel::NotOnChannel();
 	}
 	LOG_INFO("part: " << client.getNickname() << " leaves " << this->_name)
