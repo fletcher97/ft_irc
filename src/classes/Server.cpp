@@ -129,6 +129,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 				break;
 			}
 
+		case ft_irc::CMD_PART: {
+				LOG_INFO("execute: executing PART")
+
+				this->part(client, cmd);
+				break;
+			}
+
 		case ft_irc::CMD_QUIT: {
 				LOG_INFO("execute: executing QUIT")
 
@@ -231,17 +238,83 @@ ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 
 
 void
+ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
+{
+	std::stringstream channel_list;
+	std::string channel_name;
+	std::string reason;
+
+	if (cmd->args.empty()) {
+		LOG_WARN("part: 461: Need more params")
+
+		return client.sendMsg("461");
+	}
+	channel_list << std::stringstream(cmd->args.front()).str();
+	LOG_TRACE("part: Channel List: " << channel_list.str())
+	if (cmd->args.size() > 1) {
+		reason = cmd->args.at(1);
+		LOG_TRACE("part: Reason: " << reason)
+	}
+	while (getline(channel_list, channel_name, ',')) {
+		LOG_TRACE("part: Channel Name: " << channel_name)
+
+		if (!this->_channels.count(channel_name)) {
+			LOG_WARN("part: 403: not such channel: " << channel_name)
+
+			client.sendMsg("403");
+			continue;
+		}
+		try {
+			if (this->_channels[channel_name]->part(client, reason)) {
+				LOG_DEBUG("part: Deleting empty channel: " << channel_name)
+
+				delete this->_channels[channel_name];
+				this->_channels.erase(channel_name);
+			}
+			LOG_INFO("part: Client (" << client.getNickname() << ") succesfully leaved " << channel_name)
+		} catch (...) {
+			LOG_WARN("part: 442: Client(" << client.getNickname() << ") not on channel: " << channel_name)
+
+			client.sendMsg("442");
+		}
+	}
+}	// Server::part
+
+
+void
 ft_irc::Server::quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
 	LOG_INFO("quit: " << client.getNickname() << " leaving")
-	client.sendMsg("ERROR :" + cmd->args.front());
+	client.sendMsg("ERROR :Leaving Server");
+	if (!cmd->args.empty()) {
+		LOG_TRACE("quit: Reason: " << cmd->args.front())
+
+		return this->deleteClient(client.getFd(), cmd->args.front());
+	}
+	LOG_TRACE("quit: With no reason")
 	this->deleteClient(client.getFd());
 }	// Server::quit
 
 
 void
-ft_irc::Server::deleteClient(int fd)
+ft_irc::Server::deleteClient(int fd, const std::string &reason)
 {
+	std::map< std::string, Channel* >::iterator it = this->_channels.begin();
+
+	LOG_TRACE("deleteClient: Quitting channels")
+	while (it != this->_channels.end()) {
+		if (it->second->isInChannel(this->getClient(fd))) {
+			LOG_TRACE("deleteClient: Quitting: " << it->second->getName())
+			if (it->second->part(this->getClient(fd), reason)) {
+				LOG_DEBUG("deleteClient: Deleting empty channel: " << it->second->getName())
+
+				delete it->second;
+				it = this->_channels.erase(it);
+				continue;
+			}
+		}
+		it++;
+	}
 	LOG_INFO("Deleting client: " << fd)
 	delete this->_clients[fd];
 	this->_clients.erase(fd);
