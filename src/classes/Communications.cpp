@@ -85,7 +85,7 @@ ft_irc::Communications::recvMsg(int fd)
 	ssize_t size;
 	std::string msg;
 	std::string line;
-	ft_irc::Parser::cmd_t *cmd = NULL;
+	ft_irc::Parser::cmd_t *cmd;
 
 	if ((size = recv(fd, &buffer, COMS_MAX_READ, 0)) == -1) {
 		LOG_ERROR("Error recv")
@@ -99,6 +99,7 @@ ft_irc::Communications::recvMsg(int fd)
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
 	msg = buffer;
 	while (msg.size()) {
+		cmd = NULL;
 		line = msg.substr(0, msg.find("\r\n"));
 		try {
 			cmd = ft_irc::Parser::parse_msg(line);
