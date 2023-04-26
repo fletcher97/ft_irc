@@ -24,6 +24,7 @@ ft_irc::ChannelUT::ChannelUT(void) :
 
 	REGISTER(ChannelUT, test_invite)
 	REGISTER(ChannelUT, test_join)
+	REGISTER(ChannelUT, test_part)
 }
 
 
@@ -199,9 +200,9 @@ ft_irc::ChannelUT::test_getName(void)
 	LOG_TRACE("Testing getName: gmartin")
 	ASSERT_EQ(ft_irc::Channel::getName(), "gemartin")
 
-	ft_irc::Channel::_name = "marvin";
-	LOG_TRACE("Testing getName: marvin")
-	ASSERT_EQ(ft_irc::Channel::getName(), "marvin")
+	ft_irc::Channel::_name = "#test_channel";
+	LOG_TRACE("Testing getName: #test_channel")
+	ASSERT_EQ(ft_irc::Channel::getName(), "#test_channel")
 }	// ChannelUT::test_getName
 
 
@@ -427,3 +428,19 @@ ft_irc::ChannelUT::test_join(void)
 	ASSERT(!ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
 }	// ChannelUT::test_join
+
+
+void
+ft_irc::ChannelUT::test_part(void)
+{
+	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
+	std::string name = "test_client";
+
+	test.setNickname(name);
+	LOG_TRACE("Testing part with a client not on channel")
+	ASSERT_THROW(ft_irc::Channel::part(test), ft_irc::Channel::NotOnChannel)
+
+	LOG_TRACE("Testing part with the last client on channel")
+	ft_irc::Channel::addClient(test);
+	ASSERT(ft_irc::Channel::part(test));
+}	// ChannelUT::test_part
