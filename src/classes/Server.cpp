@@ -290,7 +290,8 @@ ft_irc::Server::quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		LOG_TRACE("quit: Reason: " << cmd->args.front())
 
 		this->deleteClient(client.getFd(), cmd->args.front());
-		return ;
+
+		return;
 	}
 	LOG_TRACE("quit: With no reason")
 	this->deleteClient(client.getFd());
