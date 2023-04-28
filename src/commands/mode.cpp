@@ -157,12 +157,12 @@ modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::
 		return;
 	}
 
-	bool add = (cmd->args[0][0] != '-');// default to add if no sign is specified
+	bool add = (cmd->args[1][0] != '-');// default to add if no sign is specified
 	std::string added, removed;
 
-	for (long unsigned int i = 0; i < cmd->args[0].size(); i++) {
-		if (updateClientMode(client, cmd->args[0][i], add)) {
-			updatedResponse(added, removed, cmd->args[0][i], add);
+	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
+		if (updateClientMode(client, cmd->args[1][i], add)) {
+			updatedResponse(added, removed, cmd->args[1][i], add);
 		}
 	}	// switch
 	LOG_INFO("mode: 221: " + smodes)
