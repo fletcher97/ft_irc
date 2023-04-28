@@ -74,6 +74,7 @@ public:
 	const std::string& getName(void) const;
 	const std::string& getTopic(void) const;
 	const std::string& getKey(void) const;
+	const channel_mode& getMode(void) const;
 	const std::pair< std::string, std::string >& getTopicWhoTime(void) const;
 
 	void setName(const std::string &name);

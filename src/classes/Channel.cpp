@@ -90,6 +90,13 @@ ft_irc::Channel::getTopicWhoTime(void) const
 }	// Channel::getTopicWhoTime
 
 
+const ft_irc::Channel::channel_mode&
+ft_irc::Channel::getMode(void) const
+{
+	return this->_mode;
+}	// Channel::getMode
+
+
 void
 ft_irc::Channel::setName(const std::string &name)
 {
