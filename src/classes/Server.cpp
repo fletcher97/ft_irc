@@ -103,49 +103,49 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 
 	switch (cmd->cmd) {
 		case ft_irc::CMD_CAP: {
-				LOG_INFO("execute: CAP Ignored")
+			LOG_INFO("execute: CAP Ignored")
 
-				break;
-			}
+			break;
+		}
 
 		case ft_irc::CMD_PASS: {
-				LOG_INFO("execute: executing PASS")
+			LOG_INFO("execute: executing PASS")
 
-				this->pass(client, cmd);
-				break;
-			}
+			this->pass(client, cmd);
+			break;
+		}
 
 		case ft_irc::CMD_NICK: {
-				LOG_INFO("execute: executing NICK")
+			LOG_INFO("execute: executing NICK")
 
-				this->nick(client, cmd);
-				break;
-			}
+			this->nick(client, cmd);
+			break;
+		}
 
 		case ft_irc::CMD_USER: {
-				LOG_INFO("execute: executing USER")
+			LOG_INFO("execute: executing USER")
 
-				this->user(client, cmd);
-				break;
-			}
+			this->user(client, cmd);
+			break;
+		}
 
 		case ft_irc::CMD_PART: {
-				LOG_INFO("execute: executing PART")
+			LOG_INFO("execute: executing PART")
 
-				this->part(client, cmd);
-				break;
-			}
+			this->part(client, cmd);
+			break;
+		}
 
 		case ft_irc::CMD_QUIT: {
-				LOG_INFO("execute: executing QUIT")
+			LOG_INFO("execute: executing QUIT")
 
-				this->quit(client, cmd);
-				break;
-			}
+			this->quit(client, cmd);
+			break;
+		}
 
 		default: {
-				LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
-			}
+			LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
+		}
 	}	// switch
 }	// Server::excecute
 
