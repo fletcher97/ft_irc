@@ -238,6 +238,67 @@ ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 
 
 void
+ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
+{
+	std::stringstream channel_list;
+	std::stringstream key_list;
+	std::string channel_name;
+	std::string key;
+
+	if (cmd->args.empty()) {
+		LOG_WARN("join: 461: Need more params")
+
+		return client.sendMsg("461");
+	}
+	LOG_TRACE("join: Check for parameter 0")
+	if (cmd->args.front() == "0") {
+		LOG_INFO("join: " << client.getNickname() << " leaves every channel")
+
+		for (std::map< std::string, Channel* >::iterator it = this->_channels.begin(); it != this->_channels.end(); it++) {
+			if (it->second->isInChannel(client)) {
+				LOG_TRACE("join: " << client.getNickname() << " leaves " << ti->second->getName());
+				it->second->part(client, "Leaving");
+			}
+		}
+	}
+	channel_list << std::stringstream(cmd->args.at(0)).str();
+	LOG_TRACE("join: Channel List: " << channel_list.str())
+	if (cmd->args.size() > 1) {
+		key_list << std::stringstream(cmd->args.at(1)).str();
+	}
+	LOG_TRACE("join: Key List: " << key_list.str())
+	while (getline(channel_list, channel_name, ',')) {
+		getline(key_list, key, ',');
+		LOG_TRACE("join: Channel: " << channel_name)
+		LOG_TRACE("join: Key: " << key)
+		if (!this->_channels.count(channel_name))
+		{
+			LOG_DEBUG("join: Channel doesent match any existing channel: " << channel_name)
+			try {
+				LOG_TRACE("join: Try to create channel with name: " << channel_name);
+				this->_channels[channel_name] = new ft_irc::Channel(channel_name);
+			} catch (...) {
+				LOG_WARN("join: 476 Invalid channel name: " << channel_name);
+				client.sendMsg("476 ERR_BADCHANMASK");
+				delete this->_channels[channel_name];
+				this->_channels.erase(channel_name);
+				return ;
+			}
+		}
+		try {
+			LOG_TRACE("join: " << client.getNickname() <<  " try to join to  channel: " << channel_name);
+			this->_channels[channel_name]->join(client, key);
+			LOG_DEBUG("join: " << client.getNickname() << " joined succesfully to " << channel_name)
+		} catch (ft_irc::Channel::BannedClient &e) {
+			LOG_WARN("join: 474: Banned from channel: " << client.getMask())
+
+			client.sendMsg("474");
+		}
+	}
+}
+
+
+void
 ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
 	std::stringstream channel_list;
@@ -279,6 +340,8 @@ ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		}
 	}
 }	// Server::part
+
+
 
 
 void
