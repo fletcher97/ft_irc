@@ -2,23 +2,59 @@
 #define CLIENT_HPP
 
 #include <string>
-#include <map>
 
-#include "Channel.hpp"
+namespace ft_irc
+{
 
-class Channel;
 class Client
 {
-protected:
-	std::string _nick;
-	std::string _address;
-	std::string _username;
-	std::map<std::string, Channel&> _channels;
 public:
-	Client(std::string nick, std::string address, std::string username);
-	Client(const Client& c);
-	Client& operator=(const Client& c);
-	~Client();
-};
+	enum    Status
+	{
+		PASSWORD,
+		REGISTER,
+		ONLINE,
+		AWAY,
+		DELETE
+	};
+
+private:
+	int _fd;
+	std::string _address;
+	std::string _hostname;
+	std::string _nickname;
+	std::string _username;
+	std::string _realname;
+	Client::Status _status;
+
+protected:
+	Client(void);
+
+public:
+	Client(int fd, struct sockaddr_in socket);
+	Client(const Client &c);
+
+	Client& operator=(const Client &c);
+
+	~Client(void);
+
+	int getFd(void) const;
+	const std::string& getAddress(void) const;
+	const std::string& getHostname(void) const;
+	const std::string& getNickname(void) const;
+	const std::string& getUsername(void) const;
+	const std::string& getRealname(void) const;
+	Client::Status getStatus(void) const;
+	std::string getMask(void) const;
+
+	void setNickname(const std::string &nickname);
+	void setUsername(const std::string &username);
+	void setRealname(const std::string &realname);
+	void setStatus(Client::Status status);
+
+	void sendMsg(const std::string &msg) const;
+};	// class Client
+
+}	// namespace ft_irc
 
 #endif // CLIENT_HPP

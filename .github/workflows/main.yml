@@ -1,0 +1,89 @@
+name: C/C++ CI
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  Code-Style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install uncrustify
+        run: |
+          MyCode=$(pwd)
+          cd /tmp
+          git clone https://github.com/uncrustify/uncrustify.git
+          cd uncrustify
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make
+          sudo make install
+          cd $MyCode
+      - name: Check format
+        run: make uncrustify-check
+        
+  Coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update make
+        run: |
+          sudo apt update
+          sudo apt install lzip
+          wget https://ftp.gnu.org/gnu/make/make-4.4.1.tar.lz
+          tar -xvf make-4.4.1.tar.lz
+          cd make-4.4.1
+          ./configure
+          make
+          sudo make install
+      - name: Compile
+        run: make debug_cov LOG_LVL=trace
+      - name: Execute code
+        run: ./bin/test_ircserv
+      - name: Check 90% coverage
+        run: |
+          cov=$(make cov | tail -n 1 | cut -d':' -f2 | cut -d'.' -f1)
+          echo "Total line coverage is $cov"
+          test "$cov" -ge '90'
+
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update make
+        run: |
+          sudo apt update
+          sudo apt install lzip
+          wget https://ftp.gnu.org/gnu/make/make-4.4.1.tar.lz
+          tar -xvf make-4.4.1.tar.lz
+          cd make-4.4.1
+          ./configure
+          make
+          sudo make install
+      - name: Compile check
+        run: make compile-test COMPILER=GNU
+      - name: Creste tests
+        run: make tests LOG_LVL=trace COMPILER=GNU
+      - name: Execute tests
+        run: ./bin/test_ircserv
+
+  test-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update make
+        run: |
+          curl https://ftp.gnu.org/gnu/make/make-4.4.1.tar.lz -o make-4.4.1.tar.lz
+          tar -xvf make-4.4.1.tar.lz
+          cd make-4.4.1
+          ./configure
+          make
+          sudo make install
+      - name: Compile check
+        run: make compile-test COMPILER=LLVM
+      - name: Creste tests
+        run: make tests LOG_LVL=trace COMPILER=LLVM
+      - name: Execute tests
+        run: ./bin/test_ircserv

@@ -6,14 +6,14 @@
 # Version: 5.2
 # Repo: www.github.com/fletcher97/utils
 
-# v5.2: Added libflt seccion. All libflt specific configurations are now
+# v.5.2: Added libflt seccion. All libflt specific configurations are now
 # separated. Added timer configuration for libflt. A new task to generate
 # coverage reports with lcov was added. All files generated will be stored in
 # REP_ROOT. A new section dedicated to running tasks at the start was added
 # (init). This was required fot the new vars task. Also fixed minor bugs when
 # using iMac.
 
-# v5: Added testing capabilities to the makefile. You can now places Tests in
+# v5: Added testing capabilities to the makefile. You can now place Tests in
 # TST_ROOT or a subfolder and treat it the same as you would SRC_ROOT. For each
 # executable a test executable is now generated. It will use the TST_DIRS that
 # have the same index as SRC_DIRS to test them. An important change is that main
@@ -34,7 +34,7 @@
 # v3.1: Added debug coverage rules and fixed minor bugs. This Makefile can now
 # compile binaries to produce coverage profile files in order to be used with
 # gcov. Intermediary files are placed in the OBJ folder. After executing the
-# programyou you can run gcov to generate the coverage reports. Alteratively the
+# program you can run gcov to generate the coverage reports. Alternatively the
 # target cov can be used to do that. All generated files will be moved to a gcov
 # folder.
 
@@ -48,7 +48,7 @@
 # turned on. Setting the variable to anything else will disable extra warnings.
 # Turning it off will still compile with -Wall -Wextra -Werror.
 #
-# A LANG variable was aslo added to to specify what language the program is
+# A LANG variable was also added to to specify what language the program is
 # using so as to be able to detect the extentions of the files (not implemented)
 # and enable more warnings.
 
@@ -77,7 +77,7 @@
 DEFAULT_VARS := ${.VARIABLES}
 
 # List of variables that should be ignored when print own variables
-IGNORE_VARS = DEFAULT_VARS
+IGNORE_VARS := DEFAULT_VARS
 
 # Ignore functions
 IGNORE_VARS += _index index lookup rmdup get_files get_files_tests
@@ -92,11 +92,13 @@ IGNORE_VARS += make_compile_test_def make_compile_test_test_def
 ################################################################################
 
 # Name of a single binary. Add as many variables as required by the project
-NAME1 := ircserv
+NAME1 := libflt.a
 
 # The names of all the binaries. Add aditional variables created above separated
 # by space.
 NAMES := ${NAME1}
+
+AR = ar rcs
 
 ################################################################################
 # Configs
@@ -129,7 +131,7 @@ LOG_LVL := none
 TIMER := off
 
 # Name prefix for test executable
-TEST_PREFIX := test_
+TST_PREFIX := test_
 
 # Version 2.1 and above of this makefile can generate targets to use other
 # makefiles as dependencies. This feature will execute the rule of same name in
@@ -137,7 +139,7 @@ TEST_PREFIX := test_
 # in others. If for example you just want to clean the root directory the clean
 # rule will be executed in any other makefile specified. You can deactivate the
 # creation of these targets by setting the bellow variable to 0.
-CREATE_LIB_TARGETS := 1
+CREATE_LIB_TARGETS := 0
 
 # Pedantic allows for extra warning flags to be used while compiling. If set to
 # true these flags are applied. If set to anything else the flags will not be
@@ -145,7 +147,7 @@ CREATE_LIB_TARGETS := 1
 PEDANTIC := true
 
 # Specify the language use by your program. This will allow to detect file
-# extentions automatically (not implemented). It also allows fo warnings to be
+# extentions automatically (not implemented). It also allows for warnings to be
 # activated/deactivated based on the language used.
 LANG := C++
 
@@ -211,7 +213,7 @@ endif
 DFLAGS := -g
 
 # Coverage flags
-COVFLAGS = -fprofile-arcs -ftest-coverage -O0
+COVFLAGS = -fprofile-arcs -ftest-coverage
 
 # Address sanitizing flags
 ASAN := -fsanitize=address -fsanitize-recover=address
@@ -248,32 +250,32 @@ TST_ROOT := tst/
 
 ifeq (${CREATE_LIB_TARGETS},1)
 
-# Libflt
-LIBFLT_ROOT := ${LIB_ROOT}libflt/
-LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
-LIBFLT := ${LIBFT_ROOT}bin/libflt.a
+# Libft
+LIBFT_ROOT := ${LIB_ROOT}libft/
+LIBFT_INC := ${LIBFT_ROOT}inc/
+LIBFT := ${LIBFT_ROOT}bin/libft.a
 
-INC_DIRS += ${LIBFLT_INC}
-LIBS += -L${LIBFLT_ROOT}bin -lflt
+INC_DIRS += ${LIBFT_INC}
+LIBS += -L${LIBFT_ROOT}bin -lft
 
 # Libraries for which to create default targets. All libraries in this list will
 # have targets created autimatically. The targets that are created are set in
 # DEFAULT_LIB_RULES. The targets will have to format <library root>//<target>
 # and it will invoke make as follows:
 # `make -C <library root> <rule>`
-DEFAULT_LIBS := ${LIBFLT_ROOT}
+DEFAULT_LIBS := ${LIBFT_ROOT}
 
 # Default targets to create for libraries specified in DEFAULT_LIBS. This is a
 # small list of common targets in most makefiles.
 DEFAULT_LIB_RULES := all clean re
 
-# All projects with a copy of this makefile v2.1 and up ate garanteed to work
+# All projects with a copy of this makefile v2.1 and up are garanteed to work
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
 DEFAULT_LIB_RULES += fclean clean_all clean_dep
 DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
 
-# All projects with a copy of this makefile v2.2 and up ate garanteed to work
+# All projects with a copy of this makefile v2.2 and up are garanteed to work
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
 DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
@@ -324,34 +326,34 @@ endif
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := log/:classes/:utils/
+DIRS := log/:unit_test/:timer/
 
 # List of directories with tests. Formating follows the same rules as DIRS
 # above. All folders are relative to TST_ROOT. Each group of folder should only
 # contain tests for the equivalent executable. The first group will test the
 # files in the first group of DIRS (or the first executable specified in NAMES).
-DIRS_TEST := unit_tests/
+DIRS_TST := tests/
 
 SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
 
-TST_DIRS_LIST := $(addprefix ${TST_ROOT},${DIRS_TEST})
+TST_DIRS_LIST := $(addprefix ${TST_ROOT},${DIRS_TST})
 TST_DIRS_LIST := $(foreach dl,${TST_DIRS_LIST},$(subst :,:${TST_ROOT},${dl}))
 
 SRC_DIRS = $(call rmdup,$(subst :,${SPACE},${SRC_DIRS_LIST}))
 
 TST_DIRS = $(call rmdup,$(subst :,${SPACE},${TST_DIRS_LIST}))
 
-OBJ_DIRS := $(addprefix ${OBJ_ROOT},${SRC_DIRS})
+OBJ_DIRS = $(addprefix ${OBJ_ROOT},${SRC_DIRS})
 OBJ_DIRS += $(addprefix ${OBJ_ROOT},${TST_DIRS})
 
-DEP_DIRS := $(addprefix ${DEP_ROOT},${SRC_DIRS})
+DEP_DIRS = $(addprefix ${DEP_ROOT},${SRC_DIRS})
 DEP_DIRS += $(addprefix ${DEP_ROOT},${TST_DIRS})
 
 # List of folders with header files.Each folder needs to end with a '/'. The
 # path to the folders is relative to the root of the makefile. Library includes
 # can be specified here.
-INC_DIRS += ${INC_ROOT}
+INC_DIRS += ${INC_ROOT} ${INC_ROOT}ut/
 
 # List of folders with templates and their implementations. Each folder needs to
 # end with a '/'. The path to the folders is relative to the root of the
@@ -378,11 +380,11 @@ endif
 # List of src files containing the main function. This list should contain one
 # entry per executable. All files are relative to SRC_ROOT
 # Exemple:
-MAIN_FILES := ${SRC_ROOT}main.${SRC_FILE_EXT}
+MAIN_FILES :=
 # List of src files containing the main function for testing. This list should
 # contain one entry per executable. All files are relative to SRC_ROOT
 # Exemple:
-MAIN_FILES_TEST := ${TST_ROOT}main.${SRC_FILE_EXT}
+MAIN_FILES_TST := ${TST_ROOT}main.${SRC_FILE_EXT}
 
 # Source files grouped by executable
 SRCS_LIST_SIMPLE = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
@@ -395,20 +397,20 @@ TSTS_LIST_SIMPLE = $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
 	$(foreach dir,$(subst :,${SPACE},${dl}),\
 	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
 TSTS_LIST = $(call merge,$(call merge,${SRCS_LIST_SIMPLE},${TSTS_LIST_SIMPLE}),\
-	${MAIN_FILES_TEST})
+	${MAIN_FILES_TST})
 
 # Object files grouped by executable
 OBJS_LIST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
 	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST})))
 
 # Test object files grouped by executable
-OBJS_LIST_TEST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
+OBJS_LIST_TST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
 	$(subst .${SRC_FILE_EXT},.o,${TSTS_LIST})))
 
 # All source/dependancy files
 SRCS_SUM = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
 SRCS_SUM += $(foreach dir,${TST_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
-SRCS_SUM += ${MAIN_FILES} ${MAIN_FILES_TEST}
+SRCS_SUM += ${MAIN_FILES} ${MAIN_FILES_TST}
 SRCS = $(call rmdup,${SRCS_SUM})
 DEPS = $(addprefix ${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
@@ -417,7 +419,7 @@ INCS += ${addprefix -I,${TPL_DIRS}}
 INCS += ${addprefix -I,${IMP_DIRS}}
 
 BINS := ${addprefix ${BIN_ROOT},${NAMES}}
-TESTS := ${addprefix ${BIN_ROOT}${TEST_PREFIX},${NAMES}}
+TESTS := ${addprefix ${BIN_ROOT}${TST_PREFIX},${NAMES}}
 
 ################################################################################
 # Conditions
@@ -457,19 +459,16 @@ all: ${BINS}
 tests: ${TESTS}
 
 .SECONDEXPANSION:
-${BIN_ROOT}${NAME1}: ${LIBFLT} $$(call get_files,$${@F},$${OBJS_LIST})
+${BIN_ROOT}${NAME1}: $$(call get_files,$${@F},$${OBJS_LIST})
+	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
+	${AT}mkdir -p ${@D} ${BLOCK}
+	${AT}${AR} $@ $^ ${BLOCK}
+
+${BIN_ROOT}${TST_PREFIX}${NAME1}: $$(call get_files_tests,$${@F},$${OBJS_LIST_TST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
-		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
-
-${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFLT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
-	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
-	${AT}mkdir -p ${@D} ${BLOCK}
-	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
-		$(call get_files_tests,${@F},${OBJS_LIST_TEST}) ${LIBS} -o $@ ${BLOCK}
-
-${LIBFLT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
+		$(call get_files_tests,${@F},${OBJS_LIST_TST}) ${LIBS} -o $@ ${BLOCK}
 
 ################################################################################
 # Clean Targets
@@ -501,8 +500,6 @@ clean_dep: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 clean_all: fclean clean_dep
 
 re: fclean all
-
-tests_re: fclean tests
 
 ################################################################################
 # Debug Targets
@@ -590,7 +587,7 @@ print-%: ; @echo $*=$($*)
 # List all the targets in alphabetical order
 targets:
 	${AT}${MAKE} LC_ALL=C -pRrq -f ${CURRENT_FILE} : 2>/dev/null\
-		| awk -v RS= -F: '/^# File/,/^# files hash-table stats/\
+		| awk -v RS= -F: '/(^|\n)# File/,/^# files hash-table stats/\
 			{if ($$1 !~ "^[#]") {print $$1}}\
 			{if ($$1 ~ "# makefile") {print $$2}}'\
 		| sort
@@ -600,10 +597,10 @@ vars:
 		$(sort $(filter-out ${DEFAULT_VARS} ${IGNORE_VARS},${.VARIABLES})),\
 		$(info ${v} = ${${v}}))
 
-compile-test: CFLAGS += -DDEBUG_LVL=TRACE
+compile-test: CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
 compile-test: CFLAGS += -DFLT_TIMER
 compile-test: ${addprefix compile-test/,${NAMES}}
-compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
+compile-test: ${addprefix compile-test/${TST_PREFIX},${NAMES}}
 
 uncrustify-check:
 	${AT}find . -name "*.[chit]pp" > uncrustify-targets.txt ${BLOCK}
@@ -627,7 +624,7 @@ uncrustify-check:
 .PHONY: targets .FORCE compile-test vars uncrustify-check
 
 # Phony execution targets
-.PHONY: re tests_re all tests
+.PHONY: re all tests
 
 ################################################################################
 # Constants
@@ -655,7 +652,7 @@ rmdup = $(if $1,$(firstword $1) $(call rmdup,$(filter-out $(firstword $1),$1)))
 # Get files for a specific binary
 get_files = $(subst :,${SPACE},$(call lookup,$1,${NAMES},$2))
 get_files_tests = $(subst :,${SPACE},\
-	$(call lookup,$1,$(addprefix ${TEST_PREFIX},${NAMES}),$2))
+	$(call lookup,$1,$(addprefix ${TST_PREFIX},${NAMES}),$2))
 
 # Get default target for libs given a rule
 get_lib_target = $(foreach lib,$1,${lib}/$2)
@@ -741,7 +738,7 @@ $(foreach name,$(NAMES),$(eval\
 $(call make_compile_test_def,${name})))
 
 $(foreach name,$(NAMES),$(eval\
-$(call make_compile_test_test_def,${TEST_PREFIX}${name})))
+$(call make_compile_test_test_def,${TST_PREFIX}${name})))
 
 ################################################################################
 # Includes
