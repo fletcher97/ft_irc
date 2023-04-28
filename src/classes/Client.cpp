@@ -14,7 +14,8 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	_nickname(),
 	_username(),
 	_realname(),
-	_status(PASSWORD)
+	_status(PASSWORD),
+	_mode()
 {
 	LOG_DEBUG("Creating new client")
 	this->_address = inet_ntoa(socket.sin_addr);
@@ -29,7 +30,8 @@ ft_irc::Client::Client(const ft_irc::Client &c) :
 	_nickname(c._nickname),
 	_username(c._username),
 	_realname(c._realname),
-	_status(c._status)
+	_status(c._status),
+	_mode()
 {}
 
 ft_irc::Client&
@@ -42,6 +44,7 @@ ft_irc::Client::operator=(const ft_irc::Client &c)
 	this->_username = c._username;
 	this->_realname = c._realname;
 	this->_status = c._status;
+	this->_mode = c._mode;
 
 	return *this;
 }	// =
@@ -103,6 +106,13 @@ ft_irc::Client::getStatus(void) const
 }	// Client::getStatus
 
 
+ft_irc::Client::mode_t
+ft_irc::Client::getMode(void) const
+{
+	return this->_mode;
+}	// getMode
+
+
 void
 ft_irc::Client::setNickname(const std::string &nickname)
 {
@@ -129,6 +139,32 @@ ft_irc::Client::setStatus(ft_irc::Client::Status status)
 {
 	this->_status = status;
 }	// Client::setStatus
+
+
+bool
+ft_irc::Client::addMode(const Client::mode_t mode)
+{
+	if (!(this->_mode & mode)) {
+		this->_mode |= mode;
+
+		return true;
+	}
+
+	return false;
+}	// Client::addMode
+
+
+bool
+ft_irc::Client::removeMode(const Client::mode_t mode)
+{
+	if (this->_mode & mode) {
+		this->_mode &= ~mode;
+
+		return true;
+	}
+
+	return false;
+}	// Client::removeMode
 
 
 std::string
