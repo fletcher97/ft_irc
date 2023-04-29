@@ -129,6 +129,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			break;
 		}
 
+		case ft_irc::CMD_JOIN: {
+			LOG_INFO("execute: executing JOIN")
+
+			this->join(client, cmd);
+			break;
+		}
+
 		case ft_irc::CMD_PART: {
 			LOG_INFO("execute: executing PART")
 
@@ -245,6 +252,12 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	std::string channel_name;
 	std::string key;
 
+	if ((client.getStatus() == ft_irc::Client::PASSWORD) || (client.getStatus() == ft_irc::Client::REGISTER)) {
+		LOG_WARN("join: " << client.getNickname() << " is not registered");
+		client.sendMsg("451 ERR_NOTREGISTERED");
+
+		return;
+	}
 	if (cmd->args.empty()) {
 		LOG_WARN("join: 461: Need more params")
 
@@ -285,17 +298,29 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 				delete this->_channels[channel_name];
 				this->_channels.erase(channel_name);
 
-				return;
+				continue;
 			}
 		}
 		try {
 			LOG_TRACE("join: " << client.getNickname() << " try to join to  channel: " << channel_name);
 			this->_channels[channel_name]->join(client, key);
-			LOG_DEBUG("join: " << client.getNickname() << " joined succesfully to " << channel_name)
+			LOG_INFO("join: " << client.getNickname() << " joined succesfully to " << channel_name);
+			client.sendMsg("332 RPL_TOPIC");
+			client.sendMsg("333 RPL_TOPICWHOTIME");
+			client.sendMsg("353 RPL_NAMREPLY");
+			client.sendMsg("366 RPL_ENDOFNAMES");
 		} catch (ft_irc::Channel::BannedClient &e) {
-			LOG_WARN("join: 474: Banned from channel: " << client.getMask())
-
-			client.sendMsg("474");
+			LOG_WARN("join: 473: Invite only channel and client is not invited: " << client.getMask());
+			client.sendMsg("473 ERR_INVITEONLYCHAN");
+		} catch (ft_irc::Channel::InviteOnlyChannel &e) {
+			LOG_WARN("join: 474: Banned from channel: " << client.getMask());
+			client.sendMsg("474 ERR_BANNEDFROMCHAN");
+		} catch (ft_irc::Channel::ChannelIsFull &e) {
+			LOG_WARN("join: 471: Channel is full: " << channel_name);
+			client.sendMsg("471 ERR_CHANNELISFULL");
+		} catch (ft_irc::Channel::InvalidKey &e) {
+			LOG_WARN("join: 475: Wrong channel key: " << key);
+			client.sendMsg("475 ERR_BADCHANNELKEY");
 		}
 	}
 }	// Server::join
@@ -308,6 +333,12 @@ ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	std::string channel_name;
 	std::string reason;
 
+	if ((client.getStatus() == ft_irc::Client::PASSWORD) || (client.getStatus() == ft_irc::Client::REGISTER)) {
+		LOG_WARN("join: " << client.getNickname() << " is not registered");
+		client.sendMsg("451 ERR_NOTREGISTERED");
+
+		return;
+	}
 	if (cmd->args.empty()) {
 		LOG_WARN("part: 461: Need more params")
 
