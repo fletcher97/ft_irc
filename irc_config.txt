@@ -1,0 +1,7 @@
+name = server
+port = 8080
+password = serverpasswd
+
+admin = admin_name1
+admin = admin_name2
+admin = admin_name3

@@ -1,11 +1,11 @@
 #if !defined(SERVER_HPP)
 #define SERVER_HPP
 
-#include <string>
 #include <map>
+#include <string>
 
 #include "Client.hpp"
-#include "Configuration.hpp"
+#include "Parser.hpp"
 
 namespace ft_irc
 {
@@ -13,27 +13,31 @@ namespace ft_irc
 class Server
 {
 private:
-	std::map<int, ft_irc::Client*> _clients;
-	Configuration _config;
+	std::map< int, ft_irc::Client* > _clients;
 
 protected:
 	Server(void);
-	Server(const Server& s);
+	Server(const Server &s);
 	~Server(void);
 
-	Server& operator=(const Server& s);
+	Server& operator=(const Server &s);
 
 public:
-	static Server&	getInstance(void);
+	static Server& getInstance(void);
 
-	void	run(void);
+	void run(void);
 
-	ft_irc::Client&	getClient(const std::string& nickname) const;
-	ft_irc::Client&	getClient(int fd) const;
+	ft_irc::Client& getClient(const std::string &nickname) const;
+	ft_irc::Client& getClient(int fd) const;
 
-	void	newClient(void);
-};
+	void newClient(void);
+	void quit(int fd);
 
-} // namespace ft_irc
+	void sendMsg(int fd, const std::string &msg);
+
+	void excecute(int fd, const ft_irc::Parser::cmd_t *cmd);
+};	// class Server
+
+}	// namespace ft_irc
 
 #endif // SERVER_HPP

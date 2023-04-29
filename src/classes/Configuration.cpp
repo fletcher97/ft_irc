@@ -7,7 +7,7 @@
 #include "Server.hpp"
 #include "Log.hpp"
 
-ft_irc::Configuration::Configuration(void)
+ft_irc::Configuration::Configuration(void) : _server_name()
 {
     LOG_DEBUG("Creating configuration")
     LOG_INFO("New configuration created")
@@ -17,25 +17,21 @@ ft_irc::Configuration::Configuration(const ft_irc::Configuration&)
 {}
 
 ft_irc::Configuration&
-ft_irc::Configuration::operator=(const ft_irc::Configuration& s) {
-     if (this == &s)
-        return *this;
+ft_irc::Configuration::operator=(const ft_irc::Configuration&) {
     return *this;
 }
 
 ft_irc::Configuration::~Configuration(void) {}
 
-bool get_config()
+bool ft_irc::Configuration::init_config()
 {
     std::ifstream config_file("irc_config.txt");
 
     if (!config_file.is_open())
     {
         std::cerr << "Error: Could not open configuration file" << std::endl;
-        return 1;
+        return (false);
     }
-
-    ft_irc::Configuration::ServerConfig server_config;
     std::string line;
     
     while (std::getline(config_file, line))
@@ -46,26 +42,50 @@ bool get_config()
         {
             size_t equal = line.find('=');
 
-            if (equal != std::string::npos) 
+            if (equal == std::string::npos) 
             {
-                std::string key = line.substr(0, equal);
-                std::string value = line.substr(equal + 2);
+                std::cerr << "Invalid configuration" << std::endl;
+                return false;
+            }
 
-                if (key.substr(0, 4) == "name")
-                    server_config.name = value;
-                else if (key.substr(0, 4) == "port")
-                    server_config.port = std::stoi(value);
-                else if (key.substr(0, 8) == "password")
-                    server_config.password = value;
-                else if (key.substr(0, 5) == "admin")
-                    server_config.admins.push_back(value);
-                else
-                {
-                    LOG_FATAL("Invalid parameter in irc_config file")
-                    return (false);
-                }
+            std::string key = line.substr(0, equal);
+            std::string value = line.substr(equal + 2);
+
+            if (key.substr(0, equal - 1) == "name")
+                this->_server_name = value;
+            else if (key.substr(0, equal - 1) == "port")
+                this->_port = std::stoi(value);
+            else if (key.substr(0, equal - 1) == "password")
+                this->_password = value;
+            else if (key.substr(0, equal - 1) == "admin")
+                this->_admins.push_back(value);
+            else
+            {
+                LOG_FATAL("Invalid parameter in irc_config file")
+                return (false);
             }
         }
     }
     return true;
+}
+
+std::string ft_irc::Configuration::get_svname(void)
+{
+    return this->_server_name;
+}
+
+std::string ft_irc::Configuration::get_psswd(void)
+{
+    return this->_password;
+}
+
+
+int ft_irc::Configuration::get_port(void)
+{
+    return this->_port;
+}
+
+std::vector<std::string> ft_irc::Configuration::get_admins(void)
+{
+    return this->_admins;
 }

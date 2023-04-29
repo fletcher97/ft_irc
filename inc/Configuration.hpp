@@ -3,30 +3,33 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 namespace ft_irc
 {
 
-class Configuration
-{
-protected:
+	class Configuration
+	{
+		private:
+			std::string _server_name;
+		    int _port;
+		    std::string _password;
+		    std::vector<std::string> _admins;
+		public:
 
-public:
-	Configuration(void);
-	Configuration(const Configuration& s);
-	~Configuration(void);
-	Configuration& operator=(const Configuration& s);
+			Configuration(void);
+			Configuration(const Configuration& s);
+			~Configuration(void);
+			Configuration& operator=(const Configuration& s);
 
-	bool	get_config(void);
+			bool	init_config(void);
 
-	struct ServerConfig {
-    std::string name;
-    int port;
-    std::string password;
-    std::vector<std::string> admins;
-};
+			int get_port(void);
+			std::string get_psswd(void);
+			std::vector<std::string> get_admins(void);
+			std::string get_svname(void);
 
-};
+	};
 
 }
 

@@ -4,39 +4,44 @@
 #include <string>
 #include <vector>
 #include <poll.h>
+#include "Configuration.hpp"
 
 #define MAX_CLIENTS 124
+#define COMS_MAX_READ 4096
+
+
 namespace ft_irc
 {
+	class Communications
+	{
+		protected:
+			int _fd;
+			std::vector< pollfd > _pfds;
+			std::string _psswd;
 
-class Communications
-{
-private:
-	int _fd;
-	std::vector<pollfd> _pfds;
-	std::string _psswd;
+			typedef std::vector< pollfd >::iterator pfds_iterator;
 
-	typedef std::vector<pollfd>::iterator	pfds_iterator;
+			Communications(void);
+			Communications(const Communications &s);
+			~Communications(void);
 
-	void write_error(const char *s);
 
-protected:
-	Communications(void);
-	Communications(const Communications& s);
-	~Communications(void);
+			Communications& operator=(const Communications &s);
+			Configuration Server_Config;
 
-	Communications& operator=(const Communications& s);
+		public:
+			static Communications& getInstance(void);
 
-public:
-	static Communications&	getInstance(void);
+			bool init(int port, const char *psswd);
+			void run(void);
+			void recvMsg(int fd);
+			void sendMsg(int fd, const std::string &msg);
 
-	bool init(int port, const char* psswd);
-	void run(void);
+			int getFd(void) const;
+			void addPfd(int fd);
 
-	int	getFd(void) const;
-	void	addPfd(int fd);
-};
+	};	// class Communications
 
-} // namespace ft_irc
+}	// namespace ft_irc
 
-#endif
+#endif // if !defined(COMMUNICATIONS_HPP)
