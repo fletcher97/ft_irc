@@ -12,35 +12,36 @@
 
 namespace ft_irc
 {
-	class Communications
-	{
-		protected:
-			int _fd;
-			std::vector< pollfd > _pfds;
-			std::string _psswd;
 
-			typedef std::vector< pollfd >::iterator pfds_iterator;
+class Communications
+{
+protected:
+	int _fd;
+	std::vector< pollfd > _pfds;
+	std::string _psswd;
 
-			Communications(void);
-			Communications(const Communications &s);
-			~Communications(void);
+	typedef std::vector< pollfd >::iterator pfds_iterator;
+
+	Communications(void);
+	Communications(const Communications &s);
+	~Communications(void);
 
 
-			Communications& operator=(const Communications &s);
-			Configuration Server_Config;
+	Communications& operator=(const Communications &s);
 
-		public:
-			static Communications& getInstance(void);
+	Configuration Server_Config;
 
-			bool init(int port, const char *psswd);
-			void run(void);
-			void recvMsg(int fd);
-			void sendMsg(int fd, const std::string &msg);
+public:
+	static Communications& getInstance(void);
 
-			int getFd(void) const;
-			void addPfd(int fd);
+	bool init(int port, const char *psswd);
+	void run(void);
+	void recvMsg(int fd);
+	void sendMsg(int fd, const std::string &msg);
 
-	};	// class Communications
+	int getFd(void) const;
+	void addPfd(int fd);
+};	// class Communications
 
 }	// namespace ft_irc
 

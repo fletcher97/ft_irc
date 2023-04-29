@@ -1,6 +1,6 @@
+#include <iostream>
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <iostream>
 
 #include "Log.hpp"
 
@@ -27,9 +27,8 @@ ft_irc::Communications::Communications(void)
 ft_irc::Communications::Communications(const ft_irc::Communications &s) :
 	_fd(s._fd),
 	_pfds(s._pfds)
+{}
 
-{
-}
 
 ft_irc::Communications&
 ft_irc::Communications::operator=(const ft_irc::Communications &s)
@@ -47,10 +46,10 @@ ft_irc::Communications::~Communications(void) {}
 bool
 ft_irc::Communications::init(int port, const char *psswd)
 {
-	if (port == 0 && !psswd)
-	{
-		if (Server_Config.init_config() == false)
+	if ((port == 0) && (psswd == 0)) {
+		if (Server_Config.init_config() == false) {
 			return false;
+		}
 		port = Server_Config.get_port();
 		psswd = Server_Config.get_psswd().c_str();
 	}
@@ -152,6 +151,7 @@ ft_irc::Communications::run(void)
 		}
 	}
 }	// Communications::run
+
 
 int
 ft_irc::Communications::getFd(void) const
