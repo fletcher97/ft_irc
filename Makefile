@@ -324,7 +324,7 @@ endif
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := log/:classes/:utils/
+DIRS := log/:classes/:utils/:commands/
 
 # List of directories with tests. Formating follows the same rules as DIRS
 # above. All folders are relative to TST_ROOT. Each group of folder should only

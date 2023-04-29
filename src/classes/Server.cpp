@@ -129,6 +129,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			break;
 		}
 
+		case ft_irc::CMD_JOIN: {
+			LOG_INFO("execute: executing JOIN")
+
+			this->join(client, cmd);
+			break;
+		}
+
 		case ft_irc::CMD_PART: {
 			LOG_INFO("execute: executing PART")
 
@@ -244,6 +251,12 @@ ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	std::string channel_name;
 	std::string reason;
 
+	if ((client.getStatus() == ft_irc::Client::PASSWORD) || (client.getStatus() == ft_irc::Client::REGISTER)) {
+		LOG_WARN("join: " << client.getNickname() << " is not registered");
+		client.sendMsg("451 ERR_NOTREGISTERED");
+
+		return;
+	}
 	if (cmd->args.empty()) {
 		LOG_WARN("part: 461: Need more params")
 

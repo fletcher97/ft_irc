@@ -41,6 +41,7 @@ public:
 	void pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 };	// class Server
