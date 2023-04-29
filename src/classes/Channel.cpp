@@ -272,6 +272,13 @@ ft_irc::Channel::invite(const Client &source, const std::string &nick)
 }	// Channel::invite
 
 
+std::map< std::string, ft_irc::Channel::mask_mode >&
+ft_irc::Channel::getMasks()
+{
+	return this->_masks;
+}	// Channel::getMasks
+
+
 bool
 ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 {

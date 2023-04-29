@@ -90,6 +90,8 @@ public:
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);
 
+	std::map< std::string, mask_mode >& getMasks();
+
 	bool join(const ft_irc::Client &client, const std::string &key = "");
 	bool part(const ft_irc::Client &client, const std::string &reason = "");
 
