@@ -254,9 +254,12 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	if (cmd->args.front() == "0") {
 		LOG_INFO("join: " << client.getNickname() << " leaves every channel")
 
-		for (std::map< std::string, Channel* >::iterator it = this->_channels.begin(); it != this->_channels.end(); it++) {
+		for (std::map< std::string, Channel* >::iterator it = this->_channels.begin();
+			 it != this->_channels.end();
+			 it++)
+		{
 			if (it->second->isInChannel(client)) {
-				LOG_TRACE("join: " << client.getNickname() << " leaves " << ti->second->getName());
+				LOG_TRACE("join: " << client.getNickname() << " leaves " << it->second->getName());
 				it->second->part(client, "Leaving");
 			}
 		}
@@ -271,8 +274,7 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		getline(key_list, key, ',');
 		LOG_TRACE("join: Channel: " << channel_name)
 		LOG_TRACE("join: Key: " << key)
-		if (!this->_channels.count(channel_name))
-		{
+		if (!this->_channels.count(channel_name)) {
 			LOG_DEBUG("join: Channel doesent match any existing channel: " << channel_name)
 			try {
 				LOG_TRACE("join: Try to create channel with name: " << channel_name);
@@ -282,11 +284,12 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 				client.sendMsg("476 ERR_BADCHANMASK");
 				delete this->_channels[channel_name];
 				this->_channels.erase(channel_name);
-				return ;
+
+				return;
 			}
 		}
 		try {
-			LOG_TRACE("join: " << client.getNickname() <<  " try to join to  channel: " << channel_name);
+			LOG_TRACE("join: " << client.getNickname() << " try to join to  channel: " << channel_name);
 			this->_channels[channel_name]->join(client, key);
 			LOG_DEBUG("join: " << client.getNickname() << " joined succesfully to " << channel_name)
 		} catch (ft_irc::Channel::BannedClient &e) {
@@ -295,7 +298,7 @@ ft_irc::Server::join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 			client.sendMsg("474");
 		}
 	}
-}
+}	// Server::join
 
 
 void
@@ -340,8 +343,6 @@ ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		}
 	}
 }	// Server::part
-
-
 
 
 void
