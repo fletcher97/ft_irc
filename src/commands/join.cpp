@@ -68,7 +68,6 @@ checkChannel(ft_irc::Client &client,
 		} catch (...) {
 			LOG_WARN("join: 476 Invalid channel name: " << channel_name);
 			client.sendMsg("476");	// 451 - ERR_BADCHANMASK
-			delete channels[channel_name];
 			channels.erase(channel_name);
 
 			return false;
