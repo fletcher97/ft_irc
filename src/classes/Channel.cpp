@@ -95,7 +95,7 @@ ft_irc::Channel::setName(const std::string &name)
 
 
 void
-ft_irc::Channel::setTopic(ft_irc::Client &source, std::string &topic)
+ft_irc::Channel::setTopic(ft_irc::Client &source, const std::string &topic)
 {
 	if (!this->_clients.count(source.getFd())) {
 		LOG_WARN("setTopic called with a client not on channel");
@@ -149,16 +149,16 @@ ft_irc::Channel::toggleMode(const char mode)
 
 
 bool
-ft_irc::Channel::isInChannel(const ft_irc::Client &client)
+ft_irc::Channel::isInChannel(const ft_irc::Client &client) const
 {
 	return this->_clients.count(client.getFd());
 }	// Channel::isInChannel
 
 
 bool
-ft_irc::Channel::isInChannel(const std::string &nickname)
+ft_irc::Channel::isInChannel(const std::string &nickname) const
 {
-	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->second.client.getNickname() == nickname) {
 			LOG_INFO("isInChannel client in channel: " << nickname)
 
@@ -301,6 +301,18 @@ ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, cons
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
 		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+	}
+}	// Channel::broadcast
+
+
+void
+ft_irc::Channel::broadcast(ft_irc::commands cmd, const std::string arg) const
+{
+	LOG_DEBUG("broadcast Command overload: " << ft_irc::toString(cmd) << " " << arg)
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
+
+		it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
 	}
 }	// Channel::broadcast
 

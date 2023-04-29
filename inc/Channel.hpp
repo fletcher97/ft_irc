@@ -75,13 +75,13 @@ public:
 	const std::string& getKey(void) const;
 
 	void setName(const std::string &name);
-	void setTopic(ft_irc::Client &source, std::string &topic);
+	void setTopic(ft_irc::Client &source, const std::string &topic);
 	void setKey(std::string &key);
 	void setClientLimit(long limit);
 	void toggleMode(const char mode);
 
-	bool isInChannel(const Client &client);
-	bool isInChannel(const std::string &nickname);
+	bool isInChannel(const Client &client) const;
+	bool isInChannel(const std::string &nickname) const;
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);
@@ -90,6 +90,7 @@ public:
 	bool part(const ft_irc::Client &client, const std::string &reason = "");
 
 	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
+	void broadcast(ft_irc::commands cmd, const std::string arg = "") const;
 
 public:
 
