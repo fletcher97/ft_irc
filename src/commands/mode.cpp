@@ -17,7 +17,7 @@ preChecks(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		return false;
 	}
 	if (client.getStatus() == ft_irc::Client::REGISTER) {
-		LOG_WARN("mode: Client " << client.getFd << "hasn't registered yet ")
+		LOG_WARN("mode: Client " << client.getFd() << "hasn't registered yet ")
 		client.sendMsg("451");	// 451 - ERR_NOTREGISTERED
 
 		return false;
@@ -186,8 +186,9 @@ modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::
 			updatedResponse(added, removed, cmd->args[1][i], add);
 		}
 	}	// switch
-	LOG_INFO("mode: 221: " + smodes)
-	client.sendMsg("MODE" + client.getNickname() + " :" + (added.size() ? "+" + added : "")
+	LOG_INFO("mode: 221: MDOE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
+		+ (removed.size() ? "-" + removed : ""))
+	client.sendMsg("MODE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
 		+ (removed.size() ? "-" + removed : ""));	// 221 - RPL_UMODEIS
 }	// modeClient
 
@@ -340,14 +341,17 @@ updateChannelLists(ft_irc::Client &client,
 	switch (c) {
 		case 'b': {
 			maskValue = CH_BAN;
+			break;
 		}
 
 		case 'e': {
 			maskValue = CH_EXCEPTION;
+			break;
 		}
 
 		case 'I': {
 			maskValue = CH_INVITE_EXCEPTION;
+			break;
 		}
 
 		default: {
