@@ -842,513 +842,515 @@ ft_irc::getReply(ft_irc::codes code,
 	const std::string arg6,
 	const std::string arg7)
 {
+	int _code = code;
+
 	if (source.empty()) {
 		source = "*";
 	}
 	source += " ";
 	switch (code) {
 		case ft_irc::RPL_WELCOME: {
-			return SSTR(code) + " " + source + rpl_welcome(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_welcome(arg1, arg2);
 		}
 
 		case ft_irc::RPL_YOURHOST: {
-			return SSTR(code) + " " + source + rpl_yourhost(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_yourhost(arg1, arg2);
 		}
 
 		case ft_irc::RPL_CREATED: {
-			return SSTR(code) + " " + source + rpl_created(arg1);
+			return SSTR(_code) + " " + source + rpl_created(arg1);
 		}
 
 		case ft_irc::RPL_MYINFO: {
-			return SSTR(code) + " " + source + rpl_myinfo(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_myinfo(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_ISUPPORT: {
-			return SSTR(code);
+			return SSTR(_code);
 		}
 
 		case ft_irc::RPL_BOUNCE: {
-			return SSTR(code) + " " + source + rpl_info(arg1);
+			return SSTR(_code) + " " + source + rpl_info(arg1);
 		}
 
 		case ft_irc::RPL_UMODEIS: {
-			return SSTR(code) + " " + source + arg1;
+			return SSTR(_code) + " " + source + arg1;
 		}
 
 		case ft_irc::RPL_LUSERCLIENT: {
-			return SSTR(code) + " " + source + rpl_luserclient(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_luserclient(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_LUSEROP: {
-			return SSTR(code) + " " + source + rpl_luserop(arg1);
+			return SSTR(_code) + " " + source + rpl_luserop(arg1);
 		}
 
 		case ft_irc::RPL_LUSERUNKNOWN: {
-			return SSTR(code) + " " + source + rpl_luserunknown(arg1);
+			return SSTR(_code) + " " + source + rpl_luserunknown(arg1);
 		}
 
 		case ft_irc::RPL_LUSERCHANNELS: {
-			return SSTR(code) + " " + source + rpl_luserchannels(arg1);
+			return SSTR(_code) + " " + source + rpl_luserchannels(arg1);
 		}
 
 		case ft_irc::RPL_LUSERME: {
-			return SSTR(code) + " " + source + rpl_luserme(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_luserme(arg1, arg2);
 		}
 
 		case ft_irc::RPL_ADMINME: {
-			return SSTR(code) + " " + source + rpl_adminme(arg1);
+			return SSTR(_code) + " " + source + rpl_adminme(arg1);
 		}
 
 		case ft_irc::RPL_ADMINLOC1: {
-			return SSTR(code) + " " + source + rpl_info(arg1);
+			return SSTR(_code) + " " + source + rpl_info(arg1);
 		}
 
 		case ft_irc::RPL_ADMINLOC2: {
-			return SSTR(code) + " " + source + rpl_info(arg1);
+			return SSTR(_code) + " " + source + rpl_info(arg1);
 		}
 
 		case ft_irc::RPL_ADMINEMAIL: {
-			return SSTR(code) + " " + source + rpl_info(arg1);
+			return SSTR(_code) + " " + source + rpl_info(arg1);
 		}
 
 		case ft_irc::RPL_TRYAGAIN: {
-			return SSTR(code) + " " + source + rpl_tryagain(arg1);
+			return SSTR(_code) + " " + source + rpl_tryagain(arg1);
 		}
 
 		case ft_irc::RPL_LOCALUSERS: {
-			return SSTR(code) + " " + source + rpl_localuser(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_localuser(arg1, arg2);
 		}
 
 		case ft_irc::RPL_GLOBALUSERS: {
-			return SSTR(code) + " " + source + rpl_globaluser(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_globaluser(arg1, arg2);
 		}
 
 		case ft_irc::RPL_WHOISCERTFP: {
-			return SSTR(code) + " " + source + rpl_whoiscertfp(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_whoiscertfp(arg1, arg2);
 		}
 
 		case ft_irc::RPL_NONE: {
-			return SSTR(code << " :");
+			return SSTR(_code << " :");
 		}
 
 		case ft_irc::RPL_AWAY: {
-			return SSTR(code) + " " + source + rpl_away(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_away(arg1, arg2);
 		}
 
 		case ft_irc::RPL_USERHOST: {
-			return SSTR(code) + " " + source + rpl_userhost(arg1);
+			return SSTR(_code) + " " + source + rpl_userhost(arg1);
 		}
 
 		case ft_irc::RPL_UNAWAY: {
-			return SSTR(code) + " " + source + rpl_unaway();
+			return SSTR(_code) + " " + source + rpl_unaway();
 		}
 
 		case ft_irc::RPL_NOWAWAY: {
-			return SSTR(code) + " " + source + rpl_nowaway();
+			return SSTR(_code) + " " + source + rpl_nowaway();
 		}
 
 		case ft_irc::RPL_WHOREPLY: {
-			return SSTR(code) + " " + source + rpl_whoreply(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+			return SSTR(_code) + " " + source + rpl_whoreply(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 		}
 
 		case ft_irc::RPL_ENDOFWHO: {
-			return SSTR(code) + " " + source + rpl_endofwho(arg1);
+			return SSTR(_code) + " " + source + rpl_endofwho(arg1);
 		}
 
 		case ft_irc::RPL_WHOISREGNICK: {
-			return SSTR(code) + " " + source + rpl_whoisregnick(arg1);
+			return SSTR(_code) + " " + source + rpl_whoisregnick(arg1);
 		}
 
 		case ft_irc::RPL_WHOISUSER: {
-			return SSTR(code) + " " + source + rpl_whoisuser(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_whoisuser(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_WHOISSERVER: {
-			return SSTR(code) + " " + source + rpl_whoisserver(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_whoisserver(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_WHOISOPERATOR: {
-			return SSTR(code) + " " + source + rpl_whoisoperator(arg1);
+			return SSTR(_code) + " " + source + rpl_whoisoperator(arg1);
 		}
 
 		case ft_irc::RPL_WHOWASUSER: {
-			return SSTR(code) + " " + source + rpl_whowasuser(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_whowasuser(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_WHOISIDLE: {
-			return SSTR(code) + " " + source + rpl_whoisidle(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_whoisidle(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_ENDOFWHOIS: {
-			return SSTR(code) + " " + source + rpl_endofwhois(arg1);
+			return SSTR(_code) + " " + source + rpl_endofwhois(arg1);
 		}
 
 		case ft_irc::RPL_WHOISCHANNELS: {
-			return SSTR(code) + " " + source + rpl_whoischannels(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_whoischannels(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_WHOISSPECIAL: {
-			return SSTR(code) + " " + source + rpl_whoisspecial(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_whoisspecial(arg1, arg2);
 		}
 
 		case ft_irc::RPL_LISTSTART: {
-			return SSTR(code) + " " + source + rpl_liststart();
+			return SSTR(_code) + " " + source + rpl_liststart();
 		}
 
 		case ft_irc::RPL_LIST: {
-			return SSTR(code) + " " + source + rpl_list(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_list(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_LISTEND: {
-			return SSTR(code) + " " + source + rpl_listend();
+			return SSTR(_code) + " " + source + rpl_listend();
 		}
 
 		case ft_irc::RPL_CHANNELMODEIS: {
-			return SSTR(code) + " " + source + rpl_channelmodeis(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_channelmodeis(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_CREATIONTIME: {
-			return SSTR(code) + " " + source + rpl_createontime(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_createontime(arg1, arg2);
 		}
 
 		case ft_irc::RPL_WHOISACCOUNT: {
-			return SSTR(code) + " " + source + rpl_whoisaccount(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_whoisaccount(arg1, arg2);
 		}
 
 		case ft_irc::RPL_NOTOPIC: {
-			return SSTR(code) + " " + source + rpl_notopic(arg1);
+			return SSTR(_code) + " " + source + rpl_notopic(arg1);
 		}
 
 		case ft_irc::RPL_TOPIC: {
-			return SSTR(code) + " " + source + rpl_topic(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_topic(arg1, arg2);
 		}
 
 		case ft_irc::RPL_TOPICWHOTIME: {
-			return SSTR(code) + " " + source + rpl_topicwhotime(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_topicwhotime(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_INVITELIST: {
-			return SSTR(code) + " " + source + arg1;
+			return SSTR(_code) + " " + source + arg1;
 		}
 
 		case ft_irc::RPL_ENDOFINVITELIST: {
-			return SSTR(code) + " " + source + rpl_endofinvitelist();
+			return SSTR(_code) + " " + source + rpl_endofinvitelist();
 		}
 
 		case ft_irc::RPL_WHOISACTUALLY: {
-			return SSTR(code) + " " + source + rpl_whoisactually(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_whoisactually(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_INVITING: {
-			return SSTR(code) + " " + source + rpl_inviting(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_inviting(arg1, arg2);
 		}
 
 		case ft_irc::RPL_INVEXLIST: {
-			return SSTR(code) + " " + source + rpl_invexlist(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_invexlist(arg1, arg2);
 		}
 
 		case ft_irc::RPL_ENDOFINVEXLIST: {
-			return SSTR(code) + " " + source + rpl_endofinvexlist(arg1);
+			return SSTR(_code) + " " + source + rpl_endofinvexlist(arg1);
 		}
 
 		case ft_irc::RPL_EXCEPTLIST: {
-			return SSTR(code) + " " + source + arg1 + " " + arg2;
+			return SSTR(_code) + " " + source + arg1 + " " + arg2;
 		}
 
 		case ft_irc::RPL_ENDOFEXCEPTLIST: {
-			return SSTR(code) + " " + source + rpl_endofexceptlist(arg1);
+			return SSTR(_code) + " " + source + rpl_endofexceptlist(arg1);
 		}
 
 		case ft_irc::RPL_VERSION: {
-			return SSTR(code) + " " + source + rpl_version(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_version(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_NAMREPLY: {
-			return SSTR(code) + " " + source + rpl_namereply(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_namereply(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_ENDOFNAMES: {
-			return SSTR(code) + " " + source + rpl_endofnames(arg1);
+			return SSTR(_code) + " " + source + rpl_endofnames(arg1);
 		}
 
 		case ft_irc::RPL_LINKS: {
-			return SSTR(code) + " " + source + rpl_links(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_links(arg1, arg2, arg3);
 		}
 
 		case ft_irc::RPL_ENDOFLINKS: {
-			return SSTR(code) + " " + source + rpl_endoflinks();
+			return SSTR(_code) + " " + source + rpl_endoflinks();
 		}
 
 		case ft_irc::RPL_BANLIST: {
-			return SSTR(code) + " " + source + rpl_banlist(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_banlist(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_ENDOFBANLIST: {
-			return SSTR(code) + " " + source + rpl_endofbanlist(arg1);
+			return SSTR(_code) + " " + source + rpl_endofbanlist(arg1);
 		}
 
 		case ft_irc::RPL_ENDOFWHOWAS: {
-			return SSTR(code) + " " + source + rpl_endofwhowas(arg1);
+			return SSTR(_code) + " " + source + rpl_endofwhowas(arg1);
 		}
 
 		case ft_irc::RPL_INFO: {
-			return SSTR(code) + " " + source + rpl_info(arg1);
+			return SSTR(_code) + " " + source + rpl_info(arg1);
 		}
 
 		case ft_irc::RPL_ENDOFINFO: {
-			return SSTR(code) + " " + source + rpl_endofinfo();
+			return SSTR(_code) + " " + source + rpl_endofinfo();
 		}
 
 		case ft_irc::RPL_MOTDSTART: {
-			return SSTR(code) + " " + source + rpl_motdstart(arg1);
+			return SSTR(_code) + " " + source + rpl_motdstart(arg1);
 		}
 
 		case ft_irc::RPL_MOTD: {
-			return SSTR(code) + " " + source + rpl_motd(arg1);
+			return SSTR(_code) + " " + source + rpl_motd(arg1);
 		}
 
 		case ft_irc::RPL_ENDOFMOTD: {
-			return SSTR(code) + " " + source + rpl_endofmotd();
+			return SSTR(_code) + " " + source + rpl_endofmotd();
 		}
 
 		case ft_irc::RPL_WHOISHOST: {
-			return SSTR(code) + " " + source + rpl_whoishost(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_whoishost(arg1, arg2);
 		}
 
 		case ft_irc::RPL_WHOISMODES: {
-			return SSTR(code) + " " + source + rpl_whoismodes(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_whoismodes(arg1, arg2);
 		}
 
 		case ft_irc::RPL_YOUREOPER: {
-			return SSTR(code) + " " + source + rpl_youreoper();
+			return SSTR(_code) + " " + source + rpl_youreoper();
 		}
 
 		case ft_irc::RPL_REHASHING: {
-			return SSTR(code) + " " + source + rpl_rehashing(arg1);
+			return SSTR(_code) + " " + source + rpl_rehashing(arg1);
 		}
 
 		case ft_irc::RPL_TIME: {
-			return SSTR(code) + " " + source + rpl_time(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + rpl_time(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::ERR_UNKNOWNERROR: {
-			return SSTR(code) + " " + source + err_unknownerror(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + err_unknownerror(arg1, arg2, arg3);
 		}
 
 		case ft_irc::ERR_NOSUCHNICK: {
-			return SSTR(code) + " " + source + err_nosuchnick(arg1);
+			return SSTR(_code) + " " + source + err_nosuchnick(arg1);
 		}
 
 		case ft_irc::ERR_NOSUCHSERVER: {
-			return SSTR(code) + " " + source + err_nosuchserver(arg1);
+			return SSTR(_code) + " " + source + err_nosuchserver(arg1);
 		}
 
 		case ft_irc::ERR_NOSUCHCHANNEL: {
-			return SSTR(code) + " " + source + err_nosuchchannel(arg1);
+			return SSTR(_code) + " " + source + err_nosuchchannel(arg1);
 		}
 
 		case ft_irc::ERR_CANNOTSENDTOCHAN: {
-			return SSTR(code) + " " + source + err_cannotsendtochan(arg1);
+			return SSTR(_code) + " " + source + err_cannotsendtochan(arg1);
 		}
 
 		case ft_irc::ERR_TOOMANYCHANNELS: {
-			return SSTR(code) + " " + source + err_toomanychannels(arg1);
+			return SSTR(_code) + " " + source + err_toomanychannels(arg1);
 		}
 
 		case ft_irc::ERR_WASNOSUCHNICK: {
-			return SSTR(code) + " " + source + err_wasnosuchnick();
+			return SSTR(_code) + " " + source + err_wasnosuchnick();
 		}
 
 		case ft_irc::ERR_NOORIGIN: {
-			return SSTR(code) + " " + source + err_noorigin();
+			return SSTR(_code) + " " + source + err_noorigin();
 		}
 
 		case ft_irc::ERR_NORECIPIENT: {
-			return SSTR(code) + " " + source + err_norecipient(arg1);
+			return SSTR(_code) + " " + source + err_norecipient(arg1);
 		}
 
 		case ft_irc::ERR_NOTEXTTOSEND: {
-			return SSTR(code) + " " + source + err_notexttosend();
+			return SSTR(_code) + " " + source + err_notexttosend();
 		}
 
 		case ft_irc::ERR_INPUTTOOLONG: {
-			return SSTR(code) + " " + source + err_inputtoolong();
+			return SSTR(_code) + " " + source + err_inputtoolong();
 		}
 
 		case ft_irc::ERR_UNKNOWNCOMMAND: {
-			return SSTR(code) + " " + source + err_unknowncommand(arg1);
+			return SSTR(_code) + " " + source + err_unknowncommand(arg1);
 		}
 
 		case ft_irc::ERR_NOMOTD: {
-			return SSTR(code) + " " + source + err_nomotd();
+			return SSTR(_code) + " " + source + err_nomotd();
 		}
 
 		case ft_irc::ERR_NONICKNAMEGIVEN: {
-			return SSTR(code) + " " + source + err_nonicknamegiven();
+			return SSTR(_code) + " " + source + err_nonicknamegiven();
 		}
 
 		case ft_irc::ERR_ERRONEUSNICKNAME: {
-			return SSTR(code) + " " + source + err_erroneusnickname(arg1);
+			return SSTR(_code) + " " + source + err_erroneusnickname(arg1);
 		}
 
 		case ft_irc::ERR_NICKNAMEINUSE: {
-			return SSTR(code) + " " + source + err_nicknameinuse(arg1);
+			return SSTR(_code) + " " + source + err_nicknameinuse(arg1);
 		}
 
 		case ft_irc::ERR_USERNOTINCHANNEL: {
-			return SSTR(code) + " " + source + err_usernotinchannel(arg1, arg2);
+			return SSTR(_code) + " " + source + err_usernotinchannel(arg1, arg2);
 		}
 
 		case ft_irc::ERR_NOTONCHANNEL: {
-			return SSTR(code) + " " + source + err_notonchannel(arg1);
+			return SSTR(_code) + " " + source + err_notonchannel(arg1);
 		}
 
 		case ft_irc::ERR_USERONCHANNEL: {
-			return SSTR(code) + " " + source + err_useronchannel(arg1, arg2);
+			return SSTR(_code) + " " + source + err_useronchannel(arg1, arg2);
 		}
 
 		case ft_irc::ERR_NOTREGISTERED: {
-			return SSTR(code) + " " + source + err_notregistered();
+			return SSTR(_code) + " " + source + err_notregistered();
 		}
 
 		case ft_irc::ERR_NEEDMOREPARAMS: {
-			return SSTR(code) + " " + source + err_needmoreparams(arg1);
+			return SSTR(_code) + " " + source + err_needmoreparams(arg1);
 		}
 
 		case ft_irc::ERR_ALREADYREGISTERED: {
-			return SSTR(code) + " " + source + err_alreadyregistered();
+			return SSTR(_code) + " " + source + err_alreadyregistered();
 		}
 
 		case ft_irc::ERR_PASSWDMISMATCH: {
-			return SSTR(code) + " " + source + err_passwdmismatch();
+			return SSTR(_code) + " " + source + err_passwdmismatch();
 		}
 
 		case ft_irc::ERR_YOUREBANNEDCREEP: {
-			return SSTR(code) + " " + source + err_yourebannedcreep();
+			return SSTR(_code) + " " + source + err_yourebannedcreep();
 		}
 
 		case ft_irc::ERR_CHANNELISFULL: {
-			return SSTR(code) + " " + source + err_channelisfull(arg1);
+			return SSTR(_code) + " " + source + err_channelisfull(arg1);
 		}
 
 		case ft_irc::ERR_UNKNOWNMODE: {
-			return SSTR(code) + " " + source + err_unknownmode(arg1);
+			return SSTR(_code) + " " + source + err_unknownmode(arg1);
 		}
 
 		case ft_irc::ERR_INVITEONLYCHAN: {
-			return SSTR(code) + " " + source + err_inviteonlychan(arg1);
+			return SSTR(_code) + " " + source + err_inviteonlychan(arg1);
 		}
 
 		case ft_irc::ERR_BANNEDFROMCHAN: {
-			return SSTR(code) + " " + source + err_bannedfromchan(arg1);
+			return SSTR(_code) + " " + source + err_bannedfromchan(arg1);
 		}
 
 		case ft_irc::ERR_BADCHANNELKEY: {
-			return SSTR(code) + " " + source + err_badchannelkey(arg1);
+			return SSTR(_code) + " " + source + err_badchannelkey(arg1);
 		}
 
 		case ft_irc::ERR_BADCHANMASK: {
-			return SSTR(code) + " " + source + err_badchanmask(arg1);
+			return SSTR(_code) + " " + source + err_badchanmask(arg1);
 		}
 
 		case ft_irc::ERR_NOPRIVILEGES: {
-			return SSTR(code) + " " + source + err_noprivileges();
+			return SSTR(_code) + " " + source + err_noprivileges();
 		}
 
 		case ft_irc::ERR_CHANOPRIVSNEEDED: {
-			return SSTR(code) + " " + source + err_chanoprivsneeded(arg1);
+			return SSTR(_code) + " " + source + err_chanoprivsneeded(arg1);
 		}
 
 		case ft_irc::ERR_CANTKILLSERVER: {
-			return SSTR(code) + " " + source + err_cantkillserver();
+			return SSTR(_code) + " " + source + err_cantkillserver();
 		}
 
 		case ft_irc::ERR_NOOPERHOST: {
-			return SSTR(code) + " " + source + err_nooperhost();
+			return SSTR(_code) + " " + source + err_nooperhost();
 		}
 
 		case ft_irc::ERR_UMODEUNKNOWNFLAG: {
-			return SSTR(code) + " " + source + err_umodeunknownflag();
+			return SSTR(_code) + " " + source + err_umodeunknownflag();
 		}
 
 		case ft_irc::ERR_USERSDONTMATCH: {
-			return SSTR(code) + " " + source + err_usersdontmatch();
+			return SSTR(_code) + " " + source + err_usersdontmatch();
 		}
 
 		case ft_irc::ERR_HELPNOTFOUND: {
-			return SSTR(code) + " " + source + err_helpnotfound(arg1);
+			return SSTR(_code) + " " + source + err_helpnotfound(arg1);
 		}
 
 		case ft_irc::ERR_INVALIDKEY: {
-			return SSTR(code) + " " + source + err_invalidkey(arg1);
+			return SSTR(_code) + " " + source + err_invalidkey(arg1);
 		}
 
 		case ft_irc::RPL_STARTTLS: {
-			return SSTR(code) + " " + source + rpl_starttls();
+			return SSTR(_code) + " " + source + rpl_starttls();
 		}
 
 		case ft_irc::RPL_WHOISSECURE: {
-			return SSTR(code) + " " + source + rpl_whoissecure(arg1);
+			return SSTR(_code) + " " + source + rpl_whoissecure(arg1);
 		}
 
 		case ft_irc::ERR_STARTTLS: {
-			return SSTR(code) + " " + source + err_starttls();
+			return SSTR(_code) + " " + source + err_starttls();
 		}
 
 		case ft_irc::ERR_INVALIDMODEPARAM: {
-			return SSTR(code) + " " + source + err_invalidmodeparam(arg1, arg2, arg3, arg4);
+			return SSTR(_code) + " " + source + err_invalidmodeparam(arg1, arg2, arg3, arg4);
 		}
 
 		case ft_irc::RPL_HELPSTART: {
-			return SSTR(code) + " " + source + rpl_helpline(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_helpline(arg1, arg2);
 		}
 
 		case ft_irc::RPL_HELPTXT: {
-			return SSTR(code) + " " + source + rpl_helpline(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_helpline(arg1, arg2);
 		}
 
 		case ft_irc::RPL_ENDOFHELP: {
-			return SSTR(code) + " " + source + rpl_helpline(arg1, arg2);
+			return SSTR(_code) + " " + source + rpl_helpline(arg1, arg2);
 		}
 
 		case ft_irc::ERR_NOPRIVS: {
-			return SSTR(code) + " " + source + err_noprivs(arg1);
+			return SSTR(_code) + " " + source + err_noprivs(arg1);
 		}
 
 		case ft_irc::RPL_LOGGEDIN: {
-			return SSTR(code) + " " + source + rpl_loggedin(arg1, arg2, arg3, arg4, arg5);
+			return SSTR(_code) + " " + source + rpl_loggedin(arg1, arg2, arg3, arg4, arg5);
 		}
 
 		case ft_irc::RPL_LOGGEDOUT: {
-			return SSTR(code) + " " + source + rpl_loggedout(arg1, arg2, arg3);
+			return SSTR(_code) + " " + source + rpl_loggedout(arg1, arg2, arg3);
 		}
 
 		case ft_irc::ERR_NICKLOCKED: {
-			return SSTR(code) + " " + source + err_nicklocked();
+			return SSTR(_code) + " " + source + err_nicklocked();
 		}
 
 		case ft_irc::RPL_SASLSUCCESS: {
-			return SSTR(code) + " " + source + rpl_saslsuccess();
+			return SSTR(_code) + " " + source + rpl_saslsuccess();
 		}
 
 		case ft_irc::ERR_SASLFAIL: {
-			return SSTR(code) + " " + source + err_saslfail();
+			return SSTR(_code) + " " + source + err_saslfail();
 		}
 
 		case ft_irc::ERR_SASLTOOLONG: {
-			return SSTR(code) + " " + source + err_sasltoolong();
+			return SSTR(_code) + " " + source + err_sasltoolong();
 		}
 
 		case ft_irc::ERR_SASLABORTED: {
-			return SSTR(code) + " " + source + err_saslaborted();
+			return SSTR(_code) + " " + source + err_saslaborted();
 		}
 
 		case ft_irc::ERR_SASLALREADY: {
-			return SSTR(code) + " " + source + err_saslalready();
+			return SSTR(_code) + " " + source + err_saslalready();
 		}
 
 		case ft_irc::RPL_SASLMECHS: {
-			return SSTR(code) + " " + source + rpl_saslmechs(arg1);
+			return SSTR(_code) + " " + source + rpl_saslmechs(arg1);
 		}
 
 		default: {
