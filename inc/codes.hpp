@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#define SSTR(x) static_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
+#define SSTR(x) static_cast< const std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
 namespace ft_irc
 {
