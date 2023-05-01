@@ -38,6 +38,7 @@ public:
 	void sendMsg(int fd, const std::string &msg);
 
 	int getFd(void) const;
+	const std::string& getPsswd(void) const;
 	void addPfd(int fd);
 };	// class Communications
 

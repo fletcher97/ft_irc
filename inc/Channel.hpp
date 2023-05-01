@@ -5,24 +5,25 @@
 #include <stdexcept>
 #include <string>
 
+#include "codes.hpp"
 #include "Client.hpp"
 
-#define INVITE_ONLY 0x01
-#define MODERATE 0x02
-#define SECRET 0x04
-#define PROTECTED_TOPIC 0x08
-#define NOT_EXTERNAL_MSGS 0x10
+#define CH_INVITE_ONLY 0x01
+#define CH_MODERATE 0x02
+#define CH_SECRET 0x04
+#define CH_PROTECTED_TOPIC 0x08
+#define CH_NOT_EXTERNAL_MSGS 0x10
 
-#define FOUNDER 0x01
-#define PROTECTED 0x02
-#define OPERATOR 0x04
-#define HALFOP 0x08
-#define VOICE 0x10
+#define CH_FOUNDER 0x01
+#define CH_PROTECTED 0x02
+#define CH_OPERATOR 0x04
+#define CH_HALFOP 0x08
+#define CH_VOICE 0x10
 
-#define BAN 0x01
-#define EXCEPTION 0x02
-#define INVITE 0x04
-#define INVITE_EXCEPTION 0x08
+#define CH_BAN 0x01
+#define CH_EXCEPTION 0x02
+#define CH_INVITE 0x04
+#define CH_INVITE_EXCEPTION 0x08
 
 namespace ft_irc
 {
@@ -86,6 +87,9 @@ public:
 	bool invite(const Client &source, const std::string &client);
 
 	bool join(const ft_irc::Client &client, const std::string &key = "");
+	bool part(const ft_irc::Client &client, const std::string &reason = "");
+
+	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
 
 public:
 

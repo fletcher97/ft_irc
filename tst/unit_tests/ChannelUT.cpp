@@ -24,6 +24,7 @@ ft_irc::ChannelUT::ChannelUT(void) :
 
 	REGISTER(ChannelUT, test_invite)
 	REGISTER(ChannelUT, test_join)
+	REGISTER(ChannelUT, test_part)
 }
 
 
@@ -124,25 +125,25 @@ ft_irc::ChannelUT::test_setTopic(void)
 	this->_clients.at(test.getFd()).mode = 0;
 
 	LOG_TRACE("Testing setTopic with a client with no privileges on ProtectedTopic mode")
-	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+	ft_irc::Channel::toggleMode(CH_PROTECTED_TOPIC);
 	ASSERT_THROW(ft_irc::Channel::setTopic(test, topic), ft_irc::Channel::NoPrivsOnChannel);
 
 	LOG_TRACE("Testing setTopic with a client with privileges (OPERATOR) on ProtectedTopic mode")
 	topic = "gemartin";
-	ft_irc::Channel::_clients.at(test.getFd()).mode = OPERATOR;
+	ft_irc::Channel::_clients.at(test.getFd()).mode = CH_OPERATOR;
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
 
 	LOG_TRACE("Testing setTopic with a client with privileges (HALFOP) on ProtectedTopic mode")
-	ft_irc::Channel::_clients.at(test.getFd()).mode = HALFOP;
+	ft_irc::Channel::_clients.at(test.getFd()).mode = CH_HALFOP;
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
 
 	LOG_TRACE("Testing setTopic with a client with privileges (PROTECTED) on ProtectedTopic mode")
-	ft_irc::Channel::_clients.at(test.getFd()).mode = PROTECTED;
+	ft_irc::Channel::_clients.at(test.getFd()).mode = CH_PROTECTED;
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
-	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
+	ft_irc::Channel::toggleMode(CH_PROTECTED_TOPIC);
 
 	LOG_TRACE("Testing setTopic with no ProtectedTopic mode")
 	ft_irc::Channel::_clients.at(test.getFd()).mode = 0;
@@ -199,9 +200,9 @@ ft_irc::ChannelUT::test_getName(void)
 	LOG_TRACE("Testing getName: gmartin")
 	ASSERT_EQ(ft_irc::Channel::getName(), "gemartin")
 
-	ft_irc::Channel::_name = "marvin";
-	LOG_TRACE("Testing getName: marvin")
-	ASSERT_EQ(ft_irc::Channel::getName(), "marvin")
+	ft_irc::Channel::_name = "#test_channel";
+	LOG_TRACE("Testing getName: #test_channel")
+	ASSERT_EQ(ft_irc::Channel::getName(), "#test_channel")
 }	// ChannelUT::test_getName
 
 
@@ -241,9 +242,9 @@ ft_irc::ChannelUT::test_addClient(void)
 	ASSERT(ft_irc::Channel::addClient(test))
 
 	LOG_TRACE("Testing addClient, first client has FOUNDER mode")
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (FOUNDER))
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (CH_FOUNDER))
 	LOG_TRACE("Testing addClient, first client has OPERATOR mode")
-	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (OPERATOR))
+	ASSERT(ft_irc::Channel::_clients.at(test.getFd()).mode & (CH_OPERATOR))
 
 	LOG_TRACE("Testing addClient dosen't add a client that is already on channel")
 	ASSERT(!ft_irc::Channel::addClient(test))
@@ -297,7 +298,7 @@ ft_irc::ChannelUT::test_banMask(void)
 	ft_irc::Channel::_masks.clear();
 
 	LOG_TRACE("Testing banMask with a mask that is already in mask map but not banned")
-	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(test, INVITE));
+	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(test, CH_INVITE));
 	ASSERT(ft_irc::Channel::banMask(test))
 	ft_irc::Channel::_masks.clear();
 }	// ChannelUT::test_banMask
@@ -307,34 +308,34 @@ void
 ft_irc::ChannelUT::test_toggleMode(void)
 {
 	LOG_TRACE("Testing toggleMode: INVITE_ONLY")
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(ft_irc::Channel::_mode & (INVITE_ONLY))
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
-	ASSERT(!(ft_irc::Channel::_mode & (INVITE_ONLY)))
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
+	ASSERT(ft_irc::Channel::_mode & (CH_INVITE_ONLY))
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
+	ASSERT(!(ft_irc::Channel::_mode & (CH_INVITE_ONLY)))
 
 	LOG_TRACE("Testing toggleMode: MODERATE")
-	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(ft_irc::Channel::_mode & (MODERATE))
-	ft_irc::Channel::toggleMode(MODERATE);
-	ASSERT(!(ft_irc::Channel::_mode & (MODERATE)))
+	ft_irc::Channel::toggleMode(CH_MODERATE);
+	ASSERT(ft_irc::Channel::_mode & (CH_MODERATE))
+	ft_irc::Channel::toggleMode(CH_MODERATE);
+	ASSERT(!(ft_irc::Channel::_mode & (CH_MODERATE)))
 
 	LOG_TRACE("Testing toggleMode: SECRET")
-	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(ft_irc::Channel::_mode & (SECRET))
-	ft_irc::Channel::toggleMode(SECRET);
-	ASSERT(!(ft_irc::Channel::_mode & (SECRET)))
+	ft_irc::Channel::toggleMode(CH_SECRET);
+	ASSERT(ft_irc::Channel::_mode & (CH_SECRET))
+	ft_irc::Channel::toggleMode(CH_SECRET);
+	ASSERT(!(ft_irc::Channel::_mode & (CH_SECRET)))
 
 	LOG_TRACE("Testing toggleMode: PROTECTED_TOPIC")
-	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(ft_irc::Channel::_mode & (PROTECTED_TOPIC))
-	ft_irc::Channel::toggleMode(PROTECTED_TOPIC);
-	ASSERT(!(ft_irc::Channel::_mode & (PROTECTED_TOPIC)))
+	ft_irc::Channel::toggleMode(CH_PROTECTED_TOPIC);
+	ASSERT(ft_irc::Channel::_mode & (CH_PROTECTED_TOPIC))
+	ft_irc::Channel::toggleMode(CH_PROTECTED_TOPIC);
+	ASSERT(!(ft_irc::Channel::_mode & (CH_PROTECTED_TOPIC)))
 
 	LOG_TRACE("Testing toggleMode: NOT_EXTERNAL_MSGS")
-	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(ft_irc::Channel::_mode & (NOT_EXTERNAL_MSGS))
-	ft_irc::Channel::toggleMode(NOT_EXTERNAL_MSGS);
-	ASSERT(!(ft_irc::Channel::_mode & (NOT_EXTERNAL_MSGS)))
+	ft_irc::Channel::toggleMode(CH_NOT_EXTERNAL_MSGS);
+	ASSERT(ft_irc::Channel::_mode & (CH_NOT_EXTERNAL_MSGS))
+	ft_irc::Channel::toggleMode(CH_NOT_EXTERNAL_MSGS);
+	ASSERT(!(ft_irc::Channel::_mode & (CH_NOT_EXTERNAL_MSGS)))
 
 	LOG_TRACE("Testing toggleMode: invalid argument: -1")
 	ASSERT_THROW(ft_irc::Channel::toggleMode(-1), std::invalid_argument)
@@ -354,17 +355,17 @@ ft_irc::ChannelUT::test_invite(void)
 	LOG_TRACE("Testing invite with a client not on channel")
 	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NotOnChannel)
 	ft_irc::Channel::addClient(client);
-	ft_irc::Channel::_clients.at(client.getFd()).mode ^= OPERATOR;
+	ft_irc::Channel::_clients.at(client.getFd()).mode ^= CH_OPERATOR;
 
 	LOG_TRACE("Testing invite a nickname that is already tracked but not invited")
-	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(nickname, BAN));
+	ft_irc::Channel::_masks.insert(std::make_pair< std::string, mask_mode >(nickname, CH_BAN));
 	ASSERT(ft_irc::Channel::invite(client, nickname))
 	ft_irc::Channel::_masks.clear();
 
 	LOG_TRACE("Testing invite with a client with no privileges on InviteOnly mode")
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
 	ASSERT_THROW(ft_irc::Channel::invite(client, nickname), ft_irc::Channel::NoPrivsOnChannel)
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
 
 	LOG_TRACE("Testing invite correct input")
 	ASSERT(ft_irc::Channel::invite(client, nickname))
@@ -406,14 +407,14 @@ ft_irc::ChannelUT::test_join(void)
 	ft_irc::Channel::_key = "";
 
 	ft_irc::Channel::addClient(tmp);
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
 	LOG_TRACE("Testing join a channel with InviteOnly mode: not invited client")
 	ASSERT_THROW(ft_irc::Channel::join(test), ft_irc::Channel::InviteOnlyChannel)
 	ft_irc::Channel::invite(tmp, test.getMask());
 	LOG_TRACE("Testing join a channel with InviteOnly mode: invited client")
 	ASSERT(ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
-	ft_irc::Channel::toggleMode(INVITE_ONLY);
+	ft_irc::Channel::toggleMode(CH_INVITE_ONLY);
 
 	ft_irc::Channel::addClient(tmp);
 	ft_irc::Channel::setClientLimit(1);
@@ -427,3 +428,19 @@ ft_irc::ChannelUT::test_join(void)
 	ASSERT(!ft_irc::Channel::join(test))
 	ft_irc::Channel::_clients.clear();
 }	// ChannelUT::test_join
+
+
+void
+ft_irc::ChannelUT::test_part(void)
+{
+	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
+	std::string name = "test_client";
+
+	test.setNickname(name);
+	LOG_TRACE("Testing part with a client not on channel")
+	ASSERT_THROW(ft_irc::Channel::part(test), ft_irc::Channel::NotOnChannel)
+
+	LOG_TRACE("Testing part with the last client on channel")
+	ft_irc::Channel::addClient(test);
+	ASSERT(ft_irc::Channel::part(test));
+}	// ChannelUT::test_part

@@ -47,12 +47,12 @@ public:
 	Client::Status getStatus(void) const;
 	std::string getMask(void) const;
 
-	void setNickname(std::string &nickname);
-	void setUsername(std::string &username);
-	void setRealname(std::string &realname);
+	void setNickname(const std::string &nickname);
+	void setUsername(const std::string &username);
+	void setRealname(const std::string &realname);
 	void setStatus(Client::Status status);
 
-	void sendMsg(const std::string &msg);
+	void sendMsg(const std::string &msg) const;
 };	// class Client
 
 }	// namespace ft_irc

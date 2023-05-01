@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "Channel.hpp"
 #include "Client.hpp"
 #include "Parser.hpp"
 
@@ -12,15 +13,15 @@ namespace ft_irc
 
 class Server
 {
-private:
-	std::map< int, ft_irc::Client* > _clients;
-
 protected:
 	Server(void);
 	Server(const Server &s);
 	~Server(void);
 
 	Server& operator=(const Server &s);
+
+	std::map< int, Client* > _clients;
+	std::map< std::string, Channel* > _channels;
 
 public:
 	static Server& getInstance(void);
@@ -31,11 +32,18 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	void newClient(void);
-	void quit(int fd);
+	void deleteClient(int fd, const std::string &reason = "Leaving Server");
 
 	void sendMsg(int fd, const std::string &msg);
 
 	void excecute(int fd, const ft_irc::Parser::cmd_t *cmd);
+
+	void pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void join(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 };	// class Server
 
 }	// namespace ft_irc

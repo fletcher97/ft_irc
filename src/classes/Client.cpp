@@ -104,21 +104,21 @@ ft_irc::Client::getStatus(void) const
 
 
 void
-ft_irc::Client::setNickname(std::string &nickname)
+ft_irc::Client::setNickname(const std::string &nickname)
 {
 	this->_nickname = nickname;
 }	// Client::setNickname
 
 
 void
-ft_irc::Client::setUsername(std::string &username)
+ft_irc::Client::setUsername(const std::string &username)
 {
 	this->_username = username;
 }	// Client::setUsername
 
 
 void
-ft_irc::Client::setRealname(std::string &realname)
+ft_irc::Client::setRealname(const std::string &realname)
 {
 	this->_realname = realname;
 }	// Client::setRealname
@@ -139,7 +139,8 @@ ft_irc::Client::getMask(void) const
 
 
 void
-ft_irc::Client::sendMsg(const std::string &msg)
+ft_irc::Client::sendMsg(const std::string &msg) const
 {
+	LOG_DEBUG("send: " << this->_nickname << ": " << msg)
 	ft_irc::Server::getInstance().sendMsg(this->_fd, msg);
 }	// Client::send
