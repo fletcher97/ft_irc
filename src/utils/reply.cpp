@@ -94,14 +94,14 @@ rpl_tryagain(const std::string &command)
 static std::string
 rpl_localuser(const std::string &u, const std::string &m)
 {
-	return ":Current local users " + u + ", max" + m;
+	return ":Current local users " + u + ", max " + m;
 }	// RPL_LOCALUSERS
 
 
 static std::string
 rpl_globaluser(const std::string &u, const std::string &m)
 {
-	return ":Current local users " + u + ", max" + m;
+	return ":Current global users " + u + ", max " + m;
 }	// RPL_GLOBALUSERS
 
 
@@ -168,7 +168,8 @@ rpl_whoisregnick(const std::string &nick)
 
 
 static std::string
-rpl_whoisuser(const std::string &nick, std::string username, std::string host, std::string realname)
+rpl_whoisuser(const std::string &nick, const std::string &username, const std::string &host,
+	const std::string &realname)
 {
 	return nick + " " + username + " " + host + " * :" + realname;
 }	// RPL_WHOISUSER
@@ -229,7 +230,7 @@ rpl_whoisspecial(const std::string &nick, const std::string &info)
 static std::string
 rpl_liststart(void)
 {
-	return "Channel :Users  Name";
+	return "Channel :Users Names";
 }	// RPL_LISTSTART
 
 
@@ -687,7 +688,7 @@ err_cantkillserver(void)
 static std::string
 err_nooperhost(void)
 {
-	return +" :No O-lines for your host";
+	return ":No O-lines for your host";
 }	// ERR_NOOPERHOST
 
 

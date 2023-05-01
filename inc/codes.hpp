@@ -1,10 +1,12 @@
 #if !defined(NUMERICS_HPP)
 #define NUMERICS_HPP
 
+#include <iomanip>
 #include <sstream>
 #include <string>
 
-#define SSTR(x) static_cast< const std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
+#define SSTR(x)\
+		static_cast< const std::ostringstream & >( ( std::ostringstream() << std::dec << std::setw(3) << std::setfill('0') << x ) ).str()
 
 namespace ft_irc
 {
@@ -67,7 +69,7 @@ enum codes
 	RPL_CREATED = 003,
 	RPL_MYINFO = 004,
 	RPL_ISUPPORT = 005,
-	RPL_BOUNCE = 010,
+	RPL_BOUNCE = 10,
 	RPL_UMODEIS = 221,
 	RPL_LUSERCLIENT = 251,
 	RPL_LUSEROP = 252,
