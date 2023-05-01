@@ -19,6 +19,7 @@ protected:
 	int _fd;
 	std::vector< pollfd > _pfds;
 	std::string _psswd;
+	Configuration _server_config;
 
 	typedef std::vector< pollfd >::iterator pfds_iterator;
 
@@ -26,10 +27,7 @@ protected:
 	Communications(const Communications &s);
 	~Communications(void);
 
-
 	Communications& operator=(const Communications &s);
-
-	Configuration Server_Config;
 
 public:
 	static Communications& getInstance(void);

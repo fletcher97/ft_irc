@@ -16,7 +16,7 @@ main(int argc, char **argv)
 		return 1;
 	}
 	if (argc == 1) {
-		if (!communications.init(0, 0)) {
+		if (!communications.init(0, NULL)) {
 			return 1;
 		}
 	} else {

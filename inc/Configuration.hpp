@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#define CONFIG_FILE "irc_config.txt"
+
 namespace ft_irc
 {
 
@@ -26,10 +28,10 @@ public:
 
 	bool init_config(void);
 
-	int get_port(void);
-	std::string get_psswd(void);
-	std::vector< std::string > get_admins(void);
-	std::string get_svname(void);
+	int get_port(void) const;
+	const std::string& get_psswd(void) const;
+	const std::vector< std::string > get_admins(void) const;
+	const std::string& get_svname(void) const;
 };	// class Configuration
 
 }	// namespace ft_irc
