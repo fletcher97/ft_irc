@@ -62,7 +62,7 @@ ft_irc::Server::part(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 				delete this->_channels[channel_name];
 				this->_channels.erase(channel_name);
 			}
-			client.sendMsg(":" + ft_irc::toString(cmd->cmd) + " " + channel_name);
+			client.sendMsg(":" + client.getMask() + " " + ft_irc::toString(cmd->cmd) + " " + channel_name);
 			LOG_INFO("part: Client (" << client.getNickname() << ") succesfully leaved " << channel_name)
 		} catch (...) {
 			LOG_WARN("part: 442: Client(" << client.getNickname() << ") not on channel: " << channel_name)

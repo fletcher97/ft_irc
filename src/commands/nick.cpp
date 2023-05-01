@@ -46,7 +46,9 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	}
 	try {
 		client.setNickname(cmd->args.front());
-		client.sendMsg(":" + old_nick + ft_irc::toString(cmd->cmd) + " " + client.getNickname());
+		if (client.getStatus() == ft_irc::Client::ONLINE) {
+			client.sendMsg(":" + old_nick + ft_irc::toString(cmd->cmd) + " " + client.getNickname());
+		}
 		LOG_INFO("nick: " << old_nick << "set to " << cmd->args.front())
 	} catch (...) {
 		LOG_WARN("nick: 433: erroneus nickname: " << cmd->args.front())

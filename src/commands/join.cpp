@@ -92,6 +92,7 @@ joinChannel(ft_irc::Client &client,
 			client.sendMsg(ft_irc::getReply(ft_irc::RPL_TOPIC, client.getNickname(), channel_name,
 				channels[channel_name]->getTopic()));
 		}
+		channels[channel_name]->broadcast(client.getMask(), ft_irc::CMD_JOIN);
 		channels[channel_name]->names(client);
 	} catch (ft_irc::Channel::BannedClient &e) {
 		LOG_WARN("join: 473: Invite only channel and client is not invited: " << client.getMask());

@@ -328,7 +328,6 @@ ft_irc::Channel::names(const ft_irc::Client &client) const
 		prefix = ((it->second.mode & CH_HALFOP) ? "%" : prefix);
 		prefix = ((it->second.mode & CH_OPERATOR) ? "@" : prefix);
 		prefix = ((it->second.mode & CH_PROTECTED) ? "&" : prefix);
-		prefix = ((it->second.mode & CH_FOUNDER) ? "~" : prefix);
 		LOG_DEBUG("names: " << symbol << " " << this->_name << " " << prefix << " " << it->second.client.getNickname())
 		client.sendMsg(ft_irc::getReply(ft_irc::RPL_NAMREPLY, client.getNickname(), symbol, this->_name, prefix,
 			it->second.client.getNickname()));

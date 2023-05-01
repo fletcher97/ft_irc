@@ -30,6 +30,16 @@ preCheck(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 }	// preCheck
 
 
+static void
+posConnection(ft_irc::Client &client)
+{
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_WELCOME, client.getNickname(), "42 Barcelona", client.getMask()));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_YOURHOST, client.getNickname(), "42 Barcelona", "1.0"));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_MYINFO, client.getNickname(), "42 Barcelona", "1.0", "ioOw",
+		"beliIkmstn"));
+}	// posConnection
+
+
 void
 ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
@@ -42,4 +52,5 @@ ft_irc::Server::user(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	client.setRealname(cmd->args.back());
 	client.setStatus(ft_irc::Client::ONLINE);
 	LOG_INFO("user: " << client.getMask() << " is online")
+	posConnection(client);
 }	// Server::user
