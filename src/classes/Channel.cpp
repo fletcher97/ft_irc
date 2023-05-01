@@ -149,7 +149,7 @@ ft_irc::Channel::toggleMode(const char mode)
 
 
 bool
-ft_irc::Channel::isInChannel(const ft_irc::Client &client)
+ft_irc::Channel::isInChannel(const ft_irc::Client &client) const
 {
 	return this->_clients.count(client.getFd());
 }	// Channel::isInChannel
@@ -303,6 +303,39 @@ ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, cons
 		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
 	}
 }	// Channel::broadcast
+
+
+void
+ft_irc::Channel::names(const ft_irc::Client &client) const
+{
+	std::string symbol = "=";
+	std::string prefix;
+	bool is_in_channel = this->isInChannel(client);
+
+	LOG_TRACE("names: Check if " << this->_name << " is secret")
+	if (this->_mode & CH_SECRET) {
+		if (!is_in_channel) {
+			LOG_INFO("names: Chanel " << this->_name << " is secret and " << client.getNickname() << " is not joined")
+			client.sendMsg(ft_irc::getReply(ft_irc::RPL_ENDOFNAMES, client.getNickname(), this->_name));
+
+			return;
+		}
+		symbol = "@";
+	}
+	LOG_TRACE("names: Symbol " << symbol << " " << this->_name)
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		prefix = ((it->second.mode & CH_VOICE) ? "+" : "");
+		prefix = ((it->second.mode & CH_HALFOP) ? "%" : prefix);
+		prefix = ((it->second.mode & CH_OPERATOR) ? "@" : prefix);
+		prefix = ((it->second.mode & CH_PROTECTED) ? "&" : prefix);
+		prefix = ((it->second.mode & CH_FOUNDER) ? "~" : prefix);
+		LOG_DEBUG("names: " << symbol << " " << this->_name << " " << prefix << " " << it->second.client.getNickname())
+		client.sendMsg(ft_irc::getReply(ft_irc::RPL_NAMREPLY, client.getNickname(), symbol, this->_name, prefix,
+			it->second.client.getNickname()));
+	}
+	LOG_TRACE("names: End of names")
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_ENDOFNAMES, client.getNickname(), this->_name));
+}	// Channel::names
 
 
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) :
