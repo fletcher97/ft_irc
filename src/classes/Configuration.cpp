@@ -71,7 +71,7 @@ ft_irc::Configuration::init_config()
 			} else if (key.substr(0, equal) == "password") {
 				this->_password = value;
 			} else if ((key.substr(0, equal) == "admin") && (control == 1)) {
-				if ((value[0] != '[') || (value.back() != ']')) {
+				if ((value[0] != '[') || (value[value.size() - 1] != ']')) {
 					return false;
 				}
 				size_t end = value.find_first_of(",]");
