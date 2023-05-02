@@ -1,5 +1,5 @@
-#include <sstream>
 #include <ctime>
+#include <sstream>
 
 #include "Log.hpp"
 
@@ -87,7 +87,7 @@ const std::pair< std::string, std::string >&
 ft_irc::Channel::getTopicWhoTime(void) const
 {
 	return this->_topic_who_time;
-}
+}	// Channel::getTopicWhoTime
 
 
 void

@@ -116,6 +116,7 @@ void
 ft_irc::ChannelUT::test_setTopic(void)
 {
 	ft_irc::Client test(42, sockaddr_in());
+
 	test.setNickname("TEST");
 	std::string topic = "";
 
