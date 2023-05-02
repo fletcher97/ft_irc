@@ -60,6 +60,7 @@ protected:
 	std::map< std::string, mask_mode > _masks;
 	channel_mode _mode;
 	size_t _client_limit;
+	std::pair< std::string, std::string > _topic_who_time;
 
 public:
 	Channel(void);
@@ -73,6 +74,7 @@ public:
 	const std::string& getName(void) const;
 	const std::string& getTopic(void) const;
 	const std::string& getKey(void) const;
+	const std::pair< std::string, std::string >& getTopicWhoTime(void) const;
 
 	void setName(const std::string &name);
 	void setTopic(ft_irc::Client &source, const std::string &topic);

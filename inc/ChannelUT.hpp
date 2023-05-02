@@ -20,6 +20,7 @@ public:
 	void test_getName(void);
 	void test_getTopic(void);
 	void test_getKey(void);
+	void test_getTopicWhoTime(void);
 
 	void test_setName(void);
 	void test_setTopic(void);
