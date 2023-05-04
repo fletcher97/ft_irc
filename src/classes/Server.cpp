@@ -143,6 +143,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			break;
 		}
 
+		case ft_irc::CMD_INVITE: {
+			LOG_INFO("execute: executing INVITE")
+
+			this->invite(client, cmd);
+			break;
+		}
+
 		case ft_irc::CMD_TOPIC: {
 			LOG_INFO("execute: executing TOPIC")
 
