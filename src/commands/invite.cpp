@@ -76,8 +76,7 @@ ft_irc::Server::invite(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		LOG_INFO("invite: Client: " << cmd->args.at(0) << ", invited succesfully to " << cmd->args.at(1))
 	} catch (ft_irc::Channel::NotOnChannel &e) {
 		LOG_WARN("invite: 442: " << client.getNickname() << " Not on channel: " << cmd->args.at(1))
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOTONCHANNEL, client.getNickname(), ft_irc::toString(cmd->cmd),
-			cmd->args.at(1)));
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOTONCHANNEL, client.getNickname(), cmd->args.at(1)));
 	} catch (ft_irc::Channel::NoPrivsOnChannel &e) {
 		LOG_WARN("invite: 442: " << client.getNickname() << " No privileges on channel: " << cmd->args.at(1))
 		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), ft_irc::toString(cmd->cmd),

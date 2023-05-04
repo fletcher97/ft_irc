@@ -37,6 +37,7 @@ public:
 	void sendMsg(int fd, const std::string &msg);
 
 	void excecute(int fd, const ft_irc::Parser::cmd_t *cmd);
+	void posConnection(ft_irc::Client &client);
 
 	void pass(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);

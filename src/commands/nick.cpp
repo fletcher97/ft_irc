@@ -56,4 +56,8 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 
 		return;
 	}
+
+	if ((client.getStatus() != ft_irc::Client::ONLINE) && client.getUsername().size()) {
+		this->posConnection(client);
+	}
 }	// Server::nick
