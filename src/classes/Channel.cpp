@@ -127,7 +127,7 @@ ft_irc::Channel::setTopic(ft_irc::Client &source, const std::string &topic)
 	}
 	LOG_INFO("Channel's topic changed from: " << this->_topic << " to: " << topic)
 	this->_topic = topic;
-	this->_topic_who_time.first = source.getNickname();
+	this->_topic_who_time.first = source.getMask();
 	clock_gettime(CLOCK_REALTIME, &now);
 	converter.precision(0);
 	converter << std::fixed << static_cast< double >(now.tv_sec);

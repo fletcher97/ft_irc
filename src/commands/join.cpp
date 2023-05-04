@@ -91,6 +91,8 @@ joinChannel(ft_irc::Client &client,
 		if (channels[channel_name]->getTopic().size()) {
 			client.sendMsg(ft_irc::getReply(ft_irc::RPL_TOPIC, client.getNickname(), channel_name,
 				channels[channel_name]->getTopic()));
+			client.sendMsg(ft_irc::getReply(ft_irc::RPL_TOPICWHOTIME, client.getNickname(), channel_name,
+				channels[channel_name]->getTopicWhoTime().first, channels[channel_name]->getTopicWhoTime().second));
 		}
 		channels[channel_name]->broadcast(client.getMask(), ft_irc::CMD_JOIN);
 		channels[channel_name]->names(client);
