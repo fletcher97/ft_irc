@@ -153,8 +153,8 @@ ft_irc::ChannelUT::test_setTopic(void)
 	topic = "marvin";
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+	ASSERT_EQ(ft_irc::Channel::_topic_who_time.first, test.getMask())
 	ft_irc::Channel::_clients.clear();
-	ASSERT_EQ(ft_irc::Channel::_topic_who_time.first, "TEST")
 }	// ChannelUT::test_setTopic
 
 
