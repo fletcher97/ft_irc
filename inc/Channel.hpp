@@ -80,7 +80,7 @@ public:
 	void setClientLimit(long limit);
 	void toggleMode(const char mode);
 
-	bool isInChannel(const Client &client);
+	bool isInChannel(const Client &client) const;
 	bool isInChannel(const std::string &nickname);
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
@@ -90,6 +90,7 @@ public:
 	bool part(const ft_irc::Client &client, const std::string &reason = "");
 
 	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
+	void names(const ft_irc::Client &client) const;
 
 public:
 
