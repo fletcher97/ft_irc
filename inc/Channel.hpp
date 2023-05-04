@@ -84,6 +84,7 @@ public:
 
 	bool isInChannel(const Client &client) const;
 	bool isInChannel(const std::string &nickname) const;
+
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);
@@ -93,6 +94,7 @@ public:
 
 	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
 	void broadcast(ft_irc::commands cmd, const std::string arg = "") const;
+	void names(const ft_irc::Client &client) const;
 
 public:
 

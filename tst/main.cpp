@@ -5,6 +5,7 @@
 #include "CommunicationsUT.hpp"
 #include "MatcherUT.hpp"
 #include "ParserUT.hpp"
+#include "ReplyUT.hpp"
 #include "ServerUT.hpp"
 
 using ft_irc::ChannelUT;
@@ -13,6 +14,7 @@ using ft_irc::CommunicationsUT;
 using ft_irc::MatcherUT;
 using ft_irc::ParserUT;
 using ft_irc::ServerUT;
+using ft_irc::ReplyUT;
 
 int
 main(void)
@@ -23,6 +25,7 @@ main(void)
 	ADD_TEST(MatcherUT)
 	ADD_TEST(ParserUT)
 	ADD_TEST(ServerUT)
+	ADD_TEST(ReplyUT)
 
 	flt::TestCollection::instance().test();
 	flt::TestCollection::instance().report(std::cout);

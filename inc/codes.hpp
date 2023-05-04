@@ -1,7 +1,12 @@
 #if !defined(NUMERICS_HPP)
 #define NUMERICS_HPP
 
+#include <iomanip>
+#include <sstream>
 #include <string>
+
+#define SSTR(x)\
+		static_cast< const std::ostringstream & >( ( std::ostringstream() << std::dec << std::setw(3) << std::setfill('0') << x ) ).str()
 
 namespace ft_irc
 {
@@ -64,7 +69,7 @@ enum codes
 	RPL_CREATED = 003,
 	RPL_MYINFO = 004,
 	RPL_ISUPPORT = 005,
-	RPL_BOUNCE = 010,
+	RPL_BOUNCE = 10,
 	RPL_UMODEIS = 221,
 	RPL_LUSERCLIENT = 251,
 	RPL_LUSEROP = 252,
@@ -138,9 +143,12 @@ enum codes
 	ERR_TOOMANYCHANNELS = 405,
 	ERR_WASNOSUCHNICK = 406,
 	ERR_NOORIGIN = 409,
+	ERR_NORECIPIENT = 411,
+	ERR_NOTEXTTOSEND = 412,
 	ERR_INPUTTOOLONG = 417,
 	ERR_UNKNOWNCOMMAND = 421,
 	ERR_NOMOTD = 422,
+	ERR_NONICKNAMEGIVEN = 431,
 	ERR_ERRONEUSNICKNAME = 432,
 	ERR_NICKNAMEINUSE = 433,
 	ERR_USERNOTINCHANNEL = 441,
@@ -186,6 +194,15 @@ enum codes
 
 std::string toString(ft_irc::commands cmd);
 ft_irc::commands commandFromString(const std::string &cmd);
+std::string getReply(ft_irc::codes code,
+	std::string source,
+	const std::string arg1 = "",
+	const std::string arg2 = "",
+	const std::string arg3 = "",
+	const std::string arg4 = "",
+	const std::string arg5 = "",
+	const std::string arg6 = "",
+	const std::string arg7 = "");
 
 }	// namespace ft_irc
 
