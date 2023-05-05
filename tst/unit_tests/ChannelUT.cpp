@@ -17,6 +17,7 @@ ft_irc::ChannelUT::ChannelUT(void) :
 	REGISTER(ChannelUT, test_getName)
 	REGISTER(ChannelUT, test_getTopic)
 	REGISTER(ChannelUT, test_getKey)
+	REGISTER(ChannelUT, test_getTopicWhoTime)
 	REGISTER(ChannelUT, test_addClient)
 	REGISTER(ChannelUT, test_banMask)
 	REGISTER(ChannelUT, test_toggleMode)
@@ -115,6 +116,8 @@ void
 ft_irc::ChannelUT::test_setTopic(void)
 {
 	ft_irc::Client test(42, sockaddr_in());
+
+	test.setNickname("TEST");
 	std::string topic = "";
 
 
@@ -122,7 +125,7 @@ ft_irc::ChannelUT::test_setTopic(void)
 	ASSERT_THROW(ft_irc::Channel::setTopic(test, topic), ft_irc::Channel::NotOnChannel);
 
 	ft_irc::Channel::addClient(test);
-	this->_clients.at(test.getFd()).mode = 0;
+	ft_irc::Channel::_clients.at(test.getFd()).mode = 0;
 
 	LOG_TRACE("Testing setTopic with a client with no privileges on ProtectedTopic mode")
 	ft_irc::Channel::toggleMode(CH_PROTECTED_TOPIC);
@@ -150,6 +153,7 @@ ft_irc::ChannelUT::test_setTopic(void)
 	topic = "marvin";
 	ASSERT_NOTHROW(ft_irc::Channel::setTopic(test, topic));
 	ASSERT_EQ(ft_irc::Channel::_topic, topic)
+	ASSERT_EQ(ft_irc::Channel::_topic_who_time.first, test.getMask())
 	ft_irc::Channel::_clients.clear();
 }	// ChannelUT::test_setTopic
 
@@ -230,6 +234,21 @@ ft_irc::ChannelUT::test_getKey(void)
 	LOG_TRACE("Testing getKey: marvin")
 	ASSERT_EQ(ft_irc::Channel::getKey(), "marvin")
 	ft_irc::Channel::_key = "";
+}	// ChannelUT::test_getKey
+
+
+void
+ft_irc::ChannelUT::test_getTopicWhoTime(void)
+{
+	ft_irc::Channel::_topic_who_time.first = "gemartin";
+	LOG_TRACE("Testing getTopicWhoTime.first: gmartin")
+	ASSERT_EQ(ft_irc::Channel::getTopicWhoTime().first, "gemartin")
+
+	ft_irc::Channel::_topic_who_time.second = "1683032223";
+	LOG_TRACE("Testing getTopicWhoTime: 1683032223")
+	ASSERT_EQ(ft_irc::Channel::getTopicWhoTime().second, "1683032223")
+	ft_irc::Channel::_topic_who_time.first = "";
+	ft_irc::Channel::_topic_who_time.second = "";
 }	// ChannelUT::test_getKey
 
 

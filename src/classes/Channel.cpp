@@ -1,3 +1,6 @@
+#include <ctime>
+#include <sstream>
+
 #include "Log.hpp"
 
 #include "Channel.hpp"
@@ -8,7 +11,8 @@ ft_irc::Channel::Channel(void) :
 	_key(),
 	_clients(),
 	_mode(),
-	_client_limit()
+	_client_limit(),
+	_topic_who_time()
 {
 	LOG_DEBUG("Creating new channel");
 }
@@ -18,7 +22,8 @@ ft_irc::Channel::Channel(const std::string &name) :
 	_topic(),
 	_key(),
 	_mode(),
-	_client_limit()
+	_client_limit(),
+	_topic_who_time()
 {
 	LOG_DEBUG("Creating new channel")
 	this->setName(name);
@@ -32,7 +37,8 @@ ft_irc::Channel::Channel(const ft_irc::Channel &c) :
 	_key(c._key),
 	_clients(c._clients),
 	_mode(c._mode),
-	_client_limit(c._client_limit)
+	_client_limit(c._client_limit),
+	_topic_who_time(c._topic_who_time)
 {}
 
 ft_irc::Channel&
@@ -44,6 +50,7 @@ ft_irc::Channel::operator=(const ft_irc::Channel &c)
 	this->_clients = c._clients;
 	this->_mode = c._mode;
 	this->_client_limit = c._client_limit;
+	this->_topic_who_time = c._topic_who_time;
 
 	return *this;
 }	// =
@@ -76,6 +83,13 @@ ft_irc::Channel::getKey(void) const
 }	// Channel::getKey
 
 
+const std::pair< std::string, std::string >&
+ft_irc::Channel::getTopicWhoTime(void) const
+{
+	return this->_topic_who_time;
+}	// Channel::getTopicWhoTime
+
+
 void
 ft_irc::Channel::setName(const std::string &name)
 {
@@ -95,8 +109,11 @@ ft_irc::Channel::setName(const std::string &name)
 
 
 void
-ft_irc::Channel::setTopic(ft_irc::Client &source, std::string &topic)
+ft_irc::Channel::setTopic(ft_irc::Client &source, const std::string &topic)
 {
+	timespec now;
+	std::ostringstream converter;
+
 	if (!this->_clients.count(source.getFd())) {
 		LOG_WARN("setTopic called with a client not on channel");
 		throw ft_irc::Channel::NotOnChannel();
@@ -110,6 +127,12 @@ ft_irc::Channel::setTopic(ft_irc::Client &source, std::string &topic)
 	}
 	LOG_INFO("Channel's topic changed from: " << this->_topic << " to: " << topic)
 	this->_topic = topic;
+	this->_topic_who_time.first = source.getMask();
+	clock_gettime(CLOCK_REALTIME, &now);
+	converter.precision(0);
+	converter << std::fixed << static_cast< double >(now.tv_sec);
+	this->_topic_who_time.second = converter.str();
+	LOG_INFO("setTopic: topic changed by " << this->_topic_who_time.first << " at " << this->_topic_who_time.second)
 }	// Channel::setTopic
 
 
@@ -156,9 +179,9 @@ ft_irc::Channel::isInChannel(const ft_irc::Client &client) const
 
 
 bool
-ft_irc::Channel::isInChannel(const std::string &nickname)
+ft_irc::Channel::isInChannel(const std::string &nickname) const
 {
-	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->second.client.getNickname() == nickname) {
 			LOG_INFO("isInChannel client in channel: " << nickname)
 
@@ -301,6 +324,18 @@ ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, cons
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
 		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+	}
+}	// Channel::broadcast
+
+
+void
+ft_irc::Channel::broadcast(ft_irc::commands cmd, const std::string arg) const
+{
+	LOG_DEBUG("broadcast Command overload: " << ft_irc::toString(cmd) << " " << arg)
+	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
+
+		it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
 	}
 }	// Channel::broadcast
 
