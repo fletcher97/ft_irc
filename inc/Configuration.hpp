@@ -32,6 +32,7 @@ public:
 	const std::string& get_psswd(void) const;
 	const std::vector< std::string > get_admins(void) const;
 	const std::string& get_svname(void) const;
+	bool find_admin(std::string name) const;
 };	// class Configuration
 
 }	// namespace ft_irc

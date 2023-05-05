@@ -66,6 +66,7 @@ ft_irc::Configuration::init_config()
 
 			if (key.substr(0, equal) == "name") {
 				this->_server_name = value;
+				ft_irc::Server::getInstance().setName(this->_server_name);
 			} else if (key.substr(0, equal) == "port") {
 				this->_port = atoi(value.c_str());
 			} else if (key.substr(0, equal) == "password") {
@@ -94,10 +95,20 @@ ft_irc::Configuration::init_config()
 			}
 		}
 	}
-
 	return true;
 }	// Configuration::init_config
 
+bool ft_irc::Configuration::find_admin(std::string name) const
+{
+	unsigned long i = 0;
+	while (i < this->_admins.size())
+	{
+		if (this->_admins[i] == name)
+			return true;
+		i++;
+	}
+	return false;
+}
 
 const std::string&
 ft_irc::Configuration::get_svname(void) const

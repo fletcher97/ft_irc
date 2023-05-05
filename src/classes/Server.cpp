@@ -39,6 +39,10 @@ ft_irc::Server::~Server(void)
 	LOG_INFO("Removed server");
 }	// Server::~Server
 
+void ft_irc::Server::setName(std::string name)
+{
+	this->_name = name;
+}
 
 void
 ft_irc::Server::run(void)
