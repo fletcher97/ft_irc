@@ -95,20 +95,26 @@ ft_irc::Configuration::init_config()
 			}
 		}
 	}
+
 	return true;
 }	// Configuration::init_config
 
-bool ft_irc::Configuration::find_admin(std::string name) const
+
+bool
+ft_irc::Configuration::find_admin(std::string name) const
 {
 	unsigned long i = 0;
-	while (i < this->_admins.size())
-	{
-		if (this->_admins[i] == name)
+
+	while (i < this->_admins.size()) {
+		if (this->_admins[i] == name) {
 			return true;
+		}
 		i++;
 	}
+
 	return false;
-}
+}	// Configuration::find_admin
+
 
 const std::string&
 ft_irc::Configuration::get_svname(void) const

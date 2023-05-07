@@ -48,12 +48,15 @@ ft_irc::Communications::init(int port, const char *psswd)
 {
 	if (_server_config.init_config() == false) {
 		LOG_FATAL("Config file fatal error")
+
 		return false;
 	}
-	if (port == 0)
+	if (port == 0) {
 		port = _server_config.get_port();
-	if (psswd == NULL)
+	}
+	if (psswd == NULL) {
 		psswd = _server_config.get_psswd().c_str();
+	}
 	if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		LOG_FATAL("Error creating socket")
 
