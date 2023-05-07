@@ -196,7 +196,7 @@ modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::
 static bool
 updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &add)
 {
-	u_int8_t mode = 0;
+	ft_irc::Channel::channel_mode mode = 0;
 
 	switch (c) {
 		case 'i': {
@@ -259,7 +259,7 @@ updateList(bool &add,
 	std::map< std::string, ft_irc::Channel::mask_mode > &masks,
 	const ft_irc::Parser::cmd_t *cmd,
 	long unsigned int &pos,
-	u_int8_t maskValue)
+	ft_irc::Channel::channel_mode maskValue)
 {
 	// Look for existing masks
 	for (ft_irc::Channel::mask_iterator it = masks.begin(); it != masks.end(); it++) {
@@ -301,11 +301,11 @@ updateList(bool &add,
 static bool
 updateChannelList(ft_irc::Client &client,
 	bool &add,
-	u_int8_t &listProc,
+	ft_irc::Channel::channel_mode &listProc,
 	ft_irc::Channel &chan,
 	const ft_irc::Parser::cmd_t *cmd,
 	long unsigned int &pos,
-	u_int8_t maskValue)
+	ft_irc::Channel::channel_mode maskValue)
 {
 	std::map< std::string, ft_irc::Channel::mask_mode > &masks = chan.getMasks();
 
@@ -331,12 +331,12 @@ static bool
 updateChannelLists(ft_irc::Client &client,
 	char c,
 	bool &add,
-	u_int8_t &listProc,
+	ft_irc::Channel::channel_mode &listProc,
 	ft_irc::Channel &chan,
 	const ft_irc::Parser::cmd_t *cmd,
 	long unsigned int &pos)
 {
-	u_int8_t maskValue;
+	ft_irc::Channel::channel_mode maskValue;
 
 	switch (c) {
 		case 'b': {
@@ -463,7 +463,7 @@ modeChannel(ft_irc::Client &client,
 	bool add = (cmd->args[1][0] != '-');// default to add if no sign is specified
 	std::string added, removed;
 	std::list< std::pair< std::string, std::string > > listResponse;
-	u_int8_t listsSent = 0;
+	ft_irc::Channel::channel_mode listsSent = 0;
 	long unsigned int pos = 2;
 
 	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
