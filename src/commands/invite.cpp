@@ -82,7 +82,7 @@ ft_irc::Server::invite(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), ft_irc::toString(cmd->cmd),
 			cmd->args.at(1)));
 	} catch (ft_irc::Channel::AlreadyOnChannel &e) {
-		LOG_WARN("invite: 442: " << client.getNickname() << " Use already in channel: " << cmd->args.at(
+		LOG_WARN("invite: 442: " << client.getNickname() << " User already in channel: " << cmd->args.at(
 			0) << " " << cmd->args.at(1))
 		client.sendMsg(ft_irc::getReply(ft_irc::ERR_USERONCHANNEL, client.getNickname(), cmd->args.at(0),
 			cmd->args.at(1)));
