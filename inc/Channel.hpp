@@ -8,18 +8,23 @@
 #include "codes.hpp"
 #include "Client.hpp"
 
+// Channel modes
 #define CH_INVITE_ONLY 0x01
 #define CH_MODERATE 0x02
 #define CH_SECRET 0x04
 #define CH_PROTECTED_TOPIC 0x08
 #define CH_NOT_EXTERNAL_MSGS 0x10
+#define CH_LIMIT 0x20
+#define CH_KEY 0x40
 
+// Client perms on channel
 #define CH_FOUNDER 0x01
 #define CH_PROTECTED 0x02
 #define CH_OPERATOR 0x04
 #define CH_HALFOP 0x08
 #define CH_VOICE 0x10
 
+// Channel mask modes
 #define CH_BAN 0x01
 #define CH_EXCEPTION 0x02
 #define CH_INVITE 0x04
@@ -75,12 +80,15 @@ public:
 	const std::string& getTopic(void) const;
 	const std::string& getKey(void) const;
 	const channel_mode& getMode(void) const;
+	size_t getClientLimit() const;
 	const std::pair< std::string, std::string >& getTopicWhoTime(void) const;
 
 	void setName(const std::string &name);
 	void setTopic(ft_irc::Client &source, const std::string &topic);
-	void setKey(std::string &key);
+	void setKey(const std::string &key);
+	void removeKey(void);
 	void setClientLimit(long limit);
+	void removeClientLimit(void);
 	void toggleMode(const char mode);
 
 	bool isInChannel(const Client &client) const;

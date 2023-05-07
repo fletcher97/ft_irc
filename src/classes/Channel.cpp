@@ -97,6 +97,13 @@ ft_irc::Channel::getMode(void) const
 }	// Channel::getMode
 
 
+size_t
+ft_irc::Channel::getClientLimit() const
+{
+	return this->_client_limit;
+}	// Channel::getClientLimit
+
+
 void
 ft_irc::Channel::setName(const std::string &name)
 {
@@ -144,7 +151,7 @@ ft_irc::Channel::setTopic(ft_irc::Client &source, const std::string &topic)
 
 
 void
-ft_irc::Channel::setKey(std::string &key)
+ft_irc::Channel::setKey(const std::string &key)
 {
 	if (key.length() == 0) {
 		LOG_WARN("setKet with an empty string");
@@ -152,6 +159,14 @@ ft_irc::Channel::setKey(std::string &key)
 	}
 	LOG_INFO("Channel's key changed from: " << this->_key << " to: " << key)
 	this->_key = key;
+}	// Channel::setKey
+
+
+void
+ft_irc::Channel::removeKey(void)
+{
+	LOG_INFO("Channel's key was removed")
+	this->_key = "";
 }	// Channel::setKey
 
 
@@ -165,6 +180,13 @@ ft_irc::Channel::setClientLimit(long limit)
 	LOG_INFO("Channel's limit changed from: " << this->_client_limit << " to: " << limit)
 	this->_client_limit = limit;
 }	// Channel::setClientLimit
+
+
+void
+ft_irc::Channel::removeClientLimit(void)
+{
+	this->_client_limit = 0;
+}	// Channel::removeKey
 
 
 void
