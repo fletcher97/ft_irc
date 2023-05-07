@@ -11,27 +11,30 @@ preChecks(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
 	// check state
 	if (client.getStatus() == ft_irc::Client::PASSWORD) {
-		LOG_WARN("mode: Client didn't set the password yet")
+		LOG_WARN("MODE: Client didn't set the password yet")
 		client.sendMsg("ERROR :Password required");
 
 		return false;
 	}
 	if (client.getStatus() == ft_irc::Client::REGISTER) {
-		LOG_WARN("mode: Client " << client.getFd() << "hasn't registered yet ")
-		client.sendMsg("451");	// 451 - ERR_NOTREGISTERED
+		LOG_WARN("MDOE: " + ft_irc::getReply(ft_irc::ERR_NOTREGISTERED, client.getNickname()))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOTREGISTERED, client.getNickname()));
 
 		return false;
 	}
 	// check target
 	if (!cmd->args.size()) {
-		LOG_WARN("mode: 461: Need more params")
-		client.sendMsg("461");	// 461 - ERR_NEEDMOREPARAMS
+		LOG_WARN("MDOE: " + ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(), "MODE"))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(), "MODE"));
 
 		return false;
 	}
 
 	return true;
 }	// preChecks
+
+
+////////// MODIFY MODE //////////
 
 
 static bool
@@ -91,106 +94,13 @@ updateClientMode(ft_irc::Client &client, char c, bool &add)
 		}
 
 		default: {
-			LOG_WARN("mode: 221 " + client.getNickname() + " " + c + " :Unknown MODE flag")
-			client.sendMsg("221 " + client.getNickname() + " " + c + " :Unknown MODE flag");// 221 - RPL_UMODEIS
+			LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c))
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c));
 
 			return false;
 		}
 	}	// updateClientMode
 }	// updateClientMode
-
-
-static void
-updatedResponse(std::string &added, std::string &removed, char c, bool add)
-{
-	if (add && (added.find(c) == std::string::npos)) {
-		added += c;
-		if ((removed.find(c) != std::string::npos)) {
-			removed.erase(std::remove(removed.begin(), removed.end(), c), removed.end());
-		}
-	} else if (!add && (removed.find(c) == std::string::npos)) {
-		removed += c;
-		if ((added.find(c) != std::string::npos)) {
-			added.erase(std::remove(added.begin(), added.end(), c), added.end());
-		}
-	}
-}	// updatedResponse
-
-
-static void
-updatedListResponse(std::list< std::pair< std::string, std::string > > listResponse, char c, bool add, std::string mask)
-{
-	std::string first = (add ? "+" : "-") + c;
-	std::string rfirst = (!add ? "+" : "-") + c;
-
-	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
-		 it != listResponse.end();
-		 it++)
-	{
-		if ((it->first == rfirst) && (it->second == mask)) {
-			listResponse.erase(it);
-
-			return;
-		}
-	}
-	listResponse.push_back(std::pair< std::string, std::string >(first, mask));
-}	// updateListResponse
-
-
-static void
-modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::map< int, ft_irc::Client* > clients)
-{
-	bool found = false;
-
-	// User exists check
-	for (std::map< int, ft_irc::Client* >::const_iterator it = clients.begin(); it != clients.end() && !found; it++) {
-		if (it->second->getNickname() == cmd->args[0]) {
-			found = true;
-		}
-	}
-	if (!found) {
-		LOG_WARN("mode: 401: No such nick")
-		client.sendMsg("401");	// 401 - ERR_NOSUCHNICK
-
-		return;
-	}
-
-	// Same user check
-	if (cmd->args[0] != client.getNickname()) {
-		LOG_WARN("mode: 502: Cant change mode for other users")
-		client.sendMsg("502");	// 502 - ERR_USERSDONTMATCH
-
-		return;
-	}
-
-	// get client modes
-	if (cmd->args.size() == 1) {
-		ft_irc::Client::mode_t mmodes = client.getMode();
-		std::string smodes = "+";
-
-		smodes += ((mmodes & CL_INVISIBLE) ? "i" : "");
-		smodes += ((mmodes & CL_LOCALOP) ? "O" : "");
-		smodes += ((mmodes & CL_OP) ? "o" : "");
-		smodes += ((mmodes & CL_WALLOPS) ? "w" : "");
-		LOG_INFO("mode: 221: " + smodes)
-		client.sendMsg("221 " + client.getNickname() + " " + smodes);	// 221 - RPL_UMODEIS
-
-		return;
-	}
-
-	bool add = (cmd->args[1][0] != '-');// default to add if no sign is specified
-	std::string added, removed;
-
-	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
-		if (updateClientMode(client, cmd->args[1][i], add)) {
-			updatedResponse(added, removed, cmd->args[1][i], add);
-		}
-	}	// switch
-	LOG_INFO("mode: 221: MDOE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
-		+ (removed.size() ? "-" + removed : ""))
-	client.sendMsg("MODE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
-		+ (removed.size() ? "-" + removed : ""));	// 221 - RPL_UMODEIS
-}	// modeClient
 
 
 static bool
@@ -237,8 +147,8 @@ updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &ad
 		}
 
 		default: {
-			LOG_WARN("mode: 472 :is unknown mode char to me")
-			client.sendMsg("472 :is unknown mode char to me");	// 472 - ERR_UNKNOWNMODE
+			LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c))
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c));
 
 			return false;
 		}
@@ -252,6 +162,88 @@ updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &ad
 
 	return true;
 }	// updateServerMode
+
+
+static bool
+updateChannelConfig(ft_irc::Client &client,
+	ft_irc::Channel &chan,
+	char c,
+	bool &add,
+	const ft_irc::Parser::cmd_t *cmd,
+	long unsigned int pos)
+{
+	switch (c) {
+		case 'k': {
+			// TODO: PERMS?
+			if (pos >= cmd->args.size()) {
+				LOG_WARN("MDOE: "
+					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + (add ? '+' : '-') + 'k'))
+				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + (add ? '+' : '-') + 'k'));
+
+				return false;
+			}
+			std::string key = chan.getKey();
+			std::string given_key = cmd->args[pos++];
+
+			if (add) {
+				// add
+				if (key.empty()) {
+					chan.setKey(given_key);
+
+					return true;
+				}
+			} else {
+				if (key == given_key) {
+					chan.removeKey();
+
+					return true;
+				}
+			}
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_INVALIDMODEPARAM, client.getNickname(), cmd->args[0],
+				std::string() + c, given_key, "Channel key already set"));
+
+			return false;
+		}
+
+		case 'l': {
+			if (pos >= cmd->args.size()) {
+				LOG_WARN("MDOE: "
+					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + (add ? '+' : '-') + 'k'))
+				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + (add ? '+' : '-') + 'k'));
+
+				return false;
+			}
+
+			for (std::string::const_iterator it = cmd->args[pos].begin(); it != cmd->args[pos].end(); it++) {
+				if (!isdigit(*it)) {
+					pos++;
+
+					return false;
+				}
+			}
+			size_t newLimit = atol(cmd->args[pos++].c_str());
+
+			if (newLimit != chan.getClientLimit()) {
+				chan.setClientLimit(newLimit);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		default: {
+			LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c))
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c));
+
+			return false;
+		}
+	}	// switch
+}	// updateChanelConfig
 
 
 static bool
@@ -316,9 +308,10 @@ updateChannelList(ft_irc::Client &client,
 		listProc |= maskValue;
 		for (ft_irc::Channel::mask_iterator it = masks.begin(); it != masks.end(); it++) {
 			if (it->second & maskValue) {
-				client.sendMsg("367 " + client.getNickname() + " " + chan.getName() + " " + it->first);	// TODO: write ban message
+				client.sendMsg(ft_irc::getReply(ft_irc::RPL_BANLIST, client.getNickname(), chan.getName(), it->first));
 			}
 		}
+		client.sendMsg(ft_irc::getReply(ft_irc::RPL_ENDOFBANLIST, client.getNickname(), chan.getName()));
 
 		return false;
 	}
@@ -355,8 +348,8 @@ updateChannelLists(ft_irc::Client &client,
 		}
 
 		default: {
-			LOG_WARN("mode: 472 :is unknown mode char to me")
-			client.sendMsg("472 :is unknown mode char to me");	// 472 - ERR_UNKNOWNMODE
+			LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c))
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + c));
 
 			return false;
 		}
@@ -366,18 +359,96 @@ updateChannelLists(ft_irc::Client &client,
 }	// updateChannelLists
 
 
+////////// UPDATE REPLIES //////////
+
+
 static void
-sendResponse(ft_irc::Client &client,
+updatedResponse(std::string &added, std::string &removed, char c, bool add)
+{
+	if (add && (added.find(c) == std::string::npos)) {
+		added += c;
+		if ((removed.find(c) != std::string::npos)) {
+			removed.erase(std::remove(removed.begin(), removed.end(), c), removed.end());
+		}
+	} else if (!add && (removed.find(c) == std::string::npos)) {
+		removed += c;
+		if ((added.find(c) != std::string::npos)) {
+			added.erase(std::remove(added.begin(), added.end(), c), added.end());
+		}
+	}
+}	// updatedResponse
+
+
+static void
+updatedConfigResponse(char c,
+	bool add,
+	const std::string &param,
+	std::list< std::pair< std::string, std::string > > listResponse)
+{
+	std::string first = (add ? "+" : "-") + c;
+	std::string rfirst = (!add ? "+" : "-") + c;
+
+	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
+		 it != listResponse.end();
+		 it++)
+	{
+		if ((it->first == rfirst)) {
+			listResponse.erase(it);
+
+			return;
+		}
+	}
+	listResponse.push_back(std::pair< std::string, std::string >(first, param));
+}	// updatedConfigResponse
+
+
+static void
+updatedListResponse(std::list< std::pair< std::string, std::string > > listResponse, char c, bool add, std::string mask)
+{
+	std::string first = (add ? "+" : "-") + c;
+	std::string rfirst = (!add ? "+" : "-") + c;
+
+	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
+		 it != listResponse.end();
+		 it++)
+	{
+		if ((it->first == rfirst) && (it->second == mask)) {
+			listResponse.erase(it);
+
+			return;
+		}
+	}
+	listResponse.push_back(std::pair< std::string, std::string >(first, mask));
+}	// updateListResponse
+
+
+////////// SEND REPLIES //////////
+
+static void
+sendChanResponse(ft_irc::Client &client,
 	std::string added,
 	std::string removed,
 	std::list< std::pair< std::string,
-	std::string > > listResponse)
+	std::string > > listResponse,
+	std::list< std::pair< std::string, std::string > > configResponse)
 {
 	std::string response;
 	std::string masks;
 
 	if (added.size()) {
 		response = added;
+	}
+	for (std::list< std::pair< std::string, std::string > >::iterator it = configResponse.begin();
+		 it != configResponse.end();
+		 it++)
+	{
+		if (it->first[0] == '+') {
+			if (!response.size()) {
+				response = "+";
+			}
+			response += it->first[1];
+			masks += " " + it->second;
+		}
 	}
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
@@ -391,8 +462,21 @@ sendResponse(ft_irc::Client &client,
 			masks += " " + it->second;
 		}
 	}
+
 	if (removed.size()) {
 		response += '-' + removed;
+	}
+	for (std::list< std::pair< std::string, std::string > >::iterator it = configResponse.begin();
+		 it != configResponse.end();
+		 it++)
+	{
+		if (it->first[0] == '-') {
+			if (response.find("-") == std::string::npos) {
+				response += "-";
+			}
+			response += it->first[1];
+			masks += " " + it->second;
+		}
 	}
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
@@ -406,11 +490,71 @@ sendResponse(ft_irc::Client &client,
 			masks += " " + it->second;
 		}
 	}
-	response += " " + masks;
+
+	response += masks;
 	if (response.size()) {
 		client.sendMsg("MODE " + response);
 	}
-}	// sendResponse
+}	// sendChanResponse
+
+
+////////// MAIN FUNCTIONS //////////
+
+
+static void
+modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::map< int, ft_irc::Client* > clients)
+{
+	bool found = false;
+
+	// User exists check
+	for (std::map< int, ft_irc::Client* >::const_iterator it = clients.begin(); it != clients.end() && !found; it++) {
+		if (it->second->getNickname() == cmd->args[0]) {
+			found = true;
+		}
+	}
+	if (!found) {
+		LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_NOSUCHNICK, client.getNickname(), cmd->args[0]))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOSUCHNICK, client.getNickname(), cmd->args[0]));
+
+		return;
+	}
+
+	// Same user check
+	if (cmd->args[0] != client.getNickname()) {
+		LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_USERSDONTMATCH, client.getNickname()))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_USERSDONTMATCH, client.getNickname()));
+
+		return;
+	}
+
+	// get client modes
+	if (cmd->args.size() == 1) {
+		ft_irc::Client::mode_t mmodes = client.getMode();
+		std::string smodes = "+";
+
+		smodes += ((mmodes & CL_INVISIBLE) ? "i" : "");
+		smodes += ((mmodes & CL_LOCALOP) ? "O" : "");
+		smodes += ((mmodes & CL_OP) ? "o" : "");
+		smodes += ((mmodes & CL_WALLOPS) ? "w" : "");
+		LOG_INFO("MODE: " + ft_irc::getReply(ft_irc::RPL_UMODEIS, client.getNickname(), smodes))
+		client.sendMsg(ft_irc::getReply(ft_irc::RPL_UMODEIS, client.getNickname(), smodes));
+
+		return;
+	}
+
+	bool add = (cmd->args[1][0] != '-');// default to add if no sign is specified
+	std::string added, removed;
+
+	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
+		if (updateClientMode(client, cmd->args[1][i], add)) {
+			updatedResponse(added, removed, cmd->args[1][i], add);
+		}
+	}	// switch
+	LOG_INFO("MODE: MDOE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
+		+ (removed.size() ? "-" + removed : ""))
+	client.sendMsg("MODE " + client.getNickname() + " :" + (added.size() ? "+" + added : "")
+		+ (removed.size() ? "-" + removed : ""));
+}	// modeClient
 
 
 static void
@@ -431,8 +575,8 @@ modeChannel(ft_irc::Client &client,
 		}
 	}
 	if (!chan) {
-		LOG_WARN("mode: 403: No such channel")
-		client.sendMsg("403");	// 401 - ERR_NOSUCHNICK
+		LOG_WARN("MODE: " + ft_irc::getReply(ft_irc::ERR_NOSUCHCHANNEL, client.getNickname(), cmd->args[0]))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOSUCHCHANNEL, client.getNickname(), cmd->args[0]));
 
 		return;
 	}
@@ -441,21 +585,33 @@ modeChannel(ft_irc::Client &client,
 	if (cmd->args.size() == 1) {
 		ft_irc::Channel::channel_mode mmode = chan->getMode();
 		std::string smode = "+";
+		std::string args = "";
 
 		smode += ((mmode & CH_INVITE_ONLY) ? "i" : "");
 		smode += ((mmode & CH_MODERATE) ? "m" : "");
 		smode += ((mmode & CH_SECRET) ? "s" : "");
 		smode += ((mmode & CH_PROTECTED_TOPIC) ? "t" : "");
 		smode += ((mmode & CH_NOT_EXTERNAL_MSGS) ? "n" : "");
-		LOG_INFO("mode: 324: " + smode)
-		client.sendMsg("324 " + client.getNickname() + " " + chan->getName() + " :" + smode);	// 221 - RPL_UMODEIS
+		// add key
+		if (!chan->getKey().empty()) {
+			smode += 'k';
+			args += " " + chan->getKey();
+		}
+		// add limit
+		if (chan->getClientLimit()) {
+			smode += 'l';
+			args += " " + SSTR(chan->getClientLimit());
+		}
+		LOG_INFO("MODE: "
+			+ ft_irc::getReply(ft_irc::RPL_CHANNELMODEIS, client.getNickname(), chan->getName(), smode, args))
+		client.sendMsg(ft_irc::getReply(ft_irc::RPL_CHANNELMODEIS, client.getNickname(), chan->getName(), smode, args));
 
 		return;
 	}
 
 	if (!(client.getMode() & (CH_OPERATOR | CH_HALFOP | CH_FOUNDER))) {
-		LOG_WARN("mode: 482: :You're not channel operator")
-		client.sendMsg("482: You're not channel operator");	// 482 - ERR_CHANOPRIVSNEEDED
+		LOG_WARN("MODE" + ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), chan->getName()))
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), chan->getName()));
 
 		return;
 	}
@@ -463,27 +619,35 @@ modeChannel(ft_irc::Client &client,
 	bool add = (cmd->args[1][0] != '-');// default to add if no sign is specified
 	std::string added, removed;
 	std::list< std::pair< std::string, std::string > > listResponse;
+	std::list< std::pair< std::string, std::string > > configResponse;
 	ft_irc::Channel::channel_mode listsSent = 0;
 	long unsigned int pos = 2;
 
 	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
-		// Parse type D
 		if ((std::string("+-imstn").find(cmd->args[1][i]) != std::string::npos)) {
+			// Parse type D
 			if (updateServerMode(client, *chan, cmd->args[1][i], add)) {
 				updatedResponse(added, removed, cmd->args[1][i], add);
 			}
+		} else if ((std::string("lk").find(cmd->args[1][i]) != std::string::npos)) {
+			// Parse type C
+			if (updateChannelConfig(client, *chan, cmd->args[1][i], add, cmd, pos)) {
+				updatedConfigResponse(cmd->args[1][i], add, cmd->args[pos - 1], configResponse);
+			}
 		} else if ((std::string("beI").find(cmd->args[1][i]) != std::string::npos)) {
-			// Parse A
+			// Parse type A
 			if (updateChannelLists(client, cmd->args[1][i], add, listsSent, *chan, cmd, pos)) {
 				updatedListResponse(listResponse, cmd->args[1][i], add, cmd->args[pos - 1]);
 			}
 		} else {
-			LOG_WARN("mode: 472 :is unknown mode char to me")
-			client.sendMsg("472 :is unknown mode char to me");	// 472 - ERR_UNKNOWNMODE
+			LOG_WARN("MODE: "
+				+ ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(), std::string() + cmd->args[1][i]))
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_UNKNOWNMODE, client.getNickname(),
+				std::string() + cmd->args[1][i]));
 		}
 	}
 
-	sendResponse(client, added, removed, listResponse);
+	sendChanResponse(client, added, removed, listResponse, configResponse);
 }	// modeChannel
 
 
