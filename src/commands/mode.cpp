@@ -430,13 +430,14 @@ sendChanResponse(ft_irc::Client &client,
 	std::string removed,
 	std::list< std::pair< std::string,
 	std::string > > listResponse,
-	std::list< std::pair< std::string, std::string > > configResponse)
+	std::list< std::pair< std::string, std::string > > configResponse,
+	const std::string &chanName)
 {
 	std::string response;
 	std::string masks;
 
 	if (added.size()) {
-		response = added;
+		response = '+' + added;
 	}
 	for (std::list< std::pair< std::string, std::string > >::iterator it = configResponse.begin();
 		 it != configResponse.end();
@@ -493,7 +494,8 @@ sendChanResponse(ft_irc::Client &client,
 
 	response += masks;
 	if (response.size()) {
-		client.sendMsg("MODE " + response);
+		client.sendMsg("MODE " + chanName + " " + response);
+		// client.sendMsg("MODE " + response);
 	}
 }	// sendChanResponse
 
@@ -647,7 +649,7 @@ modeChannel(ft_irc::Client &client,
 		}
 	}
 
-	sendChanResponse(client, added, removed, listResponse, configResponse);
+	sendChanResponse(client, added, removed, listResponse, configResponse, chan->getName());
 }	// modeChannel
 
 
