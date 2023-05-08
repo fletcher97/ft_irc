@@ -609,7 +609,7 @@ modeChannel(ft_irc::Client &client,
 		return;
 	}
 
-	if (!(client.getMode() & (CH_OPERATOR | CH_HALFOP | CH_FOUNDER))) {
+	if (!(chan->isFounder(client) || chan->isOp(client) || chan->isHalfOp(client))) {
 		LOG_WARN("MODE" + ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), chan->getName()))
 		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), chan->getName()));
 
