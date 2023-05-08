@@ -178,9 +178,9 @@ updateChannelConfig(ft_irc::Client &client,
 			if (pos >= cmd->args.size()) {
 				LOG_WARN("MDOE: "
 					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + (add ? '+' : '-') + 'k'))
+					"MODE " + std::string((add ? "+" : "-")) + 'k'))
 				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + (add ? '+' : '-') + 'k'));
+					"MODE " + std::string((add ? "+" : "-")) + 'k'));
 
 				return false;
 			}
@@ -211,9 +211,9 @@ updateChannelConfig(ft_irc::Client &client,
 			if (pos >= cmd->args.size()) {
 				LOG_WARN("MDOE: "
 					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + (add ? '+' : '-') + 'k'))
+					"MODE " + std::string((add ? "+" : "-")) + 'k'))
 				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + (add ? '+' : '-') + 'k'));
+					"MODE " + std::string((add ? "+" : "-")) + 'k'));
 
 				return false;
 			}
