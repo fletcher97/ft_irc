@@ -224,6 +224,71 @@ ft_irc::Channel::isInChannel(const std::string &nickname) const
 
 
 bool
+ft_irc::Channel::isFounder(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_FOUNDER;
+		}
+	}
+
+	return false;
+}	// Channel::isFounder
+
+
+bool
+ft_irc::Channel::isProtected(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_PROTECTED;
+		}
+	}
+
+	return false;
+}	// Channel::isProtected
+
+
+bool
+ft_irc::Channel::isOp(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_OPERATOR;
+		}
+	}
+
+	return false;
+}	// Channel::isOp
+
+
+bool
+ft_irc::Channel::isHalfOp(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_HALFOP;
+		}
+	}
+
+	return false;
+}	// Channel::isHalfOp
+
+
+bool
+ft_irc::Channel::isVoice(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_VOICE;
+		}
+	}
+
+	return false;
+}	// Channel::isVoice
+
+
+bool
 ft_irc::Channel::addClient(const ft_irc::Client &client)
 {
 	if (this->_clients.count(client.getFd())) {

@@ -56,6 +56,7 @@ public:
 public:
 	typedef std::map< std::string, mask_mode >::iterator mask_iterator;
 	typedef std::map< int, ClientInfo >::iterator client_iterator;
+	typedef std::map< int, ClientInfo >::const_iterator client_const_iterator;
 
 protected:
 	std::string _name;
@@ -93,6 +94,12 @@ public:
 
 	bool isInChannel(const Client &client) const;
 	bool isInChannel(const std::string &nickname) const;
+
+	bool isFounder(const Client &c) const;
+	bool isProtected(const Client &c) const;
+	bool isOp(const Client &c) const;
+	bool isHalfOp(const Client &c) const;
+	bool isVoice(const Client &c) const;
 
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
