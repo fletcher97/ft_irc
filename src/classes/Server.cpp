@@ -178,6 +178,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			break;
 		}
 
+		case ft_irc::CMD_PRIVMSG: {
+			LOG_INFO("execute: executing PRIVMSG")
+
+			this->privmsg(client, cmd);
+			break;
+		}
+
 		default: {
 			LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
 		}
