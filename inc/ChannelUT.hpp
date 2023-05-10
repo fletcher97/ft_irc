@@ -34,6 +34,8 @@ public:
 	void test_join(void);
 	void test_setClientLimit(void);
 	void test_part(void);
+
+	void test_isBanned(void);
 };	// class ChannelUT
 
 }	// namespace ft_irc
