@@ -41,6 +41,13 @@ ft_irc::Server::~Server(void)
 
 
 void
+ft_irc::Server::setName(std::string name)
+{
+	this->_name = name;
+}	// Server::setName
+
+
+void
 ft_irc::Server::run(void)
 {
 	LOG_DEBUG("Running server");

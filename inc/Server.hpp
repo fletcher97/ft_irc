@@ -22,6 +22,7 @@ protected:
 
 	std::map< int, Client* > _clients;
 	std::map< std::string, Channel* > _channels;
+	std::string _name;
 
 public:
 	static Server& getInstance(void);
@@ -30,6 +31,8 @@ public:
 
 	ft_irc::Client& getClient(const std::string &nickname) const;
 	ft_irc::Client& getClient(int fd) const;
+
+	void setName(std::string name);
 
 	void newClient(void);
 	void deleteClient(int fd, const std::string &reason = "Leaving Server");
