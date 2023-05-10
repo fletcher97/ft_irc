@@ -150,6 +150,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			break;
 		}
 
+		case ft_irc::CMD_INVITE: {
+			LOG_INFO("execute: executing INVITE")
+
+			this->invite(client, cmd);
+			break;
+		}
+
 		case ft_irc::CMD_TOPIC: {
 			LOG_INFO("execute: executing TOPIC")
 
@@ -204,3 +211,15 @@ ft_irc::Server::deleteClient(int fd, const std::string &reason)
 	delete this->_clients[fd];
 	this->_clients.erase(fd);
 }	// Server::deleteClient
+
+
+void
+ft_irc::Server::posConnection(ft_irc::Client &client)
+{
+	client.setStatus(ft_irc::Client::ONLINE);
+	LOG_INFO("user: " << client.getMask() << " is online")
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_WELCOME, client.getNickname(), "irc.42.Barcelona", client.getMask()));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_YOURHOST, client.getNickname(), "irc.42.Barcelona", "1.0"));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_MYINFO, client.getNickname(), "irc.42.Barcelona", "1.0", "ioOw",
+		"beliIkmstn"));
+}	// Server::posConnection
