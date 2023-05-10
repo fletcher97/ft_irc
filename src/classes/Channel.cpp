@@ -90,6 +90,20 @@ ft_irc::Channel::getTopicWhoTime(void) const
 }	// Channel::getTopicWhoTime
 
 
+const ft_irc::Channel::channel_mode&
+ft_irc::Channel::getMode(void) const
+{
+	return this->_mode;
+}	// Channel::getMode
+
+
+size_t
+ft_irc::Channel::getClientLimit() const
+{
+	return this->_client_limit;
+}	// Channel::getClientLimit
+
+
 void
 ft_irc::Channel::setName(const std::string &name)
 {
@@ -137,7 +151,7 @@ ft_irc::Channel::setTopic(ft_irc::Client &source, const std::string &topic)
 
 
 void
-ft_irc::Channel::setKey(std::string &key)
+ft_irc::Channel::setKey(const std::string &key)
 {
 	if (key.length() == 0) {
 		LOG_WARN("setKet with an empty string");
@@ -145,6 +159,14 @@ ft_irc::Channel::setKey(std::string &key)
 	}
 	LOG_INFO("Channel's key changed from: " << this->_key << " to: " << key)
 	this->_key = key;
+}	// Channel::setKey
+
+
+void
+ft_irc::Channel::removeKey(void)
+{
+	LOG_INFO("Channel's key was removed")
+	this->_key = "";
 }	// Channel::setKey
 
 
@@ -158,6 +180,13 @@ ft_irc::Channel::setClientLimit(long limit)
 	LOG_INFO("Channel's limit changed from: " << this->_client_limit << " to: " << limit)
 	this->_client_limit = limit;
 }	// Channel::setClientLimit
+
+
+void
+ft_irc::Channel::removeClientLimit(void)
+{
+	this->_client_limit = 0;
+}	// Channel::removeKey
 
 
 void
@@ -192,6 +221,71 @@ ft_irc::Channel::isInChannel(const std::string &nickname) const
 
 	return false;
 }	// Channel::isInChannel
+
+
+bool
+ft_irc::Channel::isFounder(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_FOUNDER;
+		}
+	}
+
+	return false;
+}	// Channel::isFounder
+
+
+bool
+ft_irc::Channel::isProtected(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_PROTECTED;
+		}
+	}
+
+	return false;
+}	// Channel::isProtected
+
+
+bool
+ft_irc::Channel::isOp(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_OPERATOR;
+		}
+	}
+
+	return false;
+}	// Channel::isOp
+
+
+bool
+ft_irc::Channel::isHalfOp(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_HALFOP;
+		}
+	}
+
+	return false;
+}	// Channel::isHalfOp
+
+
+bool
+ft_irc::Channel::isVoice(const ft_irc::Client &c) const
+{
+	for (client_const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == c.getNickname()) {
+			return it->second.mode & CH_VOICE;
+		}
+	}
+
+	return false;
+}	// Channel::isVoice
 
 
 bool
@@ -263,6 +357,13 @@ ft_irc::Channel::invite(const Client &source, const std::string &nick)
 
 	return true;
 }	// Channel::invite
+
+
+std::map< std::string, ft_irc::Channel::mask_mode >&
+ft_irc::Channel::getMasks()
+{
+	return this->_masks;
+}	// Channel::getMasks
 
 
 bool

@@ -3,6 +3,12 @@
 
 #include <string>
 
+// Client modes. Registered will not be implemented
+#define CL_INVISIBLE 0x01
+#define CL_LOCALOP 0x02
+#define CL_OP 0x04
+#define CL_WALLOPS 0x08
+
 namespace ft_irc
 {
 
@@ -18,6 +24,7 @@ public:
 		DELETE
 	};
 
+	typedef unsigned char mode_t;
 private:
 	int _fd;
 	std::string _address;
@@ -26,6 +33,7 @@ private:
 	std::string _username;
 	std::string _realname;
 	Client::Status _status;
+	mode_t _mode;
 
 protected:
 	Client(void);
@@ -46,11 +54,15 @@ public:
 	const std::string& getRealname(void) const;
 	Client::Status getStatus(void) const;
 	std::string getMask(void) const;
+	Client::mode_t getMode(void) const;
 
 	void setNickname(const std::string &nickname);
 	void setUsername(const std::string &username);
 	void setRealname(const std::string &realname);
 	void setStatus(Client::Status status);
+
+	bool addMode(const Client::mode_t mode);
+	bool removeMode(const Client::mode_t mode);
 
 	void sendMsg(const std::string &msg) const;
 };	// class Client

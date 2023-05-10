@@ -373,7 +373,17 @@ rpl_endoflinks(void)
 static std::string
 rpl_banlist(const std::string &channel, const std::string &mask, const std::string &who, const std::string &set_ts)
 {
-	return channel + " " + mask + " " + who + " " + set_ts;
+	std::string ret = "";
+
+	ret = channel + " " + mask;
+	if (!who.empty()) {
+		ret += " " + who;
+	}
+	if (!set_ts.empty()) {
+		ret += " " + set_ts;
+	}
+
+	return ret;
 }	// RPL_BANLIST
 
 

@@ -15,7 +15,8 @@ public:
 	ClientUT(void);
 	~ClientUT(void);
 
-	void test_42(void);
+	void test_add_mode(void);
+	void test_remove_mode(void);
 };	// class ClientUT
 
 }	// namespace ft_irc
