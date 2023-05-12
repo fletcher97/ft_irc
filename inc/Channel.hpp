@@ -7,6 +7,7 @@
 
 #include "codes.hpp"
 #include "Client.hpp"
+#include "Parser.hpp"
 
 // Channel modes
 #define CH_INVITE_ONLY 0x01
@@ -100,6 +101,7 @@ public:
 	bool isOp(const Client &c) const;
 	bool isHalfOp(const Client &c) const;
 	bool isVoice(const Client &c) const;
+	bool isBanned(const Client &c) const;
 
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
@@ -109,6 +111,7 @@ public:
 
 	bool join(const ft_irc::Client &client, const std::string &key = "");
 	bool part(const ft_irc::Client &client, const std::string &reason = "");
+	void privmsg(const ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::string &priv_chars = "");
 
 	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
 	void broadcast(ft_irc::commands cmd, const std::string arg = "") const;

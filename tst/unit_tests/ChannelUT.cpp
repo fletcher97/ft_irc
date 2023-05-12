@@ -26,6 +26,8 @@ ft_irc::ChannelUT::ChannelUT(void) :
 	REGISTER(ChannelUT, test_invite)
 	REGISTER(ChannelUT, test_join)
 	REGISTER(ChannelUT, test_part)
+
+	REGISTER(ChannelUT, test_isBanned)
 }
 
 
@@ -463,3 +465,18 @@ ft_irc::ChannelUT::test_part(void)
 	ft_irc::Channel::addClient(test);
 	ASSERT(ft_irc::Channel::part(test));
 }	// ChannelUT::test_part
+
+
+void
+ft_irc::ChannelUT::test_isBanned(void)
+{
+	ft_irc::Client test = ft_irc::Client(42, sockaddr_in());
+	std::string name = "test_client";
+
+	test.setNickname(name);
+	ASSERT(!ft_irc::Channel::isBanned(test))
+	ft_irc::Channel::banMask("test*");
+	ASSERT(ft_irc::Channel::isBanned(test))
+	ft_irc::Channel::_masks["test*"] |= CH_EXCEPTION;
+	ASSERT(!ft_irc::Channel::isBanned(test))
+}	// ChannelUT::test_isBanned

@@ -4,6 +4,7 @@
 #include "Log.hpp"
 
 #include "Channel.hpp"
+#include "matcher.hpp"
 
 ft_irc::Channel::Channel(void) :
 	_name(),
@@ -289,6 +290,21 @@ ft_irc::Channel::isVoice(const ft_irc::Client &c) const
 
 
 bool
+ft_irc::Channel::isBanned(const ft_irc::Client &client) const
+{
+	for (std::map< std::string, mask_mode >::const_iterator it = this->_masks.begin(); it != this->_masks.end(); it++) {
+		if (ft_irc::match(it->first, client.getMask())) {
+			if (it->second & CH_BAN && !(it->second & CH_EXCEPTION)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}	// Channel::isBanned
+
+
+bool
 ft_irc::Channel::addClient(const ft_irc::Client &client)
 {
 	if (this->_clients.count(client.getFd())) {
@@ -374,7 +390,7 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 
 		return false;
 	}
-	if (this->_masks.count(client.getMask()) && this->_masks[client.getMask()] & CH_BAN) {
+	if (this->isBanned(client)) {
 		LOG_WARN("join, client banned from channel: " << client.getNickname());
 		throw ft_irc::Channel::BannedClient();
 	}
@@ -471,6 +487,45 @@ ft_irc::Channel::names(const ft_irc::Client &client) const
 	LOG_TRACE("names: End of names")
 	client.sendMsg(ft_irc::getReply(ft_irc::RPL_ENDOFNAMES, client.getNickname(), this->_name));
 }	// Channel::names
+
+
+void
+ft_irc::Channel::privmsg(const ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::string &priv_chars)
+{
+	size_t client_priv, priv;
+
+	if (this->_mode & CH_NOT_EXTERNAL_MSGS && !this->isInChannel(client)) {
+		LOG_WARN(
+			"privmsg: Channel " << this->_name << " is in CH_NOT_EXTERNAL_MSGS mode, and " << client.getNickname() <<
+			" is not on channel")
+   throw ft_irc::Channel::NotOnChannel();
+	}
+	if (  this->_mode & CH_MODERATE
+	   && (!this->isInChannel(client) || !(this->_clients.find(client.getFd())->second.mode & CH_VOICE)))
+	{
+		LOG_WARN("privmsg: Channel " << this->_name << " is in CH_MODERATE mode and " << client.getNickname() <<
+			" has no privs")
+   throw ft_irc::Channel::NoPrivsOnChannel();
+	}
+	if (this->isBanned(client)) {
+		LOG_WARN("privmsg: Client " << client.getNickname() << " is banned from " << this->_name);
+		throw ft_irc::Channel::BannedClient();
+	}
+	priv = std::string("~+%@&").find_last_of(priv_chars);
+	LOG_DEBUG("privmsg: priv_chars: " << priv_chars << " priv: " << priv)
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		client_priv = ((it->second.mode & CH_VOICE) ? 4 : std::string::npos);
+		client_priv = ((it->second.mode & CH_HALFOP) ? 3 : client_priv);
+		client_priv = ((it->second.mode & CH_OPERATOR) ? 2 : client_priv);
+		client_priv = ((it->second.mode & CH_PROTECTED) ? 1 : client_priv);
+		client_priv = ((it->second.mode & CH_FOUNDER) ? 0 : client_priv);
+		LOG_TRACE("privmsg: " << it->second.client.getNickname() << " client_priv: " << client_priv)
+		if ((priv >= client_priv) && (it->second.client.getNickname() != client.getNickname())) {
+			it->second.client.sendMsg(":" + client.getNickname() + " " + ft_irc::toString(
+				cmd->cmd) + " " + this->_name + " " + cmd->args.at(1));
+		}
+	}
+}	// Channel::privmsg
 
 
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) :
