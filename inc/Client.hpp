@@ -8,6 +8,7 @@
 #define CL_LOCALOP 0x02
 #define CL_OP 0x04
 #define CL_WALLOPS 0x08
+#define CL_BOT 0x10
 
 namespace ft_irc
 {

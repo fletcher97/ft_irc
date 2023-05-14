@@ -1,3 +1,5 @@
+#include "Log.hpp"
+
 #include "IBot.hpp"
 
 #include "Server.hpp"
@@ -92,6 +94,8 @@ ft_irc::IBot::onInvite(std::string &chan) const
 
 	msg = "JOIN " + chan;
 	cmd = ft_irc::Parser::parse_msg(msg);
+	LOG_FATAL("IBot: Joining " + chan)
 	ft_irc::Server::getInstance().join(ft_irc::Server::getInstance().getClient(this->_fd), cmd);
+	LOG_FATAL("IBot: Joined")
 	delete cmd;
 }	// IBot::onInvite
