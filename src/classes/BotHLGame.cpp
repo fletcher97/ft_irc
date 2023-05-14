@@ -93,12 +93,16 @@ ft_irc::BotHLGame::exec(ft_irc::Parser::cmd_t *cmd) const
 		if (cmd->args.size() < 4) {
 			LOG_TRACE("BotHLGame: invalid usage")
 			this->respond(cmd, "Usage: ?hl guess <value>");
+
+			return;
 		}
 		this->respond(cmd, this->guess(std::atoi(cmd->args[3].c_str()), where));
 	} else if (cmd->args[2] == "new") {
 		if (cmd->args.size() < 4) {
 			LOG_TRACE("BotHLGame: invalid usage")
 			this->respond(cmd, "Usage: ?hl new <max_size>");
+
+			return;
 		}
 		dynamic_cast< ft_irc::BotHLGame & >(ft_irc::Server::getInstance().getClient(this->ID)).newGame(where,
 			std::atoi(cmd->args[3].c_str()));
