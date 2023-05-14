@@ -1,5 +1,6 @@
 #include <stdexcept>
 
+// #include <algorithm>
 #include <cstdlib>
 
 #include "Log.hpp"
@@ -93,6 +94,13 @@ ft_irc::BotHLGame::exec(ft_irc::Parser::cmd_t *cmd) const
 		if (cmd->args.size() < 4) {
 			LOG_TRACE("BotHLGame: invalid usage")
 			this->respond(cmd, "Usage: ?hl guess <value>");
+
+			return;
+		}
+		if (cmd->args[3].find_first_not_of("1234567890") != cmd->args[3].npos) {
+			LOG_TRACE("BotHLGame: invalid usage")
+			this->respond(cmd, "Usage: ?hl guess <value>");
+			this->respond(cmd, "    value must be a number");
 
 			return;
 		}
