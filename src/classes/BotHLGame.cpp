@@ -84,7 +84,7 @@ ft_irc::BotHLGame::exec(ft_irc::Parser::cmd_t *cmd) const
 		return;
 	}
 
-	LOG_FATAL("Arg size: " + cmd->args.size())
+	LOG_FATAL("Arg size: " << cmd->args.size())
 	for (size_t i = 0; i < cmd->args.size(); i++) {
 		LOG_FATAL(cmd->args[i])
 	}
