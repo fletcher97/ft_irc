@@ -17,6 +17,7 @@ ft_irc::ServerUT::ServerUT(void) :
 
 ft_irc::ServerUT::~ServerUT(void) {}
 
+
 void
 ft_irc::ServerUT::test_constructor(void)
 {

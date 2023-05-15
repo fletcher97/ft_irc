@@ -7,9 +7,7 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-ft_irc::Client::Client(void) :
-	_mode()
-{}
+ft_irc::Client::Client(void) {}
 
 ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	_fd(fd),
@@ -45,6 +43,7 @@ ft_irc::Client::operator=(const ft_irc::Client &c)
 	this->_username = c._username;
 	this->_realname = c._realname;
 	this->_status = c._status;
+	this->_mode = c._mode;
 
 	return *this;
 }	// =
@@ -99,22 +98,25 @@ ft_irc::Client::getStatus(void) const
 }	// Client::getStatus
 
 
+ft_irc::Client::mode_t
+ft_irc::Client::getMode(void) const
+{
+	return this->_mode;
+}	// getMode
+
+
 void
 ft_irc::Client::setNickname(const std::string &nickname)
 {
 	if (nickname.length() == 0) {
-		LOG_WARN("setNickname: called with an empty string")
-   throw std::invalid_argument("Nickname must be a non empty string");
+		LOG_WARN("setNickname: called with an empty string");
+		throw std::invalid_argument("Nickname must be a non empty string");
 	}
-	if (  (nickname.find(' ') != std::string::npos) || (nickname.find(',') != std::string::npos)
-	   || (nickname.find('*') != std::string::npos) || (nickname.find('?') != std::string::npos)
-	   || (nickname.find('!') != std::string::npos) || (nickname.find('@') != std::string::npos)
-	   || (nickname.find('$') != std::string::npos) || (nickname.find(':') != std::string::npos)
-	   || (nickname.find('#') != std::string::npos) || (nickname.find('&') != std::string::npos)
-	   || (nickname.find('.') != std::string::npos))
+	if (  (nickname.find_first_of(" ,*?!@.") != std::string::npos)
+	   || (std::string("$:#&").find_first_of(nickname[0]) != std::string::npos))
 	{
-		LOG_WARN("setNickname: called with an invalid character: " << nickname)
-   throw std::invalid_argument("Invalid character: " + nickname);
+		LOG_WARN("setNickname: invalid client nickname: " << nickname);
+		throw std::invalid_argument("Invalid character: " + nickname);
 	}
 	LOG_INFO("setNickname: changed from '" << this->_nickname << "' to '" << nickname << "'")
 	this->_nickname = nickname;
@@ -153,16 +155,30 @@ ft_irc::Client::setStatus(ft_irc::Client::Status status)
 }	// Client::setStatus
 
 
-void
-ft_irc::Client::toggleMode(const client_mode mode)
+bool
+ft_irc::Client::addMode(const Client::mode_t mode)
 {
-	if ((mode > (CL_NETWORK_OPER | CL_LOCAL_OPER | CL_INVISIBLE | CL_WALLOPS)) || (mode <= 0)) {
-		LOG_WARN("toggleMode: invalid mode: " << std::showbase << std::hex << std::uppercase << int(mode))
-   throw ft_irc::Client::InvalidMode("Invalid mode");
+	if (!(this->_mode & mode)) {
+		this->_mode |= mode;
+
+		return true;
 	}
-	LOG_INFO("toggleMode: " << std::showbase << std::hex << std::uppercase << int(mode))
-	this->_mode ^= mode;
-}	// Client::toggleMode
+
+	return false;
+}	// Client::addMode
+
+
+bool
+ft_irc::Client::removeMode(const Client::mode_t mode)
+{
+	if (this->_mode & mode) {
+		this->_mode &= ~mode;
+
+		return true;
+	}
+
+	return false;
+}	// Client::removeMode
 
 
 std::string
@@ -173,12 +189,8 @@ ft_irc::Client::getMask(void) const
 
 
 void
-ft_irc::Client::sendMsg(const std::string &msg)
+ft_irc::Client::sendMsg(const std::string &msg) const
 {
+	LOG_DEBUG("send: " << this->_nickname << ": " << msg)
 	ft_irc::Server::getInstance().sendMsg(this->_fd, msg);
 }	// Client::send
-
-
-ft_irc::Client::InvalidMode::InvalidMode(std::string msg) :
-	std::invalid_argument(msg)
-{}

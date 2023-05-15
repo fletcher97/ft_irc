@@ -4,9 +4,11 @@
 #include <string>
 #include <vector>
 #include <poll.h>
+#include "Configuration.hpp"
 
 #define MAX_CLIENTS 124
 #define COMS_MAX_READ 4096
+
 
 namespace ft_irc
 {
@@ -17,6 +19,7 @@ protected:
 	int _fd;
 	std::vector< pollfd > _pfds;
 	std::string _psswd;
+	Configuration _server_config;
 
 	typedef std::vector< pollfd >::iterator pfds_iterator;
 
@@ -35,6 +38,7 @@ public:
 	void sendMsg(int fd, const std::string &msg);
 
 	int getFd(void) const;
+	const std::string& getPsswd(void) const;
 	void addPfd(int fd);
 };	// class Communications
 

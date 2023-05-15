@@ -13,7 +13,6 @@ ft_irc::ClientUT::ClientUT(void) :
 	REGISTER(ClientUT, test_setUsername)
 	REGISTER(ClientUT, test_setRealname)
 	REGISTER(ClientUT, test_setStatus)
-	REGISTER(ClientUT, test_toggleMode)
 
 	REGISTER(ClientUT, test_getFd)
 	REGISTER(ClientUT, test_getHostname)
@@ -22,6 +21,8 @@ ft_irc::ClientUT::ClientUT(void) :
 	REGISTER(ClientUT, test_getRealname)
 	REGISTER(ClientUT, test_getStatus)
 	REGISTER(ClientUT, test_getMask)
+	REGISTER(ft_irc::ClientUT, test_add_mode)
+	REGISTER(ft_irc::ClientUT, test_remove_mode)
 }
 
 
@@ -168,50 +169,6 @@ ft_irc::ClientUT::test_setStatus(void)
 
 
 void
-ft_irc::ClientUT::test_toggleMode(void)
-{
-	LOG_TRACE("test toggleMode: invalid parameter: larger number '127'")
-	ASSERT_THROW(ft_irc::Client::toggleMode(127), ft_irc::Client::InvalidMode)
-
-	LOG_TRACE("test toggleMode: invalid parameter: larger number '-10'")
-	ASSERT_THROW(ft_irc::Client::toggleMode(-10), ft_irc::Client::InvalidMode)
-
-	LOG_TRACE("test toggleMode: 'CL_NETWORK_OPER'")
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_NETWORK_OPER))
-	ASSERT(ft_irc::Client::_mode & (CL_NETWORK_OPER))
-
-	LOG_TRACE("test toggleMode: 'CL_LOCAL_OPER'")
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_LOCAL_OPER))
-	ASSERT(ft_irc::Client::_mode & (CL_LOCAL_OPER | CL_NETWORK_OPER))
-
-	LOG_TRACE("test toggleMode: 'CL_INVISIBLE'")
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_INVISIBLE))
-	ASSERT(ft_irc::Client::_mode & (CL_LOCAL_OPER | CL_NETWORK_OPER | CL_INVISIBLE))
-
-	LOG_TRACE("test toggleMode: 'CL_WALLOPS'")
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_WALLOPS))
-	ASSERT(ft_irc::Client::_mode & (CL_LOCAL_OPER | CL_NETWORK_OPER | CL_INVISIBLE | CL_WALLOPS))
-
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_WALLOPS))
-	ASSERT(!(ft_irc::Client::_mode & (CL_WALLOPS)))
-
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_INVISIBLE))
-	ASSERT(!(ft_irc::Client::_mode & (CL_INVISIBLE)))
-
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_LOCAL_OPER))
-	ASSERT(!(ft_irc::Client::_mode & (CL_LOCAL_OPER)))
-
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_NETWORK_OPER))
-	ASSERT(!(ft_irc::Client::_mode & (CL_NETWORK_OPER)))
-
-	LOG_TRACE("test toggleMode: All at the same time")
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_LOCAL_OPER | CL_NETWORK_OPER | CL_INVISIBLE | CL_WALLOPS))
-	ASSERT(ft_irc::Client::_mode & (CL_LOCAL_OPER | CL_NETWORK_OPER | CL_INVISIBLE | CL_WALLOPS))
-	ASSERT_NOTHROW(ft_irc::Client::toggleMode(CL_LOCAL_OPER | CL_NETWORK_OPER | CL_INVISIBLE | CL_WALLOPS))
-}	// ClientUT::test_toggleMode
-
-
-void
 ft_irc::ClientUT::test_getFd(void)
 {
 	LOG_TRACE("test getFd: '42'")
@@ -311,3 +268,83 @@ ft_irc::ClientUT::test_getMask(void)
 	LOG_TRACE("test getMastk: 'smiro!smiro@localhost.com'")
 	ASSERT_EQ(ft_irc::Client::getMask(), "smiro!smiro@localhost.com")
 }	// ClientUT::test_getMask
+
+
+void
+ft_irc::ClientUT::test_add_mode(void)
+{
+	struct sockaddr_in clientSocket;
+	ft_irc::Client c = ft_irc::Client(0, clientSocket);
+	bool changed;
+
+	ASSERT_EQ(c.getMode(), 0);
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_INVISIBLE))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), CL_INVISIBLE);
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_INVISIBLE))
+	ASSERT(!changed)
+	ASSERT_EQ(c.getMode(), CL_INVISIBLE);
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_LOCALOP))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP));
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_LOCALOP))
+	ASSERT(!changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP));
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_OP))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP));
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_INVISIBLE))
+	ASSERT(!changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP));
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_WALLOPS))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP | CL_WALLOPS));
+
+	ASSERT_NOTHROW(changed = c.addMode(CL_WALLOPS))
+	ASSERT(!changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP | CL_WALLOPS));
+}	// ClientUT::test_add_mode
+
+
+void
+ft_irc::ClientUT::test_remove_mode(void)
+{
+	struct sockaddr_in clientSocket;
+	ft_irc::Client c = ft_irc::Client(0, clientSocket);
+	bool changed;
+
+	ASSERT_EQ(c.getMode(), 0);
+
+	ASSERT_NOTHROW(c.addMode(CL_INVISIBLE))
+	ASSERT_NOTHROW(c.addMode(CL_LOCALOP))
+	ASSERT_NOTHROW(c.addMode(CL_OP))
+	ASSERT_NOTHROW(c.addMode(CL_WALLOPS))
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP | CL_WALLOPS));
+
+	ASSERT_NOTHROW(changed = c.removeMode(CL_WALLOPS))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP));
+
+	ASSERT_NOTHROW(changed = c.removeMode(CL_WALLOPS))
+	ASSERT(!changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP | CL_OP));
+
+	ASSERT_NOTHROW(changed = c.removeMode(CL_OP))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), (CL_INVISIBLE | CL_LOCALOP));
+
+	ASSERT_NOTHROW(changed = c.removeMode(CL_LOCALOP))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), CL_INVISIBLE);
+
+	ASSERT_NOTHROW(changed = c.removeMode(CL_INVISIBLE))
+	ASSERT(changed)
+	ASSERT_EQ(c.getMode(), 0);
+}	// ClientUT::test_remove_mode

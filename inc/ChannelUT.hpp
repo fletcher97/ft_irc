@@ -20,12 +20,12 @@ public:
 	void test_getName(void);
 	void test_getTopic(void);
 	void test_getKey(void);
+	void test_getTopicWhoTime(void);
 
 	void test_setName(void);
 	void test_setTopic(void);
 	void test_setKey(void);
 	void test_addClient(void);
-	void test_deleteClient(void);
 	void test_banMask(void);
 	void test_toggleMode(void);
 	void test_isInChannel(void);
@@ -33,6 +33,9 @@ public:
 	void test_invite(void);
 	void test_join(void);
 	void test_setClientLimit(void);
+	void test_part(void);
+
+	void test_isBanned(void);
 };	// class ChannelUT
 
 }	// namespace ft_irc

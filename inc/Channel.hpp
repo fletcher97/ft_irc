@@ -5,24 +5,31 @@
 #include <stdexcept>
 #include <string>
 
+#include "codes.hpp"
 #include "Client.hpp"
+#include "Parser.hpp"
 
-#define INVITE_ONLY 0x01
-#define MODERATE 0x02
-#define SECRET 0x04
-#define PROTECTED_TOPIC 0x08
-#define NOT_EXTERNAL_MSGS 0x10
+// Channel modes
+#define CH_INVITE_ONLY 0x01
+#define CH_MODERATE 0x02
+#define CH_SECRET 0x04
+#define CH_PROTECTED_TOPIC 0x08
+#define CH_NOT_EXTERNAL_MSGS 0x10
+#define CH_LIMIT 0x20
+#define CH_KEY 0x40
 
-#define FOUNDER 0x01
-#define PROTECTED 0x02
-#define OPERATOR 0x04
-#define HALFOP 0x08
-#define VOICE 0x10
+// Client perms on channel
+#define CH_FOUNDER 0x01
+#define CH_PROTECTED 0x02
+#define CH_OPERATOR 0x04
+#define CH_HALFOP 0x08
+#define CH_VOICE 0x10
 
-#define BAN 0x01
-#define EXCEPTION 0x02
-#define INVITE 0x04
-#define INVITE_EXCEPTION 0x08
+// Channel mask modes
+#define CH_BAN 0x01
+#define CH_EXCEPTION 0x02
+#define CH_INVITE 0x04
+#define CH_INVITE_EXCEPTION 0x08
 
 namespace ft_irc
 {
@@ -50,6 +57,7 @@ public:
 public:
 	typedef std::map< std::string, mask_mode >::iterator mask_iterator;
 	typedef std::map< int, ClientInfo >::iterator client_iterator;
+	typedef std::map< int, ClientInfo >::const_iterator client_const_iterator;
 
 protected:
 	std::string _name;
@@ -59,6 +67,7 @@ protected:
 	std::map< std::string, mask_mode > _masks;
 	channel_mode _mode;
 	size_t _client_limit;
+	std::pair< std::string, std::string > _topic_who_time;
 
 public:
 	Channel(void);
@@ -72,21 +81,41 @@ public:
 	const std::string& getName(void) const;
 	const std::string& getTopic(void) const;
 	const std::string& getKey(void) const;
+	const channel_mode& getMode(void) const;
+	size_t getClientLimit() const;
+	const std::pair< std::string, std::string >& getTopicWhoTime(void) const;
 
 	void setName(const std::string &name);
-	void setTopic(ft_irc::Client &source, std::string &topic);
-	void setKey(std::string &key);
+	void setTopic(ft_irc::Client &source, const std::string &topic);
+	void setKey(const std::string &key);
+	void removeKey(void);
 	void setClientLimit(long limit);
+	void removeClientLimit(void);
 	void toggleMode(const char mode);
 
-	bool isInChannel(const Client &client);
-	bool isInChannel(const std::string &nickname);
+	bool isInChannel(const Client &client) const;
+	bool isInChannel(const std::string &nickname) const;
+
+	bool isFounder(const Client &c) const;
+	bool isProtected(const Client &c) const;
+	bool isOp(const Client &c) const;
+	bool isHalfOp(const Client &c) const;
+	bool isVoice(const Client &c) const;
+	bool isBanned(const Client &c) const;
+
 	bool addClient(const Client &client);
-	bool deleteClient(const Client &client);
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);
 
+	std::map< std::string, mask_mode >& getMasks();
+
 	bool join(const ft_irc::Client &client, const std::string &key = "");
+	bool part(const ft_irc::Client &client, const std::string &reason = "");
+	void privmsg(const ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::string &priv_chars = "");
+
+	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
+	void broadcast(ft_irc::commands cmd, const std::string arg = "") const;
+	void names(const ft_irc::Client &client) const;
 
 public:
 

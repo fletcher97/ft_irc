@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fcntl.h>
 #include <netinet/in.h>
 
@@ -28,6 +29,7 @@ ft_irc::Communications::Communications(const ft_irc::Communications &s) :
 	_pfds(s._pfds)
 {}
 
+
 ft_irc::Communications&
 ft_irc::Communications::operator=(const ft_irc::Communications &s)
 {
@@ -44,6 +46,17 @@ ft_irc::Communications::~Communications(void) {}
 bool
 ft_irc::Communications::init(int port, const char *psswd)
 {
+	if (_server_config.init_config() == false) {
+		LOG_FATAL("Config file fatal error")
+
+		return false;
+	}
+	if (port == 0) {
+		port = _server_config.get_port();
+	}
+	if (psswd == NULL) {
+		psswd = _server_config.get_psswd().c_str();
+	}
 	if ((this->_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		LOG_FATAL("Error creating socket")
 
@@ -92,13 +105,26 @@ ft_irc::Communications::recvMsg(int fd)
 
 		return;
 	}
+	if (!size) {
+		throw std::exception();
+	}
 	buffer[size] = '\0';
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
 	msg = buffer;
 	while (msg.size()) {
+		cmd = NULL;
 		line = msg.substr(0, msg.find("\r\n"));
-		cmd = ft_irc::Parser::parse_msg(line);
-		ft_irc::Server::getInstance().excecute(fd, cmd);
+		try {
+			cmd = ft_irc::Parser::parse_msg(line);
+			ft_irc::Server::getInstance().excecute(fd, cmd);
+		} catch (...) {
+			if (cmd) {
+				delete cmd;
+			}
+
+			return;
+		}
+
 		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
 		delete cmd;
 	}
@@ -129,14 +155,26 @@ ft_irc::Communications::run(void)
 			server.newClient();
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
+				if (it->revents & POLLNVAL) {
+					this->_pfds.erase(it);
+					break;
+				}
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
-					server.quit(it->fd);
+					server.deleteClient(it->fd);
 					this->_pfds.erase(it);
 					break;
 				}
 				if (it->revents & POLLIN) {
-					this->recvMsg(it->fd);
+					try {
+						this->recvMsg(it->fd);
+					} catch (...) {
+						LOG_INFO("Client disconnected: " << it->fd)
+
+						server.deleteClient(it->fd);
+						this->_pfds.erase(it);
+						break;
+					}
 				}
 			}
 		}
@@ -149,6 +187,13 @@ ft_irc::Communications::getFd(void) const
 {
 	return this->_fd;
 }	// Communications::getFd
+
+
+const std::string&
+ft_irc::Communications::getPsswd(void) const
+{
+	return this->_psswd;
+}	// Communications::getPsswd
 
 
 void

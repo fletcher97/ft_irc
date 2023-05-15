@@ -38,14 +38,15 @@ ft_irc::Server::operator=(const ft_irc::Server &s)
 
 ft_irc::Server::~Server(void)
 {
-	for (std::map< int, ft_irc::Client* >::iterator it = _clients.begin(); it != _clients.end(); it++) {
-		delete it->second;
-	}
-	for (std::map< std::string, ft_irc::Channel* >::iterator it = _channels.begin(); it != _channels.end(); it++) {
-		delete it->second;
-	}
 	LOG_INFO("Removed server");
 }	// Server::~Server
+
+
+void
+ft_irc::Server::setName(std::string name)
+{
+	this->_name = name;
+}	// Server::setName
 
 
 void
@@ -102,14 +103,6 @@ ft_irc::Server::newClient(void)
 
 
 void
-ft_irc::Server::quit(int fd)
-{
-	delete this->_clients[fd];
-	LOG_INFO("Deleting client: " << fd)
-}	// Server::quit
-
-
-void
 ft_irc::Server::sendMsg(int fd, const std::string &msg)
 {
 	ft_irc::Communications::getInstance().sendMsg(fd, msg);
@@ -119,10 +112,127 @@ ft_irc::Server::sendMsg(int fd, const std::string &msg)
 void
 ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
-	(void) fd;
+	ft_irc::Client &client = this->getClient(fd);
+
 	switch (cmd->cmd) {
+		case ft_irc::CMD_CAP: {
+			LOG_INFO("execute: CAP Ignored")
+
+			break;
+		}
+
+		case ft_irc::CMD_PASS: {
+			LOG_INFO("execute: executing PASS")
+
+			this->pass(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_NICK: {
+			LOG_INFO("execute: executing NICK")
+
+			this->nick(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_USER: {
+			LOG_INFO("execute: executing USER")
+
+			this->user(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_JOIN: {
+			LOG_INFO("execute: executing JOIN")
+
+			this->join(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_PART: {
+			LOG_INFO("execute: executing PART")
+
+			this->part(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_INVITE: {
+			LOG_INFO("execute: executing INVITE")
+
+			this->invite(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_TOPIC: {
+			LOG_INFO("execute: executing TOPIC")
+
+			this->topic(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_QUIT: {
+			LOG_INFO("execute: executing QUIT")
+
+			this->quit(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_MODE: {
+			LOG_INFO("execute: executing MODE")
+
+			this->mode(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_PRIVMSG: {
+			LOG_INFO("execute: executing PRIVMSG")
+
+			this->privmsg(client, cmd);
+			break;
+		}
+
 		default: {
-				LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
-			}
+			LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
+		}
 	}	// switch
 }	// Server::excecute
+
+
+void
+ft_irc::Server::deleteClient(int fd, const std::string &reason)
+{
+	std::map< std::string, Channel* >::iterator it = this->_channels.begin();
+	std::string channel_name;
+
+	LOG_TRACE("deleteClient: Quitting channels")
+	while (it != this->_channels.end()) {
+		if (it->second->isInChannel(this->getClient(fd))) {
+			LOG_TRACE("deleteClient: Quitting: " << it->second->getName())
+			if (it->second->part(this->getClient(fd), reason)) {
+				LOG_DEBUG("deleteClient: Deleting empty channel: " << it->second->getName())
+
+				channel_name = it->second->getName();
+				delete it->second;
+				it++;
+				this->_channels.erase(channel_name);
+				continue;
+			}
+		}
+		it++;
+	}
+	LOG_INFO("Deleting client: " << fd)
+	delete this->_clients[fd];
+	this->_clients.erase(fd);
+}	// Server::deleteClient
+
+
+void
+ft_irc::Server::posConnection(ft_irc::Client &client)
+{
+	client.setStatus(ft_irc::Client::ONLINE);
+	LOG_INFO("user: " << client.getMask() << " is online")
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_WELCOME, client.getNickname(), "irc.42.Barcelona", client.getMask()));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_YOURHOST, client.getNickname(), "irc.42.Barcelona", "1.0"));
+	client.sendMsg(ft_irc::getReply(ft_irc::RPL_MYINFO, client.getNickname(), "irc.42.Barcelona", "1.0", "ioOw",
+		"beliIkmstn"));
+}	// Server::posConnection
