@@ -104,7 +104,7 @@ updateClientMode(ft_irc::Client &client, char c, bool &add)
 
 
 static bool
-updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &add)
+updateChannelMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &add)
 {
 	ft_irc::Channel::channel_mode mode = 0;
 
@@ -161,7 +161,7 @@ updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &ad
 	}
 
 	return true;
-}	// updateServerMode
+}	// updateChannelMode
 
 
 static bool
@@ -628,7 +628,7 @@ modeChannel(ft_irc::Client &client,
 	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
 		if ((std::string("+-imstn").find(cmd->args[1][i]) != std::string::npos)) {
 			// Parse type D
-			if (updateServerMode(client, *chan, cmd->args[1][i], add)) {
+			if (updateChannelMode(client, *chan, cmd->args[1][i], add)) {
 				updatedResponse(added, removed, cmd->args[1][i], add);
 			}
 		} else if ((std::string("lk").find(cmd->args[1][i]) != std::string::npos)) {
