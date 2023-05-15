@@ -397,10 +397,11 @@ static void
 updatedConfigResponse(char c,
 	bool add,
 	const std::string &param,
-	std::list< std::pair< std::string, std::string > > listResponse)
+	std::list< std::pair< std::string, std::string > > &listResponse)
 {
-	std::string first = (add ? "+" : "-") + c;
-	std::string rfirst = (!add ? "+" : "-") + c;
+	LOG_TRACE("mode: updatedConfigResponse")
+	std::string first = std::string((add ? "+" : "-")) + c;
+	std::string rfirst = std::string((!add ? "+" : "-")) + c;
 
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
@@ -417,10 +418,12 @@ updatedConfigResponse(char c,
 
 
 static void
-updatedListResponse(std::list< std::pair< std::string, std::string > > listResponse, char c, bool add, std::string mask)
+updatedListResponse(std::list< std::pair< std::string, std::string > > &listResponse, char c, bool add,
+	std::string mask)
 {
-	std::string first = (add ? "+" : "-") + c;
-	std::string rfirst = (!add ? "+" : "-") + c;
+	LOG_TRACE("mode: updatedListResponse")
+	std::string first = std::string((add ? "+" : "-")) + c;
+	std::string rfirst = std::string((!add ? "+" : "-")) + c;
 
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
