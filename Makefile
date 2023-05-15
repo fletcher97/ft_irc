@@ -351,7 +351,7 @@ DEP_DIRS += $(addprefix ${DEP_ROOT},${TST_DIRS})
 # List of folders with header files.Each folder needs to end with a '/'. The
 # path to the folders is relative to the root of the makefile. Library includes
 # can be specified here.
-INC_DIRS += ${INC_ROOT}
+INC_DIRS += ${INC_ROOT} ${INC_ROOT}/bots
 
 # List of folders with templates and their implementations. Each folder needs to
 # end with a '/'. The path to the folders is relative to the root of the

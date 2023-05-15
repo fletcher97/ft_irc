@@ -2,6 +2,8 @@
 
 #include "Log.hpp"
 
+#include "BotHLGame.hpp"
+
 #include "Server.hpp"
 #include "Communications.hpp"
 
@@ -17,6 +19,10 @@ ft_irc::Server::getInstance(void)
 ft_irc::Server::Server(void)
 {
 	LOG_DEBUG("Creating server");
+
+	LOG_INFO("Loading bots");
+	this->_clients[-1] = new ft_irc::BotHLGame();
+
 	LOG_INFO("Server created");
 }
 
@@ -39,6 +45,8 @@ ft_irc::Server::operator=(const ft_irc::Server &s)
 ft_irc::Server::~Server(void)
 {
 	LOG_INFO("Removed server");
+	delete this->_clients[-1];
+	this->_clients.erase(-1);
 }	// Server::~Server
 
 
@@ -188,6 +196,13 @@ ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 			LOG_INFO("execute: executing PRIVMSG")
 
 			this->privmsg(client, cmd);
+			break;
+		}
+
+		case ft_irc::CMD_PING: {
+			LOG_INFO("execute: executing PING")
+
+			this->ping(client, cmd);
 			break;
 		}
 
