@@ -1,6 +1,7 @@
 #if !defined(CLIENT_HPP)
 #define CLIENT_HPP
 
+#include <stdexcept>
 #include <string>
 
 // Client modes. Registered will not be implemented
@@ -28,7 +29,6 @@ public:
 	typedef unsigned char mode_t;
 protected:
 	int _fd;
-	std::string _address;
 	std::string _hostname;
 	std::string _nickname;
 	std::string _username;
@@ -36,7 +36,6 @@ protected:
 	Client::Status _status;
 	mode_t _mode;
 
-protected:
 	Client(void);
 
 public:

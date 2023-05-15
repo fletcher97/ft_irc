@@ -28,13 +28,15 @@ ft_irc::Server::Server(void)
 
 
 ft_irc::Server::Server(const ft_irc::Server &s) :
-	_clients(s._clients)
+	_clients(s._clients),
+	_channels(s._channels)
 {}
 
 ft_irc::Server&
 ft_irc::Server::operator=(const ft_irc::Server &s)
 {
 	this->_clients = s._clients;
+	this->_channels = s._channels;
 
 	return *this;
 }	// Server::operator=
@@ -89,6 +91,8 @@ ft_irc::Server::newClient(void)
 	ft_irc::Communications &communications = ft_irc::Communications::getInstance();
 
 	if (this->_clients.size() == MAX_CLIENTS) {
+		LOG_WARN("newClient: max number of clients in server")
+
 		return;
 	}
 
@@ -97,6 +101,8 @@ ft_irc::Server::newClient(void)
 	int clientFd = accept(communications.getFd(), reinterpret_cast< struct sockaddr* >(&clientAddress), &socklen);
 
 	if (clientFd == -1) {
+		LOG_WARN("newClient: accept faild")
+
 		return;
 	}
 	this->_clients[clientFd] = new ft_irc::Client(clientFd, clientAddress);

@@ -18,27 +18,26 @@ ft_irc::Client::Client(int fd, struct sockaddr_in socket) :
 	_mode()
 {
 	LOG_DEBUG("Creating new client")
-	this->_address = inet_ntoa(socket.sin_addr);
+	this->_hostname = inet_ntoa(socket.sin_addr);
+	this->_mode &= CL_WALLOPS;
 	LOG_INFO("New client created: " << this->_hostname)
 }
 
 
 ft_irc::Client::Client(const ft_irc::Client &c) :
 	_fd(c._fd),
-	_address(c._address),
 	_hostname(c._hostname),
 	_nickname(c._nickname),
 	_username(c._username),
 	_realname(c._realname),
 	_status(c._status),
-	_mode()
+	_mode(c._mode)
 {}
 
 ft_irc::Client&
 ft_irc::Client::operator=(const ft_irc::Client &c)
 {
 	this->_fd = c._fd;
-	this->_address = c._address;
 	this->_hostname = c._hostname;
 	this->_nickname = c._nickname;
 	this->_username = c._username;
@@ -62,13 +61,6 @@ ft_irc::Client::getFd(void) const
 {
 	return this->_fd;
 }	// Client::getFd
-
-
-const std::string&
-ft_irc::Client::getAddress(void) const
-{
-	return this->_address;
-}	// Client::getAddress
 
 
 const std::string&
@@ -116,6 +108,17 @@ ft_irc::Client::getMode(void) const
 void
 ft_irc::Client::setNickname(const std::string &nickname)
 {
+	if (nickname.length() == 0) {
+		LOG_WARN("setNickname: called with an empty string");
+		throw std::invalid_argument("Nickname must be a non empty string");
+	}
+	if (  (nickname.find_first_of(" ,*?!@.") != std::string::npos)
+	   || (std::string("$:#&").find_first_of(nickname[0]) != std::string::npos))
+	{
+		LOG_WARN("setNickname: invalid client nickname: " << nickname);
+		throw std::invalid_argument("Invalid character: " + nickname);
+	}
+	LOG_INFO("setNickname: changed from '" << this->_nickname << "' to '" << nickname << "'")
 	this->_nickname = nickname;
 }	// Client::setNickname
 
@@ -123,6 +126,11 @@ ft_irc::Client::setNickname(const std::string &nickname)
 void
 ft_irc::Client::setUsername(const std::string &username)
 {
+	if (username.length() == 0) {
+		LOG_WARN("setUsername: called with an empty string")
+   throw std::invalid_argument("Username must be a non empty string");
+	}
+	LOG_INFO("setUsername: set to '" << username << "'")
 	this->_username = username;
 }	// Client::setUsername
 
@@ -130,6 +138,11 @@ ft_irc::Client::setUsername(const std::string &username)
 void
 ft_irc::Client::setRealname(const std::string &realname)
 {
+	if (realname.length() == 0) {
+		LOG_WARN("setRealname: called with an empty string")
+   throw std::invalid_argument("Realname must be a non empty string");
+	}
+	LOG_INFO("setRealname: set to '" << realname << "'")
 	this->_realname = realname;
 }	// Client::setRealname
 
@@ -137,6 +150,7 @@ ft_irc::Client::setRealname(const std::string &realname)
 void
 ft_irc::Client::setStatus(ft_irc::Client::Status status)
 {
+	LOG_INFO("setStatus: status changed")
 	this->_status = status;
 }	// Client::setStatus
 
@@ -170,7 +184,7 @@ ft_irc::Client::removeMode(const Client::mode_t mode)
 std::string
 ft_irc::Client::getMask(void) const
 {
-	return this->_nickname + "!" + this->_username + "@" + this->_address;
+	return this->_nickname + "!" + this->_username + "@" + this->_hostname;
 }	// Client::getMask
 
 
