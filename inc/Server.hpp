@@ -32,6 +32,8 @@ public:
 	ft_irc::Client& getClient(const std::string &nickname) const;
 	ft_irc::Client& getClient(int fd) const;
 
+	ft_irc::Channel& getChannel(const std::string &name) const;
+
 	void setName(std::string name);
 
 	void newClient(void);

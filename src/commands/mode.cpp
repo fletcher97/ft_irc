@@ -9,6 +9,7 @@
 static bool
 preChecks(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
+	LOG_TRACE("mode: preChecks")
 	// check state
 	if (client.getStatus() == ft_irc::Client::PASSWORD) {
 		LOG_WARN("MODE: Client didn't set the password yet")
@@ -40,6 +41,7 @@ preChecks(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 static bool
 updateClientMode(ft_irc::Client &client, char c, bool &add)
 {
+	LOG_TRACE("mode: updateClientMode")
 	switch (c) {
 		case '+': {
 			add = true;
@@ -104,8 +106,9 @@ updateClientMode(ft_irc::Client &client, char c, bool &add)
 
 
 static bool
-updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &add)
+updateChannelMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &add)
 {
+	LOG_TRACE("mode: updateChannelMode")
 	ft_irc::Channel::channel_mode mode = 0;
 
 	switch (c) {
@@ -161,7 +164,7 @@ updateServerMode(ft_irc::Client &client, ft_irc::Channel &chan, char c, bool &ad
 	}
 
 	return true;
-}	// updateServerMode
+}	// updateChannelMode
 
 
 static bool
@@ -172,6 +175,7 @@ updateChannelConfig(ft_irc::Client &client,
 	const ft_irc::Parser::cmd_t *cmd,
 	long unsigned int pos)
 {
+	LOG_TRACE("mode: updateChannelConfig")
 	switch (c) {
 		case 'k': {
 			// TODO: PERMS?
@@ -253,16 +257,19 @@ updateList(bool &add,
 	long unsigned int &pos,
 	ft_irc::Channel::channel_mode maskValue)
 {
+	LOG_TRACE("mode: updateList")
 	// Look for existing masks
 	for (ft_irc::Channel::mask_iterator it = masks.begin(); it != masks.end(); it++) {
 		if ((it->first == cmd->args[pos]) && ((!add == !(it->second & maskValue)))) {
 			// Already Banned
 			pos++;
+			LOG_INFO("mode: updateList - already banned")
 
 			return false;
 		}
 		if ((it->first == cmd->args[pos])) {
 			// Add mask
+			LOG_INFO("mode: updateList - Unbanned ")
 			it->second ^= maskValue;// toggle bit
 			if (!it->second) {
 				// Remove if no mask is left
@@ -275,6 +282,8 @@ updateList(bool &add,
 	}
 
 	if (!add) {
+		LOG_INFO("mode: updateList - already unbanned")
+
 		// can't remove mask that doesn't exist
 		return false;
 	}
@@ -285,6 +294,8 @@ updateList(bool &add,
 	newPair.second = maskValue;
 	masks.insert(newPair);
 	pos++;
+
+	LOG_INFO("mode: updateList - banned")
 
 	return true;
 }	// updateBanStatus
@@ -299,6 +310,7 @@ updateChannelList(ft_irc::Client &client,
 	long unsigned int &pos,
 	ft_irc::Channel::channel_mode maskValue)
 {
+	LOG_TRACE("mode: updateChannelList")
 	std::map< std::string, ft_irc::Channel::mask_mode > &masks = chan.getMasks();
 
 	if (listProc & maskValue) {
@@ -329,6 +341,7 @@ updateChannelLists(ft_irc::Client &client,
 	const ft_irc::Parser::cmd_t *cmd,
 	long unsigned int &pos)
 {
+	LOG_TRACE("mode: updateChannelLists")
 	ft_irc::Channel::channel_mode maskValue;
 
 	switch (c) {
@@ -365,6 +378,7 @@ updateChannelLists(ft_irc::Client &client,
 static void
 updatedResponse(std::string &added, std::string &removed, char c, bool add)
 {
+	LOG_TRACE("mode: updatedResponse")
 	if (add && (added.find(c) == std::string::npos)) {
 		added += c;
 		if ((removed.find(c) != std::string::npos)) {
@@ -383,10 +397,11 @@ static void
 updatedConfigResponse(char c,
 	bool add,
 	const std::string &param,
-	std::list< std::pair< std::string, std::string > > listResponse)
+	std::list< std::pair< std::string, std::string > > &listResponse)
 {
-	std::string first = (add ? "+" : "-") + c;
-	std::string rfirst = (!add ? "+" : "-") + c;
+	LOG_TRACE("mode: updatedConfigResponse")
+	std::string first = std::string((add ? "+" : "-")) + c;
+	std::string rfirst = std::string((!add ? "+" : "-")) + c;
 
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
@@ -403,21 +418,25 @@ updatedConfigResponse(char c,
 
 
 static void
-updatedListResponse(std::list< std::pair< std::string, std::string > > listResponse, char c, bool add, std::string mask)
+updatedListResponse(std::list< std::pair< std::string, std::string > > &listResponse, char c, bool add,
+	std::string mask)
 {
-	std::string first = (add ? "+" : "-") + c;
-	std::string rfirst = (!add ? "+" : "-") + c;
+	LOG_TRACE("mode: updatedListResponse")
+	std::string first = std::string((add ? "+" : "-")) + c;
+	std::string rfirst = std::string((!add ? "+" : "-")) + c;
 
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
 		 it++)
 	{
+		LOG_TRACE("mode: updatedListResponse - removed set-unset")
 		if ((it->first == rfirst) && (it->second == mask)) {
 			listResponse.erase(it);
 
 			return;
 		}
 	}
+	LOG_TRACE("mode: updatedListResponse - added new update")
 	listResponse.push_back(std::pair< std::string, std::string >(first, mask));
 }	// updateListResponse
 
@@ -433,17 +452,20 @@ sendChanResponse(ft_irc::Client &client,
 	std::list< std::pair< std::string, std::string > > configResponse,
 	const std::string &chanName)
 {
+	LOG_TRACE("mode: sendChanResponse")
 	std::string response;
 	std::string masks;
 
 	if (added.size()) {
 		response = '+' + added;
 	}
+	// config add
 	for (std::list< std::pair< std::string, std::string > >::iterator it = configResponse.begin();
 		 it != configResponse.end();
 		 it++)
 	{
 		if (it->first[0] == '+') {
+			LOG_TRACE("mode: sendChanResponse - adding config added")
 			if (!response.size()) {
 				response = "+";
 			}
@@ -451,11 +473,13 @@ sendChanResponse(ft_irc::Client &client,
 			masks += " " + it->second;
 		}
 	}
+	// list add
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
 		 it++)
 	{
 		if (it->first[0] == '+') {
+			LOG_TRACE("mode: sendChanResponse - adding list added")
 			if (!response.size()) {
 				response = "+";
 			}
@@ -467,11 +491,13 @@ sendChanResponse(ft_irc::Client &client,
 	if (removed.size()) {
 		response += '-' + removed;
 	}
+	// config remove
 	for (std::list< std::pair< std::string, std::string > >::iterator it = configResponse.begin();
 		 it != configResponse.end();
 		 it++)
 	{
 		if (it->first[0] == '-') {
+			LOG_TRACE("mode: sendChanResponse - adding config removed")
 			if (response.find("-") == std::string::npos) {
 				response += "-";
 			}
@@ -479,11 +505,13 @@ sendChanResponse(ft_irc::Client &client,
 			masks += " " + it->second;
 		}
 	}
+	// list remove
 	for (std::list< std::pair< std::string, std::string > >::iterator it = listResponse.begin();
 		 it != listResponse.end();
 		 it++)
 	{
 		if (it->first[0] == '-') {
+			LOG_TRACE("mode: sendChanResponse - adding list removed")
 			if (response.find("-") == std::string::npos) {
 				response += "-";
 			}
@@ -494,8 +522,11 @@ sendChanResponse(ft_irc::Client &client,
 
 	response += masks;
 	if (response.size()) {
-		client.sendMsg("MODE " + chanName + " " + response);
-		// client.sendMsg("MODE " + response);
+		try {
+			ft_irc::Server::getInstance().getChannel(chanName).broadcast(client.getMask(), ft_irc::CMD_MODE, response);
+		} catch (std::runtime_error &e) {
+			LOG_ERROR("mode: Failed to get channel")
+		}
 	}
 }	// sendChanResponse
 
@@ -506,6 +537,7 @@ sendChanResponse(ft_irc::Client &client,
 static void
 modeClient(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::map< int, ft_irc::Client* > clients)
 {
+	LOG_TRACE("mode: modeClient")
 	bool found = false;
 
 	// User exists check
@@ -565,6 +597,7 @@ modeChannel(ft_irc::Client &client,
 	std::map< std::string,
 	ft_irc::Channel* > channels)
 {
+	LOG_TRACE("mode: modeChannel")
 	ft_irc::Channel *chan = NULL;
 
 	// Channel exists check
@@ -628,7 +661,7 @@ modeChannel(ft_irc::Client &client,
 	for (long unsigned int i = 0; i < cmd->args[1].size(); i++) {
 		if ((std::string("+-imstn").find(cmd->args[1][i]) != std::string::npos)) {
 			// Parse type D
-			if (updateServerMode(client, *chan, cmd->args[1][i], add)) {
+			if (updateChannelMode(client, *chan, cmd->args[1][i], add)) {
 				updatedResponse(added, removed, cmd->args[1][i], add);
 			}
 		} else if ((std::string("lk").find(cmd->args[1][i]) != std::string::npos)) {
@@ -656,6 +689,7 @@ modeChannel(ft_irc::Client &client,
 void
 ft_irc::Server::mode(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
+	LOG_TRACE("mode: mode")
 	// check client state
 	if (!preChecks(client, cmd)) {
 		return;
