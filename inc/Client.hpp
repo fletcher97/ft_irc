@@ -8,6 +8,7 @@
 #define CL_LOCALOP 0x02
 #define CL_OP 0x04
 #define CL_WALLOPS 0x08
+#define CL_BOT 0x10
 
 namespace ft_irc
 {
@@ -25,7 +26,7 @@ public:
 	};
 
 	typedef unsigned char mode_t;
-private:
+protected:
 	int _fd;
 	std::string _address;
 	std::string _hostname;
@@ -44,7 +45,7 @@ public:
 
 	Client& operator=(const Client &c);
 
-	~Client(void);
+	virtual ~Client(void);
 
 	int getFd(void) const;
 	const std::string& getAddress(void) const;
@@ -64,7 +65,7 @@ public:
 	bool addMode(const Client::mode_t mode);
 	bool removeMode(const Client::mode_t mode);
 
-	void sendMsg(const std::string &msg) const;
+	virtual void sendMsg(const std::string &msg) const;
 };	// class Client
 
 }	// namespace ft_irc
