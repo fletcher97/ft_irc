@@ -522,8 +522,11 @@ sendChanResponse(ft_irc::Client &client,
 
 	response += masks;
 	if (response.size()) {
-		client.sendMsg("MODE " + chanName + " " + response);
-		// client.sendMsg("MODE " + response);
+		try {
+			ft_irc::Server::getInstance().getChannel(chanName).broadcast(client.getMask(), ft_irc::CMD_MODE, response);
+		} catch (std::runtime_error &e) {
+			LOG_ERROR("mode: Failed to get channel")
+		}
 	}
 }	// sendChanResponse
 
