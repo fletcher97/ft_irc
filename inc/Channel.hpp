@@ -111,6 +111,7 @@ public:
 
 	bool join(const ft_irc::Client &client, const std::string &key = "");
 	bool part(const ft_irc::Client &client, const std::string &reason = "");
+	void kick(const ft_irc::Client &client, const std::string &target, const std::string &comment);
 	void privmsg(const ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd, const std::string &priv_chars = "");
 
 	void broadcast(const std::string &source, ft_irc::commands cmd, const std::string arg = "") const;
@@ -187,6 +188,13 @@ public:
 	{
 public:
 		AlreadyOnChannel();
+	};	// class AlreadyOnChannel
+
+class UserNotInChannel :
+		public std::exception
+	{
+public:
+		UserNotInChannel();
 	};	// class AlreadyOnChannel
 };	// class Channel
 
