@@ -190,7 +190,7 @@ public:
 		AlreadyOnChannel();
 	};	// class AlreadyOnChannel
 
-class UserNotInChannel :
+	class UserNotInChannel :
 		public std::exception
 	{
 public:

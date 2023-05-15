@@ -29,6 +29,7 @@ preCheck(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	return true;
 }	// preCheck
 
+
 void
 ft_irc::Server::kick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 {
@@ -37,7 +38,7 @@ ft_irc::Server::kick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 	std::string comment = "Kicked from channel";
 
 	if (!preCheck(client, cmd)) {
-		return ;
+		return;
 	}
 	target_list << cmd->args.at(1);
 	LOG_TRACE("kick: target_channel: " << cmd->args.at(0))
@@ -52,8 +53,7 @@ ft_irc::Server::kick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		comment = cmd->args.at(2).empty() ? comment : cmd->args.at(2);
 	}
 	LOG_DEBUG("kick: comment: " << comment)
-	while (getline(target_list, target_client, ','))
-	{
+	while (getline(target_list, target_client, ',')) {
 		try {
 			this->_channels[cmd->args.at(0)]->kick(client, target_client, comment);
 		} catch (ft_irc::Channel::NotOnChannel &e) {
@@ -61,10 +61,11 @@ ft_irc::Server::kick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 			client.sendMsg(ft_irc::getReply(ft_irc::ERR_NOTONCHANNEL, client.getNickname(), cmd->args.at(0)));
 		} catch (ft_irc::Channel::UserNotInChannel &e) {
 			LOG_WARN("kick: 441: User not on channel: " << target_client << " " << cmd->args.at(0));
-			client.sendMsg(ft_irc::getReply(ft_irc::ERR_USERNOTINCHANNEL, client.getNickname(), target_client, cmd->args.at(0)));
+			client.sendMsg(ft_irc::getReply(ft_irc::ERR_USERNOTINCHANNEL, client.getNickname(), target_client,
+				cmd->args.at(0)));
 		} catch (ft_irc::Channel::NoPrivsOnChannel &e) {
 			LOG_WARN("kick: 482: User doesnt have privileges on channel: " << cmd->args.at(0));
 			client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANOPRIVSNEEDED, client.getNickname(), cmd->args.at(0)));
 		}
 	}
-}
+}	// Server::kick

@@ -535,7 +535,7 @@ ft_irc::Channel::kick(const ft_irc::Client &client, const std::string &target, c
 		LOG_WARN("kick: client not no channel: " << client.getNickname());
 		throw ft_irc::Channel::NotOnChannel();
 	}
-	if (!(this->_clients.find(client.getFd())->second.mode & (CH_FOUNDER|CH_OPERATOR|CH_PROTECTED|CH_HALFOP))) {
+	if (!(this->_clients.find(client.getFd())->second.mode & (CH_FOUNDER | CH_OPERATOR | CH_PROTECTED | CH_HALFOP))) {
 		LOG_WARN("kick: permission denied: " << client.getNickname());
 		throw ft_irc::Channel::NoPrivsOnChannel();
 	}
@@ -549,10 +549,11 @@ ft_irc::Channel::kick(const ft_irc::Client &client, const std::string &target, c
 
 			this->broadcast(client.getMask(), ft_irc::CMD_KICK, target + " " + comment);
 			this->_clients.erase(it);
+
 			return;
 		}
 	}
-}
+}	// Channel::kick
 
 
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) :
