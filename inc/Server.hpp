@@ -52,6 +52,7 @@ public:
 	void quit(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void mode(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 	void privmsg(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
+	void ping(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd);
 };	// class Server
 
 }	// namespace ft_irc
