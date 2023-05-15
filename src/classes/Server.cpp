@@ -83,6 +83,22 @@ ft_irc::Server::getClient(int fd) const
 }	// Server::getClient
 
 
+ft_irc::Channel&
+ft_irc::Server::getChannel(const std::string &name) const
+{
+	for (std::map< std::string, ft_irc::Channel* >::const_iterator it = this->_channels.begin();
+		 it != this->_channels.end();
+		 it++)
+	{
+		if (it->second->getName() == name) {
+			return *(it->second);
+		}
+	}
+
+	throw std::runtime_error("Channel not found");
+}	// Server::getChannel
+
+
 void
 ft_irc::Server::newClient(void)
 {
