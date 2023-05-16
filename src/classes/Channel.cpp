@@ -528,6 +528,34 @@ ft_irc::Channel::privmsg(const ft_irc::Client &client, const ft_irc::Parser::cmd
 }	// Channel::privmsg
 
 
+void
+ft_irc::Channel::kick(const ft_irc::Client &client, const std::string &target, const std::string &comment)
+{
+	if (!this->isInChannel(client)) {
+		LOG_WARN("kick: client not no channel: " << client.getNickname());
+		throw ft_irc::Channel::NotOnChannel();
+	}
+	if (!(this->_clients.find(client.getFd())->second.mode & (CH_FOUNDER | CH_OPERATOR | CH_PROTECTED | CH_HALFOP))) {
+		LOG_WARN("kick: permission denied: " << client.getNickname());
+		throw ft_irc::Channel::NoPrivsOnChannel();
+	}
+	if (!this->isInChannel(target)) {
+		LOG_WARN("kick: target not in channel: " << target);
+		throw ft_irc::Channel::UserNotInChannel();
+	}
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->second.client.getNickname() == target) {
+			LOG_INFO("kick: Kicking: " << target)
+
+			this->broadcast(client.getMask(), ft_irc::CMD_KICK, target + " " + comment);
+			this->_clients.erase(it);
+
+			return;
+		}
+	}
+}	// Channel::kick
+
+
 ft_irc::Channel::InvalidChannelName::InvalidChannelName(std::string msg) :
 	std::invalid_argument(msg)
 {}
@@ -555,6 +583,8 @@ ft_irc::Channel::NotOnChannel::NotOnChannel() {}
 ft_irc::Channel::NoPrivsOnChannel::NoPrivsOnChannel() {}
 
 ft_irc::Channel::AlreadyOnChannel::AlreadyOnChannel() {}
+
+ft_irc::Channel::UserNotInChannel::UserNotInChannel() {}
 
 ft_irc::Channel::ClientInfo::ClientInfo(const ft_irc::Client &c) :
 	client(c),
