@@ -97,17 +97,17 @@ joinChannel(ft_irc::Client &client,
 		channels[channel_name]->broadcast(client.getMask(), ft_irc::CMD_JOIN);
 		channels[channel_name]->names(client);
 	} catch (ft_irc::Channel::BannedClient &e) {
-		LOG_WARN("join: 473: Invite only channel and client is not invited: " << client.getMask());
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_INVITEONLYCHAN, channel_name));
-	} catch (ft_irc::Channel::InviteOnlyChannel &e) {
 		LOG_WARN("join: 474: Banned from channel: " << client.getMask());
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_BANNEDFROMCHAN, channel_name));
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_BANNEDFROMCHAN, client.getNickname(), channel_name));
+	} catch (ft_irc::Channel::InviteOnlyChannel &e) {
+		LOG_WARN("join: 473: Invite only channel and client is not invited: " << client.getMask());
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_INVITEONLYCHAN, client.getNickname(), channel_name));
 	} catch (ft_irc::Channel::ChannelIsFull &e) {
 		LOG_WARN("join: 471: Channel is full: " << channel_name);
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANNELISFULL, channel_name));
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_CHANNELISFULL, client.getNickname(), channel_name));
 	} catch (ft_irc::Channel::InvalidKey &e) {
 		LOG_WARN("join: 475: Wrong channel key: " << key);
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_BADCHANNELKEY, channel_name));
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_BADCHANNELKEY, client.getNickname(), channel_name));
 	}
 }	// joinChannel
 

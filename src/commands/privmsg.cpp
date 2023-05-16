@@ -63,7 +63,7 @@ clientMsg(ft_irc::Client &client,
 		LOG_INFO("privmsg: 301 Client is away: " << target)
 		client.sendMsg(ft_irc::getReply(ft_irc::RPL_AWAY, client.getNickname(), "USER AWAY"));	// getAWAYMSG;
 	}
-	target_client->sendMsg(":" + client.getNickname() + " PRIVMSG " + target + " " + msg);
+	target_client->sendMsg(":" + client.getMask() + " PRIVMSG " + target + " :" + msg);
 	LOG_INFO("privmsg: Message succesfully send to " << target);
 }	// clientMsg
 
