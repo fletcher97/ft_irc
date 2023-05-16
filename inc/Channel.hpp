@@ -103,6 +103,11 @@ public:
 	bool isVoice(const Client &c) const;
 	bool isBanned(const Client &c) const;
 
+	bool setOp(const Client &c);
+	bool unsetOp(const Client &c);
+	bool setVoice(const Client &c);
+	bool unsetVoice(const Client &c);
+
 	bool addClient(const Client &client);
 	bool banMask(const std::string &client);
 	bool invite(const Client &source, const std::string &client);

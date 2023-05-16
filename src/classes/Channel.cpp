@@ -305,6 +305,66 @@ ft_irc::Channel::isBanned(const ft_irc::Client &client) const
 
 
 bool
+ft_irc::Channel::setOp(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode |= CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::setOp
+
+
+bool
+ft_irc::Channel::unsetOp(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode &= ~CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::unsetOp
+
+
+bool
+ft_irc::Channel::setVoice(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode |= CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::setVoice
+
+
+bool
+ft_irc::Channel::unsetVoice(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode &= ~CH_VOICE;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::unsetVoice
+
+
+bool
 ft_irc::Channel::addClient(const ft_irc::Client &client)
 {
 	if (this->_clients.count(client.getFd())) {
