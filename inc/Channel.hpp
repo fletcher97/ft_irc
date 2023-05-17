@@ -102,6 +102,7 @@ public:
 	bool isHalfOp(const Client &c) const;
 	bool isVoice(const Client &c) const;
 	bool isBanned(const Client &c) const;
+	bool isInvited(const Client &c) const;
 
 	bool setOp(const Client &c);
 	bool unsetOp(const Client &c);
