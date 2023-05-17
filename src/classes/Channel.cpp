@@ -442,6 +442,13 @@ ft_irc::Channel::getMasks()
 }	// Channel::getMasks
 
 
+std::map< int, ft_irc::Channel::ClientInfo >&
+ft_irc::Channel::getClients()
+{
+	return this->_clients;
+}	// Channel::getClients
+
+
 bool
 ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 {
