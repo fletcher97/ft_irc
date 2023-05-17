@@ -251,7 +251,7 @@ ifeq (${CREATE_LIB_TARGETS},1)
 # Libflt
 LIBFLT_ROOT := ${LIB_ROOT}libflt/
 LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
-LIBFLT := ${LIBFT_ROOT}bin/libflt.a
+LIBFLT := ${LIBFLT_ROOT}bin/libflt.a
 
 INC_DIRS += ${LIBFLT_INC}
 LIBS += -L${LIBFLT_ROOT}bin -lflt
