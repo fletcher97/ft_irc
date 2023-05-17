@@ -309,9 +309,13 @@ ft_irc::Channel::setOp(const Client &c)
 {
 	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->first == c.getFd()) {
-			it->second.mode |= CH_OPERATOR;
+			if (!(it->second.mode & CH_OPERATOR)) {
+				it->second.mode |= CH_OPERATOR;
 
-			return true;
+				return true;
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -324,9 +328,13 @@ ft_irc::Channel::unsetOp(const Client &c)
 {
 	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->first == c.getFd()) {
-			it->second.mode &= ~CH_OPERATOR;
+			if (it->second.mode & CH_OPERATOR) {
+				it->second.mode &= ~(CH_OPERATOR);
 
-			return true;
+				return true;
+			} else {
+				break;
+			}
 		}
 	}
 
