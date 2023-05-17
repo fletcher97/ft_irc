@@ -149,7 +149,12 @@ ft_irc::Communications::run(void)
 	ft_irc::Server &server = ft_irc::Server::getInstance();
 	int i = 0;
 
-	while (i <= 10) {
+	if (!this->_server_config.get_port())
+	{
+		LOG_ERROR("No configuration set")
+		return ;
+	}
+	while (1) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
 			continue;
