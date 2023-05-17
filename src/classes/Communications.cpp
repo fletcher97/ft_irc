@@ -122,8 +122,9 @@ ft_irc::Communications::recvMsg(int fd)
 			if (cmd) {
 				delete cmd;
 			}
-
-			return;
+			this->_msgs_buffer[fd] = this->_msgs_buffer[fd].substr(this->_msgs_buffer[fd].find("\r\n") + 2,
+				this->_msgs_buffer[fd].size());
+			continue;
 		}
 
 		this->_msgs_buffer[fd] = this->_msgs_buffer[fd].substr(this->_msgs_buffer[fd].find("\r\n") + 2,
@@ -147,8 +148,14 @@ void
 ft_irc::Communications::run(void)
 {
 	ft_irc::Server &server = ft_irc::Server::getInstance();
+	int i = 0;
 
-	while (42) {
+	if (!this->_server_config.get_port()) {
+		LOG_ERROR("No configuration set")
+
+		return;
+	}
+	while (1) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
 			continue;
@@ -158,11 +165,13 @@ ft_irc::Communications::run(void)
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
 				if (it->revents & POLLNVAL) {
+					this->_msgs_buffer.erase(it->fd);
 					this->_pfds.erase(it);
 					break;
 				}
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
+					this->_msgs_buffer.erase(it->fd);
 					server.deleteClient(it->fd);
 					this->_pfds.erase(it);
 					break;
@@ -170,6 +179,7 @@ ft_irc::Communications::run(void)
 				if (it->revents & POLLIN) {
 					try {
 						this->recvMsg(it->fd);
+						i++;
 					} catch (...) {
 						LOG_INFO("Client disconnected: " << it->fd)
 

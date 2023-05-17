@@ -305,13 +305,33 @@ ft_irc::Channel::isBanned(const ft_irc::Client &client) const
 
 
 bool
+ft_irc::Channel::isInvited(const ft_irc::Client &client) const
+{
+	for (std::map< std::string, mask_mode >::const_iterator it = this->_masks.begin(); it != this->_masks.end(); it++) {
+		if (ft_irc::match(it->first, client.getNickname())) {
+			if (it->second & CH_INVITE) {
+				return true;
+			}
+			break;
+		}
+	}
+
+	return false;
+}	// Channel::isInvited
+
+
+bool
 ft_irc::Channel::setOp(const Client &c)
 {
 	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->first == c.getFd()) {
-			it->second.mode |= CH_OPERATOR;
+			if (!(it->second.mode & CH_OPERATOR)) {
+				it->second.mode |= CH_OPERATOR;
 
-			return true;
+				return true;
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -324,9 +344,13 @@ ft_irc::Channel::unsetOp(const Client &c)
 {
 	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->first == c.getFd()) {
-			it->second.mode &= ~CH_OPERATOR;
+			if (it->second.mode & CH_OPERATOR) {
+				it->second.mode &= ~(CH_OPERATOR);
 
-			return true;
+				return true;
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -461,13 +485,11 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 		LOG_WARN("join, client banned from channel: " << client.getNickname());
 		throw ft_irc::Channel::BannedClient();
 	}
-	if (  this->_mode & CH_INVITE_ONLY
-	   && (!this->_masks.count(client.getMask()) || !(this->_masks[client.getMask()] & CH_INVITE)))
-	{
+	if ((this->_mode & CH_INVITE_ONLY) && !this->isInvited(client)) {
 		LOG_WARN("join, client not invited to channel: " << client.getNickname());
 		throw ft_irc::Channel::InviteOnlyChannel();
 	}
-	if ((this->_client_limit != 0) && (this->_client_limit >= this->_clients.size())) {
+	if ((this->_client_limit != 0) && (this->_client_limit <= this->_clients.size())) {
 		LOG_WARN("join, client can't join, channel is full: " << client.getNickname());
 		throw ft_irc::Channel::ChannelIsFull();
 	}
@@ -475,6 +497,7 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 		LOG_WARN("join, client " << client.getNickname() << " can't join, invalid key: " << key);
 		throw ft_irc::Channel::InvalidKey("Incorrect channel key");
 	}
+	this->_masks[client.getNickname()] &= ~(CH_INVITE);
 	LOG_INFO("Client joined to channel: " << client.getNickname())
 	this->addClient(client);
 
