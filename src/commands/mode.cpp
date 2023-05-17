@@ -333,6 +333,49 @@ updateChannelList(ft_irc::Client &client,
 
 
 static bool
+updateOps(ft_irc::Client &client,
+	bool &add,
+	ft_irc::Channel::channel_mode &listProc,
+	ft_irc::Channel &chan,
+	const ft_irc::Parser::cmd_t *cmd,
+	long unsigned int &pos,
+	ft_irc::Channel::client_mode maskValue)
+{
+	(void) client;
+	(void) listProc;
+	(void) maskValue;
+
+	std::map< int, ft_irc::Channel::ClientInfo > &clients = chan.getClients();
+
+	LOG_TRACE("mode: updateOps")
+	if ((pos >= cmd->args.size()) || (cmd->args.at(pos) == client.getNickname())) {
+		return false;
+	}	// LOG_TRACE
+
+	// TODO: (un)set op
+	std::string givenNick = cmd->args.at(pos++);
+
+	for (ft_irc::Channel::client_iterator it = clients.begin(); it != clients.end(); it++) {
+		if (it->second.client.getNickname() == givenNick) {
+			if (add) {
+				LOG_TRACE("mode: updateOps - adding op " + givenNick)
+
+				return chan.setOp(it->second.client);
+			} else {
+				LOG_TRACE("mode: updateOps - removing op " + givenNick)
+
+				return chan.unsetOp(it->second.client);
+			}
+		}
+	}
+
+	LOG_TRACE("mode: updateOps - user not found " + givenNick)
+
+	return false;
+}	// updateOps
+
+
+static bool
 updateChannelLists(ft_irc::Client &client,
 	char c,
 	bool &add,
@@ -358,6 +401,10 @@ updateChannelLists(ft_irc::Client &client,
 		case 'I': {
 			maskValue = CH_INVITE_EXCEPTION;
 			break;
+		}
+
+		case 'o': {
+			return updateOps(client, add, listProc, chan, cmd, pos, CH_OPERATOR);
 		}
 
 		default: {
@@ -669,7 +716,7 @@ modeChannel(ft_irc::Client &client,
 			if (updateChannelConfig(client, *chan, cmd->args[1][i], add, cmd, pos)) {
 				updatedConfigResponse(cmd->args[1][i], add, cmd->args[pos - 1], configResponse);
 			}
-		} else if ((std::string("beI").find(cmd->args[1][i]) != std::string::npos)) {
+		} else if ((std::string("beIo").find(cmd->args[1][i]) != std::string::npos)) {
 			// Parse type A
 			if (updateChannelLists(client, cmd->args[1][i], add, listsSent, *chan, cmd, pos)) {
 				updatedListResponse(listResponse, cmd->args[1][i], add, cmd->args[pos - 1]);
