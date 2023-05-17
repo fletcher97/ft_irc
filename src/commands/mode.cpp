@@ -212,22 +212,22 @@ updateChannelConfig(ft_irc::Client &client,
 		}
 
 		case 'l': {
-			if (pos >= cmd->args.size()) {
-				LOG_WARN("MDOE: "
-					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + std::string((add ? "+" : "-")) + 'l'))
-				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + std::string((add ? "+" : "-")) + 'l'));
-
-				return false;
-			}
-
 			if (!add) {
 				if (chan.getClientLimit()) {
 					chan.removeClientLimit();
 
 					return true;
 				}
+
+				return false;
+			}
+
+			if (pos >= cmd->args.size()) {
+				LOG_WARN("MDOE: "
+					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + std::string((add ? "+" : "-")) + 'l'))
+				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
+					"MODE " + std::string((add ? "+" : "-")) + 'l'));
 
 				return false;
 			}
