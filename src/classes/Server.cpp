@@ -44,8 +44,7 @@ ft_irc::Server::operator=(const ft_irc::Server &s)
 
 ft_irc::Server::~Server(void)
 {
-	for (std::map< int, Client* >::iterator it = this->_clients.begin(); it != this->_clients.end(); it++)
-	{
+	for (std::map< int, Client* >::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		delete it->second;
 	}
 	this->_clients.clear();
