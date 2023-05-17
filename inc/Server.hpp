@@ -33,6 +33,7 @@ public:
 	ft_irc::Client& getClient(int fd) const;
 
 	ft_irc::Channel& getChannel(const std::string &name) const;
+	std::map< std::string, ft_irc::Channel* >& getChannels(void);
 
 	void setName(std::string name);
 
