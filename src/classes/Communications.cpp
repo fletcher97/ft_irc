@@ -147,8 +147,9 @@ void
 ft_irc::Communications::run(void)
 {
 	ft_irc::Server &server = ft_irc::Server::getInstance();
+	int i = 0;
 
-	while (42) {
+	while (i <= 10) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
 			LOG_ERROR("Error poll")
 			continue;
@@ -172,6 +173,7 @@ ft_irc::Communications::run(void)
 				if (it->revents & POLLIN) {
 					try {
 						this->recvMsg(it->fd);
+						i++;
 					} catch (...) {
 						LOG_INFO("Client disconnected: " << it->fd)
 
