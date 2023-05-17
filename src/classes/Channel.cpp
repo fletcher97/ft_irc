@@ -467,7 +467,7 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 		LOG_WARN("join, client not invited to channel: " << client.getNickname());
 		throw ft_irc::Channel::InviteOnlyChannel();
 	}
-	if ((this->_client_limit != 0) && (this->_client_limit >= this->_clients.size())) {
+	if ((this->_client_limit != 0) && (this->_client_limit <= this->_clients.size())) {
 		LOG_WARN("join, client can't join, channel is full: " << client.getNickname());
 		throw ft_irc::Channel::ChannelIsFull();
 	}
