@@ -305,6 +305,66 @@ ft_irc::Channel::isBanned(const ft_irc::Client &client) const
 
 
 bool
+ft_irc::Channel::setOp(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode |= CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::setOp
+
+
+bool
+ft_irc::Channel::unsetOp(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode &= ~CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::unsetOp
+
+
+bool
+ft_irc::Channel::setVoice(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode |= CH_OPERATOR;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::setVoice
+
+
+bool
+ft_irc::Channel::unsetVoice(const Client &c)
+{
+	for (client_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
+		if (it->first == c.getFd()) {
+			it->second.mode &= ~CH_VOICE;
+
+			return true;
+		}
+	}
+
+	return false;
+}	// Channel::unsetVoice
+
+
+bool
 ft_irc::Channel::addClient(const ft_irc::Client &client)
 {
 	if (this->_clients.count(client.getFd())) {
@@ -382,6 +442,13 @@ ft_irc::Channel::getMasks()
 }	// Channel::getMasks
 
 
+std::map< int, ft_irc::Channel::ClientInfo >&
+ft_irc::Channel::getClients()
+{
+	return this->_clients;
+}	// Channel::getClients
+
+
 bool
 ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 {
@@ -440,7 +507,11 @@ ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, cons
 	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
-		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+		try {
+			it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+		} catch (...) {
+			LOG_ERROR("Faild to send to " << it->second.client.getNickname() << " when broacasting to " << this->_name)
+		}
 	}
 }	// Channel::broadcast
 
@@ -452,7 +523,11 @@ ft_irc::Channel::broadcast(ft_irc::commands cmd, const std::string arg) const
 	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
-		it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
+		try {
+			it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
+		} catch (...) {
+			LOG_ERROR("Faild to send to " << it->second.client.getNickname() << " when broacasting to " << this->_name)
+		}
 	}
 }	// Channel::broadcast
 

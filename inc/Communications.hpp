@@ -1,6 +1,7 @@
 #if !defined(COMMUNICATIONS_HPP)
 #define COMMUNICATIONS_HPP
 
+#include <map>
 #include <string>
 #include <vector>
 #include <poll.h>
@@ -18,6 +19,7 @@ class Communications
 protected:
 	int _fd;
 	std::vector< pollfd > _pfds;
+	std::map< int, std::string > _msgs_buffer;
 	std::string _psswd;
 	Configuration _server_config;
 

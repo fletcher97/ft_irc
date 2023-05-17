@@ -96,7 +96,6 @@ ft_irc::Communications::recvMsg(int fd)
 {
 	char buffer[COMS_MAX_READ];
 	ssize_t size;
-	std::string msg;
 	std::string line;
 	ft_irc::Parser::cmd_t *cmd;
 
@@ -110,10 +109,12 @@ ft_irc::Communications::recvMsg(int fd)
 	}
 	buffer[size] = '\0';
 	LOG_INFO("Message: '" << buffer << "' from: " << fd)
-	msg = buffer;
-	while (msg.size()) {
+	this->_msgs_buffer[fd] += buffer;
+	LOG_TRACE("Full message: " << this->_msgs_buffer[fd])
+	while (this->_msgs_buffer[fd].find("\r\n") != std::string::npos) {
 		cmd = NULL;
-		line = msg.substr(0, msg.find("\r\n"));
+		LOG_TRACE("Excecuting command")
+		line = this->_msgs_buffer[fd].substr(0, this->_msgs_buffer[fd].find("\r\n"));
 		try {
 			cmd = ft_irc::Parser::parse_msg(line);
 			ft_irc::Server::getInstance().excecute(fd, cmd);
@@ -125,7 +126,8 @@ ft_irc::Communications::recvMsg(int fd)
 			return;
 		}
 
-		msg = msg.substr(msg.find("\r\n") + 2, msg.size());
+		this->_msgs_buffer[fd] = this->_msgs_buffer[fd].substr(this->_msgs_buffer[fd].find("\r\n") + 2,
+			this->_msgs_buffer[fd].size());
 		delete cmd;
 	}
 }	// Communications::read
