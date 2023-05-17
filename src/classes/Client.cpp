@@ -51,6 +51,25 @@ ft_irc::Client::operator=(const ft_irc::Client &c)
 
 ft_irc::Client::~Client(void)
 {
+	std::map< std::string, Channel* > &channels = ft_irc::Server::getInstance().getChannels();
+	std::map< std::string, Channel* >::iterator it = channels.begin();
+	std::string channel_name;
+
+	while (it != channels.end()) {
+		if (it->second->isInChannel(*this)) {
+			LOG_TRACE("Quitting: " << it->second->getName())
+			if (it->second->part(*this, "Quitting Server")) {
+				LOG_DEBUG("Deleting empty channel: " << it->second->getName())
+
+				channel_name = it->second->getName();
+				delete it->second;
+				it++;
+				channels.erase(channel_name);
+				continue;
+			}
+		}
+		it++;
+	}
 	close(this->_fd);
 	LOG_INFO("Removed client: " << this->_nickname)
 }

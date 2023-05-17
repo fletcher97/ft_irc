@@ -507,7 +507,11 @@ ft_irc::Channel::broadcast(const std::string &source, ft_irc::commands cmd, cons
 	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
-		it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+		try {
+			it->second.client.sendMsg(":" + source + " " + ft_irc::toString(cmd) + " " + this->_name + " " + arg);
+		} catch (...) {
+			LOG_ERROR("Faild to send to " << it->second.client.getNickname() << " when broacasting to " << this->_name)
+		}
 	}
 }	// Channel::broadcast
 
@@ -519,7 +523,11 @@ ft_irc::Channel::broadcast(ft_irc::commands cmd, const std::string arg) const
 	for (std::map< int, ClientInfo >::const_iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		LOG_TRACE("broadcast: Sending: " << it->second.client.getNickname())
 
-		it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
+		try {
+			it->second.client.sendMsg(ft_irc::toString(cmd) + " " + this->_name + " :" + arg);
+		} catch (...) {
+			LOG_ERROR("Faild to send to " << it->second.client.getNickname() << " when broacasting to " << this->_name)
+		}
 	}
 }	// Channel::broadcast
 

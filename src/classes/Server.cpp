@@ -101,6 +101,13 @@ ft_irc::Server::getChannel(const std::string &name) const
 }	// Server::getChannel
 
 
+std::map< std::string, ft_irc::Channel* >&
+ft_irc::Server::getChannels(void)
+{
+	return this->_channels;
+}	// Server::getChannels
+
+
 void
 ft_irc::Server::newClient(void)
 {
