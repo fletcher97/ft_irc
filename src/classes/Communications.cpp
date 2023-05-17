@@ -158,11 +158,13 @@ ft_irc::Communications::run(void)
 		} else {
 			for (pfds_iterator it = this->_pfds.begin(); it != this->_pfds.end(); it++) {
 				if (it->revents & POLLNVAL) {
+					this->_msgs_buffer.erase(it->fd);
 					this->_pfds.erase(it);
 					break;
 				}
 				if (it->revents & POLLHUP) {
 					LOG_INFO("Client disconnected: " << it->fd)
+					this->_msgs_buffer.erase(it->fd);
 					server.deleteClient(it->fd);
 					this->_pfds.erase(it);
 					break;
