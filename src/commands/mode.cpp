@@ -173,7 +173,7 @@ updateChannelConfig(ft_irc::Client &client,
 	char c,
 	bool &add,
 	const ft_irc::Parser::cmd_t *cmd,
-	long unsigned int pos)
+	long unsigned int &pos)
 {
 	LOG_TRACE("mode: updateChannelConfig")
 	switch (c) {
@@ -215,9 +215,19 @@ updateChannelConfig(ft_irc::Client &client,
 			if (pos >= cmd->args.size()) {
 				LOG_WARN("MDOE: "
 					+ ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + std::string((add ? "+" : "-")) + 'k'))
+					"MODE " + std::string((add ? "+" : "-")) + 'l'))
 				client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(),
-					"MODE " + std::string((add ? "+" : "-")) + 'k'));
+					"MODE " + std::string((add ? "+" : "-")) + 'l'));
+
+				return false;
+			}
+
+			if (!add) {
+				if (chan.getClientLimit()) {
+					chan.removeClientLimit();
+
+					return true;
+				}
 
 				return false;
 			}
