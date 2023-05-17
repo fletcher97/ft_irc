@@ -485,8 +485,7 @@ ft_irc::Channel::join(const ft_irc::Client &client, const std::string &key)
 		LOG_WARN("join, client banned from channel: " << client.getNickname());
 		throw ft_irc::Channel::BannedClient();
 	}
-	if ((this->_mode & CH_INVITE_ONLY) && !this->isInvited(client))
-	{
+	if ((this->_mode & CH_INVITE_ONLY) && !this->isInvited(client)) {
 		LOG_WARN("join, client not invited to channel: " << client.getNickname());
 		throw ft_irc::Channel::InviteOnlyChannel();
 	}

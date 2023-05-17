@@ -122,8 +122,9 @@ ft_irc::Communications::recvMsg(int fd)
 			if (cmd) {
 				delete cmd;
 			}
-
-			return;
+			this->_msgs_buffer[fd] = this->_msgs_buffer[fd].substr(this->_msgs_buffer[fd].find("\r\n") + 2,
+				this->_msgs_buffer[fd].size());
+			continue;
 		}
 
 		this->_msgs_buffer[fd] = this->_msgs_buffer[fd].substr(this->_msgs_buffer[fd].find("\r\n") + 2,
@@ -149,10 +150,10 @@ ft_irc::Communications::run(void)
 	ft_irc::Server &server = ft_irc::Server::getInstance();
 	int i = 0;
 
-	if (!this->_server_config.get_port())
-	{
+	if (!this->_server_config.get_port()) {
 		LOG_ERROR("No configuration set")
-		return ;
+
+		return;
 	}
 	while (1) {
 		if (poll(&this->_pfds[0], this->_pfds.size(), -1) == -1) {
