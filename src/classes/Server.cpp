@@ -145,103 +145,109 @@ ft_irc::Server::sendMsg(int fd, const std::string &msg)
 void
 ft_irc::Server::excecute(int fd, const ft_irc::Parser::cmd_t *cmd)
 {
-	ft_irc::Client &client = this->getClient(fd);
+	try {
+		ft_irc::Client &client = this->getClient(fd);
 
-	switch (cmd->cmd) {
-		case ft_irc::CMD_CAP: {
-			LOG_INFO("execute: CAP Ignored")
+		switch (cmd->cmd) {
+			case ft_irc::CMD_CAP: {
+				LOG_INFO("execute: CAP Ignored")
 
-			break;
-		}
+				break;
+			}
 
-		case ft_irc::CMD_PASS: {
-			LOG_INFO("execute: executing PASS")
+			case ft_irc::CMD_PASS: {
+				LOG_INFO("execute: executing PASS")
 
-			this->pass(client, cmd);
-			break;
-		}
+				this->pass(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_NICK: {
-			LOG_INFO("execute: executing NICK")
+			case ft_irc::CMD_NICK: {
+				LOG_INFO("execute: executing NICK")
 
-			this->nick(client, cmd);
-			break;
-		}
+				this->nick(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_USER: {
-			LOG_INFO("execute: executing USER")
+			case ft_irc::CMD_USER: {
+				LOG_INFO("execute: executing USER")
 
-			this->user(client, cmd);
-			break;
-		}
+				this->user(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_JOIN: {
-			LOG_INFO("execute: executing JOIN")
+			case ft_irc::CMD_JOIN: {
+				LOG_INFO("execute: executing JOIN")
 
-			this->join(client, cmd);
-			break;
-		}
+				this->join(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_PART: {
-			LOG_INFO("execute: executing PART")
+			case ft_irc::CMD_PART: {
+				LOG_INFO("execute: executing PART")
 
-			this->part(client, cmd);
-			break;
-		}
+				this->part(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_INVITE: {
-			LOG_INFO("execute: executing INVITE")
+			case ft_irc::CMD_INVITE: {
+				LOG_INFO("execute: executing INVITE")
 
-			this->invite(client, cmd);
-			break;
-		}
+				this->invite(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_TOPIC: {
-			LOG_INFO("execute: executing TOPIC")
+			case ft_irc::CMD_TOPIC: {
+				LOG_INFO("execute: executing TOPIC")
 
-			this->topic(client, cmd);
-			break;
-		}
+				this->topic(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_QUIT: {
-			LOG_INFO("execute: executing QUIT")
+			case ft_irc::CMD_QUIT: {
+				LOG_INFO("execute: executing QUIT")
 
-			this->quit(client, cmd);
-			break;
-		}
+				this->quit(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_MODE: {
-			LOG_INFO("execute: executing MODE")
+			case ft_irc::CMD_MODE: {
+				LOG_INFO("execute: executing MODE")
 
-			this->mode(client, cmd);
-			break;
-		}
+				this->mode(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_PRIVMSG: {
-			LOG_INFO("execute: executing PRIVMSG")
+			case ft_irc::CMD_PRIVMSG: {
+				LOG_INFO("execute: executing PRIVMSG")
 
-			this->privmsg(client, cmd);
-			break;
-		}
+				this->privmsg(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_PING: {
-			LOG_INFO("execute: executing PING")
+			case ft_irc::CMD_PING: {
+				LOG_INFO("execute: executing PING")
 
-			this->ping(client, cmd);
-			break;
-		}
+				this->ping(client, cmd);
+				break;
+			}
 
-		case ft_irc::CMD_KICK: {
-			LOG_INFO("execute: executing KICK")
+			case ft_irc::CMD_KICK: {
+				LOG_INFO("execute: executing KICK")
 
-			this->kick(client, cmd);
-			break;
-		}
+				this->kick(client, cmd);
+				break;
+			}
 
-		default: {
-			LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
-		}
-	}	// switch
+			default: {
+				LOG_WARN("Client executed " + ft_irc::toString(cmd->cmd) + " but it's not implemented")
+			}
+		}	// switch
+	} catch (std::exception &e) {
+		LOG_ERROR("Failed to execute command on " << fd)
+
+		return;
+	}
 }	// Server::excecute
 
 
