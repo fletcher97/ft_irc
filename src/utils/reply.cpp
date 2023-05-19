@@ -684,7 +684,7 @@ err_noprivileges(void)
 static std::string
 err_chanoprivsneeded(const std::string &channel)
 {
-	return channel + " :You're not channel operator";
+	return channel + " :You dont have enough privileges on this channel";
 }	// ERR_CHANOPRIVSNEEDED
 
 
