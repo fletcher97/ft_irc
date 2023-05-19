@@ -14,8 +14,8 @@ preCheck(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		return false;
 	}
 	if (!cmd->args.size()) {
-		LOG_WARN("nick: 461: Need more params")
-		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NEEDMOREPARAMS, client.getNickname(), ft_irc::toString(cmd->cmd)));
+		LOG_WARN("nick: 431: Need more params")
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_NONICKNAMEGIVEN, client.getNickname()));
 
 		return false;
 	}
@@ -33,6 +33,12 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		return;
 	}
 	LOG_TRACE("nick: Checking if nickname is already in use")
+	if (!cmd->args.front().size()) {
+		LOG_WARN("nick: 432: erroneus nickname: " << cmd->args.front())
+		client.sendMsg(ft_irc::getReply(ft_irc::ERR_ERRONEUSNICKNAME, client.getNickname(), cmd->args.front()));
+
+		return;
+	}
 	for (std::map< int, ft_irc::Client* >::iterator it = this->_clients.begin(); it != this->_clients.end(); it++) {
 		if (it->second->getNickname() == cmd->args.front()) {
 			LOG_WARN("nick: 433: " << cmd->args.front() << " is already in use")
@@ -51,7 +57,7 @@ ft_irc::Server::nick(ft_irc::Client &client, const ft_irc::Parser::cmd_t *cmd)
 		}
 		LOG_INFO("nick: " << old_nick << "set to " << cmd->args.front())
 	} catch (...) {
-		LOG_WARN("nick: 433: erroneus nickname: " << cmd->args.front())
+		LOG_WARN("nick: 432: erroneus nickname: " << cmd->args.front())
 		client.sendMsg(ft_irc::getReply(ft_irc::ERR_ERRONEUSNICKNAME, client.getNickname(), cmd->args.front()));
 
 		return;

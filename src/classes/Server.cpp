@@ -1,4 +1,5 @@
 #include <netinet/in.h>
+#include <unistd.h>
 
 #include "Log.hpp"
 
@@ -83,7 +84,10 @@ ft_irc::Server::getClient(const std::string &nickname) const
 ft_irc::Client&
 ft_irc::Server::getClient(int fd) const
 {
-	return *(this->_clients.find(fd)->second);
+	if (this->_clients.find(fd) != this->_clients.end()) {
+		return *(this->_clients.find(fd)->second);
+	}
+	throw std::invalid_argument("Invalid fd");
 }	// Server::getClient
 
 
@@ -115,18 +119,19 @@ ft_irc::Server::newClient(void)
 {
 	ft_irc::Communications &communications = ft_irc::Communications::getInstance();
 
-	if (this->_clients.size() == MAX_CLIENTS) {
-		LOG_WARN("newClient: max number of clients in server")
-
-		return;
-	}
-
 	struct sockaddr_in clientAddress;
 	socklen_t socklen = sizeof(clientAddress);
 	int clientFd = accept(communications.getFd(), reinterpret_cast< struct sockaddr* >(&clientAddress), &socklen);
 
 	if (clientFd == -1) {
 		LOG_WARN("newClient: accept faild")
+
+		return;
+	}
+	if (this->_clients.size() == MAX_CLIENTS) {
+		LOG_WARN("newClient: max number of clients in server")
+		this->sendMsg(clientFd, "ERROR :Server is full");
+		close(clientFd);
 
 		return;
 	}

@@ -645,6 +645,17 @@ ft_irc::Channel::kick(const ft_irc::Client &client, const std::string &target, c
 		if (it->second.client.getNickname() == target) {
 			LOG_INFO("kick: Kicking: " << target)
 
+			if (this->isFounder(it->second.client)) {
+				LOG_WARN("kick: try to kick founder");
+				throw ft_irc::Channel::NoPrivsOnChannel();
+
+				return;
+			}
+			if (it->second.client.getNickname() == client.getNickname()) {
+				throw ft_irc::Channel::NoPrivsOnChannel();
+
+				return;
+			}
 			this->broadcast(client.getMask(), ft_irc::CMD_KICK, target + " " + comment);
 			this->_clients.erase(it);
 
